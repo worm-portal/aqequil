@@ -266,7 +266,7 @@ write_3i_file <- function(df,
                           warned_about_redox_column,
                           activity_model,
                           verbose){
-
+    
   # Set water model --------------------------------------------------------------                          
   suppressMessages(water(water_model))
     
@@ -296,11 +296,7 @@ write_3i_file <- function(df,
     })
     if(length(redox_col_index) > 0){
       if(!is.na(df[row, redox_col_index])){
-        if(unit == "Hetero. equil."){
-          this_redox_value <- unit
-        }else{
-          this_redox_value <- sprintf("%.4E", df[row, redox_col_index])
-        }
+        this_redox_value <- unit # subheader should always be "Hetero. equil." whenever redox flag -3 is used (required)
         this_redox_unit <- "using O2(g) in aqueous species block"
       } else {
         vprint(paste0("Warning: non-numeric 'O2(g)' value in sample ",
@@ -345,7 +341,7 @@ write_3i_file <- function(df,
       }
     } else {
       if(!warned_about_redox_column){
-        vprint(paste0("Warning: no 'pe' column found. Resorting to using",
+        vprint(paste0("Warning: no 'pe' column found. Resorting to using ",
                       "Log fO2 (log bars) with a value of ", default_logfO2),
                 verbose=verbose)
         warned_about_redox_column <- TRUE
@@ -529,11 +525,11 @@ write_3i_file <- function(df,
   df[row, "redox_flag"] <- this_redox_flag
   df[row, "redox_value"] <- this_redox_value
   df[row, "redox_unit"] <- this_redox_unit
-    
+
   # check that the redox state of the sample is within the stability region of water
   if(this_redox_flag != 1){
-    T <- temp_degC[row]
-    P <- pressure_bar[row]
+    T <- temp_degC
+    P <- pressure_bar
 
     # reduction
     logaH2O <- 0 # a good starting guess is 0 before actually doing the speciation...
@@ -588,6 +584,9 @@ write_3i_file <- function(df,
                        "The sample has a logfO2 of", round(as.numeric(this_redox_value), 2), "which is above the", round(logfO2_ox, 2),
                        "logfO2 threshold for stable water at this temperature and pressure."))
         }
+    }else if (this_redox_flag == -3){ # O2(g)
+      # there should be no reason to check this because O2(g) must be set to heterogeneous equilibrium
+      # with minerals. Assumedly, this keeps samples from becoming too reduced or oxidized.
     }
       
   }

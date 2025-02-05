@@ -58,16 +58,26 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-# rpy2 for Python and R integration
+# # rpy2 for Python and R integration
 import rpy2.rinterface_lib.callbacks
-import logging
-rpy2.rinterface_lib.callbacks.logger.setLevel(logging.ERROR) # will display errors, but not warnings
+# import logging
+# rpy2.rinterface_lib.callbacks.logger.setLevel(logging.ERROR) # will display errors, but not warnings
 
 import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
 pandas2ri.activate()
 
-from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook
+from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook, R_output
+
+
+def r_print(text="R TEST PRINT"):
+        # tests that R output is being captured and reported correctly
+        r_print = pkg_resources.resource_string(__name__, 'r_print.r').decode("utf-8")
+        ro.r(r_print)
+        capture = R_output()
+        capture.capture_r_output(debug=DEBUGGING_R)
+        ro.r.r_print(text)
+        capture.print_captured_r_output()
 
 
 def load(filename, messages=True, hide_traceback=True):
@@ -202,7 +212,6 @@ def _all_equal(iterable):
     # check that all elements of a list are equal
     g = itertools.groupby(iterable)
     return next(g, True) and not next(g, False)
-
 
 class AqEquil(object):
 
@@ -476,40 +485,7 @@ class AqEquil(object):
         
             self.data1 = self.thermo.data1
 
-            
-    def _capture_r_output(self):
-        """
-        Capture and create a list of R console messages
-        """
-        
-        # Record output #
-        self.stdout = []
-        self.stderr = []
-        
-        # If DEBUGGING_R==False, uses python to print R lines after executing an R block 
-        # If DEBUGGING_R==True, will ugly print from R directly. Allows printing from R to troubleshoot errors.
-        if not DEBUGGING_R:
-        
-            # Dummy functions #
-            def add_to_stdout(line): self.stdout.append(line)
-            def add_to_stderr(line): self.stderr.append(line)
 
-            # Keep the old functions #
-            self.stdout_orig = rpy2.rinterface_lib.callbacks.consolewrite_print
-            self.stderr_orig = rpy2.rinterface_lib.callbacks.consolewrite_warnerror
-
-            # Set the call backs #
-            rpy2.rinterface_lib.callbacks.consolewrite_print     = add_to_stdout
-            rpy2.rinterface_lib.callbacks.consolewrite_warnerror = add_to_stderr
-
-            
-    def _print_captured_r_output(self):
-        printable_lines = [line for line in self.stdout if line not in ['[1]', '\n']]
-        printable_lines = [line for line in printable_lines if re.search("^\s*\[[0-9]+\]$", line) is None]
-        printable_lines = [re.sub(r' \\n\"', "", line) for line in printable_lines]
-        [print(line[2:-1]) for line in printable_lines]
-
-        
     def _report_3o_6o_errors(self, lines, samplename):
 
         recording = False
@@ -577,7 +553,7 @@ class AqEquil(object):
     def _check_sample_input_file(self, input_filename, exclude, db,
                                        dynamic_db, charge_balance_on,
                                        suppress_missing,
-                                       redox_suppression):
+                                       redox_suppression, redox_flag):
         """
         Check for problems in sample input file.
         """
@@ -745,7 +721,7 @@ class AqEquil(object):
                             "Molarity", "mg/L", "mg/kg.sol", "Alk., eq/kg.H2O",
                             "Alk., eq/L", "Alk., eq/kg.sol", "Alk., mg/L CaCO3",
                             "Alk., mg/L HCO3-", "Log activity", "Log act combo",
-                            "Log mean act", "pX", "pH", "pHCl", "pmH", "pmX",
+                            "Log mean act", "pX", "pH", "pe", "pHCl", "pmH", "pmX",
                             "Hetero. equil.", "Homo. equil.", "Make non-basis",
                             "logfO2", "Mineral", "bar", "volts"]
         for i, subheader in enumerate(subheaders):
@@ -767,6 +743,25 @@ class AqEquil(object):
                 "'degC' in the second row, and a temperature value for each "
                 "sample in degrees Celsius.")
             err_list.append(err_temp)
+
+        # is the 'O2(g)' redox flag set up correctly?
+        if redox_flag == "O2(g)" or redox_flag == -3:
+            if "O2(g)" not in df_in_headercheck.columns:
+                err_O2g = ("The redox flag 'O2(g)' was selected but there is no "
+                           "O2(g) column in the input file.")
+                err_list.append(err_O2g)
+            else:
+                if df_in_headercheck["O2(g)"][1] != "Hetero. equil.":
+                    err_O2g = ("The redox flag 'O2(g)' was selected but the "
+                               "O2(g) column in the input file is set to not set to "
+                               "heterogeneous equilibrium with minerals, as is "
+                               "required. You can do this by changing the subheader "
+                               "of the O2(g) column from '"+df_in_headercheck["O2(g)"][1]+"' "
+                               "to 'Hetero. equil.' and then specifying the name "
+                               "of a mineral on each sample row that should be used "
+                               "to set redox state (e.g., hematite)."
+                              )
+                    err_list.append(err_O2g)
 
         # raise an exception that summarizes all errors found
         if len(err_list) > 0:
@@ -1353,14 +1348,14 @@ class AqEquil(object):
             Activity model to use for speciation. Can be either "b-dot",
             or "davies". NOTE: the "pitzer" model is not yet implemented.
         
-        redox_flag : str, default "O2(g)"
+        redox_flag : str, default "logfO2"
             Determines which column in the sample input file sets the overall
             redox state of the samples. Options for redox_flag include 'O2(g)',
             'pe', 'Eh', 'logfO2', and 'redox aux'. The code will search your
             sample spreadsheet file (see `filename`) for a column corresponding
             to the option you chose:
             
-            * 'O2(g)' with a valid subheader for a gas
+            * 'O2(g)' set to heterogeneous equilibrium with a mineral
             * 'pe' with subheader pe
             * 'Eh' with subheader volts
             * 'logfO2' with subheader logfO2
@@ -1571,7 +1566,7 @@ class AqEquil(object):
             sample_temps, sample_press = self._check_sample_input_file(
                                           input_filename, exclude, db,
                                           dynamic_db, charge_balance_on, suppress_missing,
-                                          redox_suppression)
+                                          redox_suppression, redox_flag)
         
         if aq_dist_type not in ["molality", "log_molality", "log_gamma", "log_activity"]:
             self.err_handler.raise_exception("Unrecognized aq_dist_type. Valid "
@@ -1630,7 +1625,7 @@ class AqEquil(object):
                 print("Getting", self.thermo.thermo_db_filename, "ready. This will take a moment...")
             
             thermo_df, data0_file_lines, grid_temps, grid_press, data0_lettercode, water_model, P1, plot_poly_fit = self.create_data0(**db_args)
-            
+
         if self.thermo.custom_data0 and not dynamic_db:
             self.__mk_check_del_directory('eqpt_files')
             if self.thermo.thermo_db_type != "data1":
@@ -1660,7 +1655,7 @@ class AqEquil(object):
             
         else:
             data0_path = self.eq36da + "/data0." + data0_lettercode
-        
+
         # gather information from data0 file and perform checks
         if not dynamic_db:
             if os.path.exists(data0_path) and os.path.isfile(data0_path):
@@ -1717,7 +1712,8 @@ class AqEquil(object):
             else:
                 P1=False
                 
-            self._capture_r_output()
+            capture = R_output()
+            capture.capture_r_output(debug=DEBUGGING_R)
         
             r_check_TP_grid = pkg_resources.resource_string(__name__, 'check_TP_grid.r').decode("utf-8")
         
@@ -1730,7 +1726,7 @@ class AqEquil(object):
                                          check_for_errors=False,
                                          verbose=self.verbose)
         
-            self._print_captured_r_output()
+            capture.print_captured_r_output()
             
             grid_temps = list(list_tp.rx2("grid_temps"))
             grid_press = list(list_tp.rx2("grid_press"))
@@ -1764,9 +1760,10 @@ class AqEquil(object):
         input_dir = "rxn_3i"
         output_dir = "rxn_3o"
         pickup_dir = "rxn_3p"
-            
+
         # preprocess for EQ3 using R scripts
-        self._capture_r_output()
+        capture = R_output()
+        capture.capture_r_output(debug=DEBUGGING_R)
         
         r_prescript = pkg_resources.resource_string(
             __name__, 'preprocess_for_EQ3.r').decode("utf-8")
@@ -1784,7 +1781,7 @@ class AqEquil(object):
                                                verbose=self.verbose)
         
         
-        self._print_captured_r_output()
+        capture.print_captured_r_output()
         
         self.df_input_processed = ro.conversion.rpy2py(input_processed_list.rx2("df"))
         
@@ -1817,7 +1814,7 @@ class AqEquil(object):
             
             # handle dynamic data0 creation
             if dynamic_db:
-                
+
                 self.__fill_data0(thermo_df=ro.conversion.rpy2py(thermo_df),
                                   data0_file_lines=copy.deepcopy(data0_file_lines),
                                   grid_temps=[temp_degC],
@@ -1857,9 +1854,10 @@ class AqEquil(object):
             allowed_aq_block_species = ["all"]
             if dynamic_db:
                 allowed_aq_block_species = list(thermo_df["name"]) + FIXED_SPECIES
-            
+
             # write 3i files
-            self._capture_r_output()
+            capture = R_output()
+            capture.capture_r_output(debug=DEBUGGING_R)
 
             warned_about_redox_column = ro.r.write_3i_file(df=ro.conversion.py2rpy(df),
                                temp_degC=temp_degC,
@@ -1884,8 +1882,8 @@ class AqEquil(object):
                                activity_model=activity_model,
                                verbose=self.verbose)
 
-            self._print_captured_r_output()
-        
+            capture.print_captured_r_output()
+
             # run EQ3 on each 3i file
             samplename = self.df_input_processed.iloc[sample_row_index, self.df_input_processed.columns.get_loc("Sample")]
             filename_3i = self.df_input_processed.index[sample_row_index]+".3i"
@@ -1928,11 +1926,11 @@ class AqEquil(object):
                 # capture everything after "start of the bottom half" of 3p
                 top_half = []
                 bottom_half = []
-                capture = False
+                capture_it = False
                 for line in lines:
                     if "Start of the bottom half of the input file" in line:
-                        capture = True
-                    if capture:
+                        capture_it = True
+                    if capture_it:
                         bottom_half.append(line)
                     else:
                         top_half.append(line)
@@ -1956,7 +1954,8 @@ class AqEquil(object):
         df_input_processed_names = _convert_to_RVector(list(self.df_input_processed.columns))
         
         # mine output
-        self._capture_r_output()
+        capture = R_output()
+        capture.capture_r_output(debug=DEBUGGING_R)
         
         r_3o_mine = pkg_resources.resource_string(
             __name__, '3o_mine.r').decode("utf-8")
@@ -1985,7 +1984,7 @@ class AqEquil(object):
             verbose=self.verbose,
         )
 
-        self._print_captured_r_output()
+        capture.print_captured_r_output()
         
         if len(batch_3o) == 0:
             self.err_handler.raise_exception("Could not compile a speciation report. This is "
@@ -2300,7 +2299,8 @@ class AqEquil(object):
                    water_model, activity_model, P1, plot_poly_fit, logK_extrapolate,
                    dynamic_db, verbose):
 
-        self._capture_r_output()
+        capture = R_output()
+        capture.capture_r_output(debug=DEBUGGING_R)
         
         r_check_TP_grid = pkg_resources.resource_string(
             __name__, 'check_TP_grid.r').decode("utf-8")
@@ -2314,7 +2314,7 @@ class AqEquil(object):
                                      check_for_errors=True,
                                      verbose=self.verbose)
         
-        self._print_captured_r_output()
+        capture.print_captured_r_output()
         
         grid_temps = list(list_tp.rx2("grid_temps"))
         grid_press = list(list_tp.rx2("grid_press"))
@@ -2326,7 +2326,7 @@ class AqEquil(object):
                                         poly_coeffs_2=list(list_tp.rx2("poly_coeffs_2")),
                                         res=500)
 
-        self._print_captured_r_output()
+        capture.print_captured_r_output()
         
         # calculate logK at each T and P for every species
         out_dfs = []
@@ -2466,7 +2466,8 @@ class AqEquil(object):
                 data0_file_lines[data0_file_lines.index("logK_grid_"+name)] = logK_list
 
         # handle data0 header section
-        self._capture_r_output()
+        capture = R_output()
+        capture.capture_r_output(debug=DEBUGGING_R)
         
         r_fill_data0_header = pkg_resources.resource_string(
             __name__, 'fill_data0_header.r').decode("utf-8")
@@ -2480,7 +2481,7 @@ class AqEquil(object):
                                        water_model=water_model,
                                        activity_model=activity_model)
         
-        self._print_captured_r_output()
+        capture.print_captured_r_output()
         
         with open("data0."+db, 'w') as f:
             for item in data0_file_lines:
@@ -2700,7 +2701,7 @@ class AqEquil(object):
             are permitted in the context of grid_temps and grid_press, then
             return their indices.
             """
-            
+        
             if not isinstance(grid_press, list):
                 # "Psat" to ["psat"]
                 grid_press_list = [grid_press.lower()]
@@ -2725,9 +2726,10 @@ class AqEquil(object):
                         sp_press_grid.append(p)
 
                 if dynamic_db:
+
                     sp_press_grid_numeric = [pyCHNOSZ.water("Psat", T=273.15+T).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
                     grid_press_list_numeric = [pyCHNOSZ.water("Psat", T=273.15+T).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
-    
+
                     sp_temps_grid_psatted = []
                     for ii,T in enumerate(sp_temps_grid):
                         if T < 100 and sp_press_grid_numeric[ii] == 1:
@@ -2793,7 +2795,7 @@ class AqEquil(object):
 
             # loop through valid species and reject them if their dissociation reactions
             # contain species that have been rejected.
-            
+
             valid_sp_i = list(dict.fromkeys(valid_sp_i))
             while True:
                 valid_sp_i_before = copy.deepcopy(valid_sp_i)
@@ -2808,7 +2810,7 @@ class AqEquil(object):
             
             for i,n in enumerate(reject_names):
                 self.thermo._reject_species(name=n, reason=reject_reasons[i])
-       
+        
             return valid_sp_i
             
             
@@ -2882,7 +2884,7 @@ class AqEquil(object):
             calculation. 2 for all messages, 1 for errors or warnings only,
             0 for silent.
         """
-        
+
         thermo_df = self.thermo.thermo_db
         db_logK = self.thermo.logK_db
         water_model = self.thermo.water_model
@@ -2995,7 +2997,8 @@ class AqEquil(object):
         
         out_list = self.thermo.out_list
     
-        self._capture_r_output()
+        capture = R_output()
+        capture.capture_r_output(debug=DEBUGGING_R)
     
         r_create_data0 = pkg_resources.resource_string(
             __name__, 'create_data0.r').decode("utf-8")
@@ -3016,7 +3019,7 @@ class AqEquil(object):
                           verbose=self.verbose,
                           )
         
-        self._print_captured_r_output()
+        capture.print_captured_r_output()
         
         data0_file_lines = data0_file_lines[0].split("\n")
         
@@ -4003,7 +4006,8 @@ class AqEquil(object):
                 exclude_category_R = {}
             exclude_category_R = ro.ListVector(exclude_category_R)
 
-            self.AqEquil_instance._capture_r_output()
+            capture = R_output()
+            capture.capture_r_output(debug=DEBUGGING_R)
 
             r_redox_dissrxns = pkg_resources.resource_string(
                 __name__, 'redox_and_dissrxns.r').decode("utf-8")
@@ -4024,8 +4028,8 @@ class AqEquil(object):
                                    fixed_species=_convert_to_RVector(FIXED_SPECIES),
                                    verbose=self.verbose)
             
-            self.AqEquil_instance._print_captured_r_output()
-
+            capture.print_captured_r_output()
+            
             thermo_df = self.out_list.rx2("thermo_df")
             thermo_df=ro.conversion.rpy2py(thermo_df)
 
