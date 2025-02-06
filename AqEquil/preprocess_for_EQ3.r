@@ -7,9 +7,9 @@ options(stringsAsFactors=F)
 
 vprint <- function(string, verbose=2){
   # print messages depending on desired level of 'verbose'-ness.
-  if(verbose == 2){
+  if(verbose > 0){
     print(string)
-  } else if(verbose == 1){
+  } else if(verbose >= 0){
     if(grepl("warning", tolower(string)) | grepl("error", tolower(string))){
       print(string)
     }
@@ -77,9 +77,6 @@ preprocess <- function(input_filename,
                        water_model,
                        verbose=2){
 
-  
-  vprint("Reading input file...", verbose=verbose)
-    
   # Read input
   r <- read.csv(input_filename,
                 header=T,
@@ -96,8 +93,6 @@ preprocess <- function(input_filename,
   num_cols <- names(df_numeric)
   num_cols <- match(num_cols, colnames(df))
   num_cols <- num_cols[num_cols != 1]
-    
-  vprint("Handling headers...", verbose=verbose)
 
   # specify headers and subheaders
   header1 <- names(df)
@@ -120,8 +115,6 @@ preprocess <- function(input_filename,
   colnames(df)[1] <- "Sample" # rename "_" as sample name header
 
   # Convert data to numeric ------------------------------------------------------
-  vprint("Ensuring data is numeric...", verbose=verbose)
-
   # convert columns to numeric
   df[, num_cols] <- mutate_all(df[, num_cols], function(x) as.numeric(as.character(x)))
 
@@ -232,8 +225,6 @@ preprocess <- function(input_filename,
                               "pressure_bar"=pressure_bar,
                               "minimum_pressure"=minimum_pressure,
                               "exclude"=exclude)
-
-  vprint("Preprocessing done!", verbose=verbose)
 
   return(input_processed_list)
 }

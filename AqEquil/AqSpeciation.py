@@ -713,8 +713,6 @@ class AqEquil(object):
                         "unit 'pH'.")
                     err_list.append(err_species_pH)
 
-        
-        
         # are subheader units valid?
         subheaders = df_in_headercheck.iloc[0,]
         valid_subheaders = ["degC", "ppm", "ppb", "Suppressed", "Molality",
@@ -744,6 +742,50 @@ class AqEquil(object):
                 "sample in degrees Celsius.")
             err_list.append(err_temp)
 
+
+        # handle automatic selection of redox flag
+        if redox_flag == "auto":
+            redox_selection_made = False
+            if "logfO2" in df_in_headercheck.columns:
+                if df_in_headercheck["logfO2"][1] == "logfO2":
+                    redox_flag = "logfO2"
+                    redox_selection_made = True
+            if "O2" in df_in_headercheck.columns:
+                redox_flag = "O2"
+                redox_selection_made = True
+            if "Eh" in df_in_headercheck.columns:
+                if df_in_headercheck["Eh"][1] == "volts":
+                    redox_flag = "Eh"
+                    redox_selection_made = True
+            if "pe" in df_in_headercheck.columns:
+                if df_in_headercheck["pe"][1] == "pe":
+                    redox_flag = "pe"
+                    redox_selection_made = True
+            if "O2(g)" in df_in_headercheck.columns:
+                if df_in_headercheck["O2(g)"][1] == "Hetero. equil.":
+                    redox_flag = "O2(g)"
+                    redox_selection_made = True
+            if self.verbose > 0 and redox_selection_made and redox_flag != "O2":
+                print("The input file column '"+redox_flag+"' will be used to "
+                      "set sample redox state. If a another column is desired, "
+                      "set it manually using the redox_flag parameter.")
+            elif self.verbose > 0 and redox_selection_made and redox_flag == "O2":
+                redox_flag = "logfO2" # nothing else is needed here
+            elif self.verbose > 0:
+                print("A column to set sample redox state could not be "
+                      "automatically detected in the input file. Valid columns "
+                      "include 'logfO2' (with subheader 'logfO2'), 'O2' "
+                      "(with a valid concentration subheader), 'Eh' "
+                      "(with subheader 'volts'), 'pe' (with subheader 'pe'), and "
+                      "'O2(g)' (with subheader 'Hetero. equil.'). A "
+                      "default logfO2 value will be used to set sample redox "
+                      "state. It is also possible to set sample redox state "
+                      "based on a valid auxiliary basis species/basis species "
+                      "combo (e.g., Fe+3/Fe+2) by setting the redox_flag "
+                      "parameter to 'redox aux' and the redox_aux parameter to "
+                      "the name of the desired auxiliary basis species.")
+                redox_flag = "logfO2"
+        
         # is the 'O2(g)' redox flag set up correctly?
         if redox_flag == "O2(g)" or redox_flag == -3:
             if "O2(g)" not in df_in_headercheck.columns:
@@ -785,7 +827,7 @@ class AqEquil(object):
             sample_press = ['psat']*len(sample_temps)
         
         
-        return sample_temps, sample_press
+        return sample_temps, sample_press, redox_flag
         
 
     def __move_eqpt_extra_output(self):
@@ -1265,7 +1307,7 @@ class AqEquil(object):
                  input_filename,
                  logK_extrapolate=None,
                  activity_model="b-dot",
-                 redox_flag="logfO2",
+                 redox_flag="auto",
                  redox_aux="Fe+3",
                  default_logfO2=-6,
                  exclude=[],
@@ -1348,13 +1390,15 @@ class AqEquil(object):
             Activity model to use for speciation. Can be either "b-dot",
             or "davies". NOTE: the "pitzer" model is not yet implemented.
         
-        redox_flag : str, default "logfO2"
+        redox_flag : str, default "auto"
             Determines which column in the sample input file sets the overall
             redox state of the samples. Options for redox_flag include 'O2(g)',
             'pe', 'Eh', 'logfO2', and 'redox aux'. The code will search your
             sample spreadsheet file (see `filename`) for a column corresponding
             to the option you chose:
-            
+
+            * 'auto' to automatically decide which redox variable to use based
+              on the user's input file.
             * 'O2(g)' set to heterogeneous equilibrium with a mineral
             * 'pe' with subheader pe
             * 'Eh' with subheader volts
@@ -1560,10 +1604,10 @@ class AqEquil(object):
         if "suppress_redox" in db_args.keys() and self.thermo.thermo_db_type != "data0" and self.thermo.thermo_db_type != "data1":
             if len(db_args["suppress_redox"]) > 0:
                 redox_suppression = True
-        
+
         # check input sample file for errors
         if activity_model != 'pitzer': # TODO: allow check_sample_input_file() to handle pitzer
-            sample_temps, sample_press = self._check_sample_input_file(
+            sample_temps, sample_press, redox_flag = self._check_sample_input_file(
                                           input_filename, exclude, db,
                                           dynamic_db, charge_balance_on, suppress_missing,
                                           redox_suppression, redox_flag)
@@ -1577,7 +1621,7 @@ class AqEquil(object):
         if redox_type not in ["Eh", "pe", "logfO2", "Ah"]:
             self.err_handler.raise_exception("Unrecognized redox_type. Valid "
                 "options are 'Eh', 'pe', 'logfO2', or 'Ah'")
-        
+
         if redox_flag == "O2(g)" or redox_flag == -3:
             redox_flag = -3
         elif redox_flag == "pe" or redox_flag == -2:
@@ -1589,9 +1633,10 @@ class AqEquil(object):
         elif redox_flag == "redox aux" or redox_flag == 1:
             redox_flag = 1
         else:
-            self.err_handler.raise_exception("Unrecognized redox flag. Valid options are 'O2(g)'"
-                                             ", 'pe', 'Eh', 'logfO2', 'redox aux'")
-
+            self.err_handler.raise_exception("Unrecognized redox flag. Valid "
+                    "options are 'auto', 'O2(g)', 'pe', 'Eh', 'logfO2', and "
+                    "'redox aux'")
+        
         # handle batch_3o naming
         if batch_3o_filename != None:
             if ".rds" in batch_3o_filename[-4:]:
