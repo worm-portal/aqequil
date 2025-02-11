@@ -427,10 +427,16 @@ write_3i_file <- function(df,
                                                   exceed.rhomin=TRUE,
                                                   exceed.Ttr=TRUE)$out$logK)
               })
-              this_redox_value <- sprintf("%.4E", logfO2)
-              this_redox_unit <- paste("Log fO2 (log bars) [calculated from O2(aq) = O2(g) at",
-                                        "temperature and pressure of sample]")
+              if(!is.finite(logfO2)){
+                logfO2 <- default_logfO2
+                this_redox_value <- sprintf("%.4E", default_logfO2)
+                this_redox_unit <- paste0("Log fO2 (log bars) [default = ", default_logfO2, "]")
+              }else{
+                this_redox_unit <- paste("Log fO2 (log bars) [calculated from O2(aq) = O2(g) at",
+                                          "temperature and pressure of sample]")
+              }
               assigned <- TRUE
+              this_redox_value <- sprintf("%.4E", logfO2)
             }
           } else {
             vprint(paste("Warning: column found for aqueous O2, but units are not recognized. Resorting to using Log fO2",

@@ -1,9 +1,11 @@
 # load packages
 suppressMessages({
   library(CHNOSZ)
+  library(MASS)
   library(dplyr)
   library(comprehenr)
   library(stringr)
+  library(pracma)
 })
 
 known_oxstates <- c("H"="+", "O"="-2", "F"="-",
@@ -18,6 +20,20 @@ vmessage <- function(m, vlevel, verbose){
   if(verbose >= vlevel){
     print(m)
   }
+}
+
+
+get_lcm <- function(vector){
+  # get least common multiple of a vector of numbers
+  # e.g., get_lcm(c(1, 4, 6, 3)) will return 12
+  for(i in 1:(length(vector)-1)){
+    if(i == 1){
+      result <- pracma::Lcm(vector[i], vector[i+1])
+    }else{
+      result <- pracma::Lcm(result, vector[i+1])
+    }
+  }
+  return(result)
 }
 
 
@@ -707,20 +723,47 @@ spec_diss <- function(sp, simplest_basis, sp_formula_makeup, HOZ_balancers,
   autobalance <- subcrt_bal(isp, c(-1, coeffs_to_include))
 
   # find least common denominator (LCD) between species that is dissociating and its
-  # basis species, then multiply coefficients so that none are below 1.0
+  # basis species, then multiply coefficients so that none a non-integer
   # e.g., coefficients c(-1.0000000, 0.5000000, 0.1666667, 1.0000000, -1.0000000)
   # have an LCD of 6, so the new coefficients will be:
   # c(-6.0000000, 3.0000000, 1.0000000, 6.0000000, -6.0000000)
-  # TODO: there may be instances where this doesn't work? So far tests seem ok.
-  if(any(abs(autobalance$newcoeff)<1)){
+  if(any(abs(autobalance$newcoeff)%%1==0)){ # check if all coefficients are integers...
+
     fracs = autobalance$newcoeff
-    lcd = max(fracs[1]/-fracs)
-    coeffs = fracs*lcd
+
+    f <- fractions(fracs) # convert decimal fractions to whole fractions
+    frac_list <- strsplit(attr(f,"fracs"),"/") # create a list of numerators and denominators
+
+    # convert numerators and denominators to numeric, and assign to independent vectors
+    numerators <- c()
+    denominators <- c()
+    for(i in 1:length(frac_list)){
+      frac_list[[i]] <- as.numeric(frac_list[[i]])
+      if(length(frac_list[[i]])>1){
+        frac_list[[i]][2] <- as.numeric(frac_list[[i]][2])
+      }else{
+        # if there is no denominator given (for whole numbers), assign 1 as denominator
+        frac_list[[i]][2] <- 1
+      }
+      numerators <- c(numerators, frac_list[[i]][1])
+      denominators <- c(denominators, frac_list[[i]][2])
+    }
+
+    # find the least common multiple of the denominators
+    lcm <- get_lcm(denominators)
+
+    # multiply numerators by the lcm, then divide numerators by denominators to get whole numbers
+    numerators <- numerators*lcm
+    denominators <- denominators
+    coeffs <- numerators/denominators
+
     coeffs = round(as.numeric(coeffs), 4)
     names(coeffs) = names(autobalance$newcoeff)
     autobalance$newcoeff = coeffs
   }
-        
+
+  
+    
   spec_names <- thermo()$OBIGT[autobalance$newspecies, "name"]
     
   spec_names[spec_names == "water"] <- "H2O" # prevent CHNOSZ from renaming 'H2O' (name req. by EQ3) to 'water'
