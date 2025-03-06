@@ -678,8 +678,10 @@ class Mass_Transfer:
         elif unit == "logact":
             
             cols_to_harvest = [b for b in basis_df.columns if b not in ["O2(g)", "H2O"]]
+
+            out = self.aq_distribution_logact[[c for c in cols_to_harvest if c in self.aq_distribution_logact.columns]]
             
-            return self.aq_distribution_logact[cols_to_harvest]
+            return out
         
         
         

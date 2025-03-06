@@ -44,7 +44,8 @@ from datetime import datetime
 import numbers
 import roman
 from natsort import natsorted
-from .AqSpeciation import Error_Handler, Speciation, AqEquil, chemlabel, check_balance, format_equation
+from .AqSpeciation import Speciation, AqEquil
+from WORMutils import Error_Handler, chemlabel, format_equation, check_balance
 
 FIXED_SPECIES = [&#34;H2O&#34;, &#34;H+&#34;, &#34;O2(g)&#34;, &#34;water&#34;, &#34;Cl-&#34;, &#34;e-&#34;, &#34;OH-&#34;, &#34;O2&#34;, &#34;H2O(g)&#34;]
 
@@ -5002,8 +5003,19 @@ class Prepare_Reaction:
                 pval5=f&#34;{&#39;{:.5E}&#39;.format(self.pval5):&gt;12}&#34;,
             ))
 
-        
-        reactant_blocks = &#34;&#34;.join([r.formatted_block for r in self.reactants])
+        if len(self.reactants) &gt; 0:
+            reactant_blocks = &#34;&#34;.join([r.formatted_block for r in self.reactants])
+        else:
+            reactant_blocks = &#34;&#34;&#34;\n|Reactant        |None                    | (ureac(n))                         |
+|------------------------------------------------------------------------------|
+|-&gt;|Type         |None                    | (urcjco(jcode(n)))                 |
+|------------------------------------------------------------------------------|
+|-&gt;|Status       |None                    | (urcjre(jreac(n)))                 |
+|------------------------------------------------------------------------------|
+|-&gt;|Amount remaining (moles) | 0.00000E+00| (morr(n))                          |
+|------------------------------------------------------------------------------|
+|-&gt;|Amount destroyed (moles) | 0.00000E+00| (modr(n))                          |
+|------------------------------------------------------------------------------|&#34;&#34;&#34;
         gas_lines = &#34;&#34;.join([r.formatted_line for r in self.gases])
         reaction_options_formatted.update(dict(reactant_blocks=reactant_blocks))
         reaction_options_formatted.update(dict(gas_lines=gas_lines))
@@ -12193,8 +12205,19 @@ and to the point.</dd>
                 pval5=f&#34;{&#39;{:.5E}&#39;.format(self.pval5):&gt;12}&#34;,
             ))
 
-        
-        reactant_blocks = &#34;&#34;.join([r.formatted_block for r in self.reactants])
+        if len(self.reactants) &gt; 0:
+            reactant_blocks = &#34;&#34;.join([r.formatted_block for r in self.reactants])
+        else:
+            reactant_blocks = &#34;&#34;&#34;\n|Reactant        |None                    | (ureac(n))                         |
+|------------------------------------------------------------------------------|
+|-&gt;|Type         |None                    | (urcjco(jcode(n)))                 |
+|------------------------------------------------------------------------------|
+|-&gt;|Status       |None                    | (urcjre(jreac(n)))                 |
+|------------------------------------------------------------------------------|
+|-&gt;|Amount remaining (moles) | 0.00000E+00| (morr(n))                          |
+|------------------------------------------------------------------------------|
+|-&gt;|Amount destroyed (moles) | 0.00000E+00| (modr(n))                          |
+|------------------------------------------------------------------------------|&#34;&#34;&#34;
         gas_lines = &#34;&#34;.join([r.formatted_line for r in self.gases])
         reaction_options_formatted.update(dict(reactant_blocks=reactant_blocks))
         reaction_options_formatted.update(dict(gas_lines=gas_lines))

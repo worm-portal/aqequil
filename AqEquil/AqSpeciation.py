@@ -1622,7 +1622,7 @@ class AqEquil(object):
             self.err_handler.raise_exception("Unrecognized redox_type. Valid "
                 "options are 'Eh', 'pe', 'logfO2', or 'Ah'")
 
-        if redox_flag == "O2(g)" or redox_flag == -3:
+        if redox_flag == "O2(g)" or redox_flag == "O2" or redox_flag == -3:
             redox_flag = -3
         elif redox_flag == "pe" or redox_flag == -2:
             redox_flag = -2
@@ -3839,28 +3839,15 @@ class AqEquil(object):
 
         def _est_logK_S(self, T_list, logK_25C, Delta_S):
 
-            R = 8.31446261815324/4.184 # cal/(mol K)
-
-            # solve for G of reaction:
-            # ∆_r G°= -2.303RT logK
-            G_25 = -2.303*R*298.15*logK_25C # in cal/mol
-
-            # solve for H of reaction:
-            # ∆_r G°= ∆_r H°-T∆_r S°
-            H = G_25 + 298.15*Delta_S # in cal/mol
+            R = 8.31446261815324/4.184 # cal/mol/K
+            T = 298.15
 
             logK_list = []
+            # based on Eq3 of Prapaipong & Shock 2001:
             for T_C in T_list:
-
-                T_K = T_C+273.15 # convert C to Kelvin
-
-                # estimate G at temperature
-                G_T = H - T_K*Delta_S
-
-                # convert G to logK
-                logK_T = G_T/(-2.303*R*T_K)
-                logK_list.append(logK_T)
-
+                delta_logK = (Delta_S/(2.303*R*298.15))*(T_C-25)
+                logK_list.append(logK_25C + delta_logK)
+            
             return logK_list
 
 
@@ -6605,6 +6592,11 @@ class Speciation(object):
             figure is simply displayed.
         """
 
+        if not isinstance(y, list) and not isinstance(y, str):
+            self.err_handler.raise_exception("y must be a string or a list. "
+                    "If you are applying the result of a lookup() to y, then "
+                    "make sure the string inside of lookup() is valid.")
+        
         if not isinstance(y, list):
             y = [y]
         

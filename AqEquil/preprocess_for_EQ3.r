@@ -79,7 +79,7 @@ preprocess <- function(input_filename,
 
   # Read input
   r <- read.csv(input_filename,
-                header=T,
+                header=TRUE,
                 check.names=F,
                 stringsAsFactors=F,
                 colClasses="character")
@@ -217,7 +217,7 @@ preprocess <- function(input_filename,
   }
 
   # create unique df row names that will become .3i filenames
-  row_order <- make.names(df$Sample, unique=T)
+  row_order <- make.names(df$Sample, unique=TRUE)
   rownames(df) <- row_order
              
   input_processed_list = list("df"=df,
@@ -725,9 +725,10 @@ write_3i_file <- function(df,
         # EQ3 won't balance on a species if its concentration is 0 so
         # change it to a very small non-zero value
         if(charge_balance_on == species_name && as.numeric(species_value)==0){
-          species_value <- 1e-99
+          species_value <- 1e-18
         }
-        species_unit  <- header_unit(column, keepcase=T)
+        species_unit  <- header_unit(column, keepcase=TRUE)
+          
         if(!(species_unit %in% EQ3_jflags)){
           if(tolower(species_unit) == "ppb"){
             species_value <- species_value/1000
