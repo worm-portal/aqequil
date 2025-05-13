@@ -374,8 +374,6 @@ match_basis_comp <- function(sp_elems, elem){
 get_dissrxn <- function(sp_name, redox_elem_states, basis_pref=c(), aux_pref=c(),
                         HOZ_balancers=c("H+", "O2", "H2O"),
                         thermo_df=NULL, verbose=2){
-
-
     
   if(length(sp_name) > 1 & length(unique(sp_name)) == 1){
     sp_name = unique(sp_name)
@@ -785,9 +783,9 @@ suppress_redox_and_generate_dissrxns <- function(thermo_df,
                               suppress_redox,
                               exclude_category,
                               element_df,
-                              fixed_species=c("H2O", "H+", "O2(g)", "water", "Cl-", "e-"),
+                              fixed_species=c("H2O", "H+", "O2(g)", "water", "e-"),
                               verbose=1){
-    
+
   # specify molecules to balance H, O, and charge (Z)
   HOZ_balancers <- c("H+", "O2(g)", "H2O") # might be dataset-specific (e.g., "O2(g)")
   
@@ -806,7 +804,7 @@ suppress_redox_and_generate_dissrxns <- function(thermo_df,
     }
   }
     
-  # Ensure that Cl- and other EQ3NR-required species are in thermo_df by marking
+  # Ensure that EQ3NR-required species are in thermo_df by marking
   # them as "required" in category 1 of the thermodynamic db CSV.
     
   # get all unique oxidation states of elements in the entire dataset
@@ -907,7 +905,6 @@ suppress_redox_and_generate_dissrxns <- function(thermo_df,
       if(is.na(charge)){
         charge <- 0
       }
-
 
       # for each element in this species, see if it matches an entry in redox_elem_states
       this_formula <- c()
@@ -1045,12 +1042,13 @@ suppress_redox_and_generate_dissrxns <- function(thermo_df,
                             "V", "a1.a", "a2.b", "a3.c",
                             "a4.d", "c1.e", "c2.f",
                             "omega.lambda", "z.T")
-                                   
+
   suppressMessages({
     thermo(OBIGT=thermo()$OBIGT[unique(info(fixed_species)), ]) # replaces the default OBIGT database with user-supplied database
     mod.OBIGT(to_mod_OBIGT, replace=TRUE) # produces a message
     basis(delete=TRUE)
   })
+  
                                    
   # begin handling basis preferences
   basis_df <- thermo_df %>%
@@ -1137,9 +1135,8 @@ suppress_redox_and_generate_dissrxns <- function(thermo_df,
     aux_pref_names <- c()
   }
                                    
-  # EQ3 has Cl-, H2O, and O2(g) hard-coded as basis species for the
-  # elements Cl, H, and O, respectively.
-  basis_pref["Cl"] <- "Cl-"
+  # EQ3 has H2O and O2(g) hard-coded as basis species for the
+  # elements H and O, respectively.
   basis_pref["H"] <- "H2O"
   basis_pref["O"] <- "O2(g)"
                                    

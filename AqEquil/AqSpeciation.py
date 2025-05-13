@@ -1,5 +1,5 @@
 DEBUGGING_R = False
-FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "Cl-", "e-", "OH-", "O2", "H2O(g)"]
+FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "e-", "OH-", "O2", "H2O(g)"]
 WORM_THERMODYNAMIC_DATABASE_COLUMN_TYPE_DICT = {
         'name':'str', 'abbrv':'str', 'formula':'str',
         'state':'str', 'ref1':'str', 'ref2':'str',
@@ -286,6 +286,13 @@ class AqEquil(object):
         organic molecules.
         The purpose of this parameter is to quickly toggle:
         `exclude_category={'category_1':["organic_aq", "organic_cr"]}`
+
+    exclude_organics_except : list of str, optional
+        Suppress the formation of all organic molecules except for the ones
+        listed and their protonation states and complexes. For example:
+        `exclude_organics_except=['acetic-acid', 'formic-acid'],`
+        This will suppress all organics except acetic acid, formic acid,
+        acetate, formate, and all formate and acetate complexes.
     
     exclude_category : dict
         Exclude species from thermodynamic databases based on column values.
@@ -2531,10 +2538,13 @@ class AqEquil(object):
         with open("data0."+db, 'w') as f:
             for item in data0_file_lines:
                 f.write("%s" % item)
-                
-    def plot_logK_fit(self, name, plot_out=False, res=200, internal=True, logK_extrapolate=None, T_vals=[]):
+
+    
+    def plot_logK_fit(self, name, plot_out=False, res=200, internal=True,
+                      logK_extrapolate=None, T_vals=[], plot_association=False):
         """
-        Plot the fit of logK values used in the speciation.
+        Plot the fit of dissociation reaction logK values used in the
+        speciation.
 
         Parameters
         ----------
@@ -2564,6 +2574,10 @@ class AqEquil(object):
             used to estimate the logK values at the temperatures specified in
             the list given to this parameter. This is useful for visualizing
             logK extrapolation options defined by `logK_extrapolate`.
+
+        plot_association : bool, default False
+            Plot species association constants instead of dissociation
+            constants?
         
         Returns
         ----------
@@ -2629,6 +2643,9 @@ class AqEquil(object):
                     "values, temperature values, or pressure values. It is "
                     "possible that this is a strict basis species with no "
                     "dissociation reaction for which to calculate logK values.")
+
+        if plot_association:
+            logK_grid = [-y for y in logK_grid]
         
         fig = px.scatter(x=T_grid, y=logK_grid)
         
@@ -2698,7 +2715,7 @@ class AqEquil(object):
                     
                 if logK_extrapolate == "no fit":
                     vline_y_vals = [min(logK_grid)-0.15*(max(logK_grid)-min(logK_grid)), logK_grid[i]]
-                    logK_label = "calculated LogK value(s)"
+                    logK_label = "calculated dissociation reaction LogK value(s)"
                     annotation = ("LogK values are calculated from<br>ΔG of dissociation into basis species"
                                   "<br>at the T and P of the speciated samples<br>and do not require a fit.")
 
@@ -2708,6 +2725,7 @@ class AqEquil(object):
                     fig.update_layout(yaxis_range=[logK_grid[0]-1,logK_grid[0]+1])
                     vline_y_vals = [logK_grid[0]-1, logK_grid[0]]
 
+                
                 fig.add_trace(
                     go.Scatter(x=[gt, gt],
                                y=vline_y_vals,
@@ -3669,20 +3687,21 @@ class AqEquil(object):
                     T_list = [float(T) for T in T_list]
 
                     Delta_S = float(self.logK_S_db["DeltaS"][i])
-                    
+
+
                     if IS_ref > 0:
                         # extrapolate to ionic strength 0
                         
                         # collect azero values for metal, ligand, and complex
-                        metal_name = self.logK_S_db["metal_name"][i]
-
-                        if self.thermo_db["name"].isin([metal_name]).any():
-                            metal_azero = list(self.thermo_db[self.thermo_db["name"] == metal_name]["azero"])[0]
-                            metal_charge = float(list(self.thermo_db[self.thermo_db["name"] == metal_name]["z.T"])[0])
-#                         elif:
-#                             # todo: get metal azero and charge from other databases, e.g., logK db
-#                             pass
-                        elif metal_name == "H+":
+                        cation_name = self.logK_S_db["cation_name"][i]
+    
+                        if self.thermo_db["name"].isin([cation_name]).any():
+                            metal_azero = list(self.thermo_db[self.thermo_db["name"] == cation_name]["azero"])[0]
+                            metal_charge = float(list(self.thermo_db[self.thermo_db["name"] == cation_name]["z.T"])[0])
+    #                         elif:
+    #                             # todo: get metal azero and charge from other databases, e.g., logK db
+    #                             pass
+                        elif cation_name == "H+":
                             metal_azero = 4
                             metal_charge = 1
                         else:
@@ -3691,8 +3710,8 @@ class AqEquil(object):
                         
                         ligand_name = self.logK_S_db["ligand_name"][i]
                         ligand_basis = self.logK_S_db["ligand_basis"][i]
-
-
+    
+    
                         if isinstance(self.logK_S_db["ligand_charge"][i], float):
                             ligand_charge = float(self.logK_S_db["ligand_charge"][i])
                         elif self.thermo_db["name"].isin([ligand_name]).any():
@@ -3710,7 +3729,7 @@ class AqEquil(object):
                             # self.err_handler.raise_exception("The ligand '"+ligand_name+"' was not found in the "
                             #         "currently loaded databases. Is this ligand present in the database? Was this "
                             #         "ligand excluded (e.g., exclude_organics=True)?")
-
+    
                         if isinstance(self.logK_S_db["ligand_azero"][i], float):
                             ligand_azero = float(self.logK_S_db["ligand_azero"][i])
                         elif self.thermo_db["name"].isin([ligand_name]).any():
@@ -3720,12 +3739,12 @@ class AqEquil(object):
                         else:
                             # todo: elif ligand_name in logK database names, get azero from there...
                             # or maybe this is not necessary if logK is merged with thermo_db at this point
-
+    
                             ligand_azero = 4 # acceptable placeholder azero for charged species
-
+    
                     
                         dissrxn = self.logK_S_db["dissrxn"][i].split(" ")
-                        n_metal = float(dissrxn[dissrxn.index(metal_name)-1])
+                        n_metal = float(dissrxn[dissrxn.index(cation_name)-1])
                         if ligand_name in dissrxn:
                             n_ligand = float(dissrxn[dissrxn.index(ligand_name)-1])
                         elif ligand_basis in dissrxn:
@@ -3734,7 +3753,7 @@ class AqEquil(object):
                             # todo: throw error
                             pass
                         n_complex = -float(dissrxn[dissrxn.index(sp)-1])
-                        
+
                         complex_charge = n_metal*metal_charge + n_ligand*ligand_charge
                         complex_azero = self.logK_S_db["azero"][i]
                         
@@ -3780,7 +3799,7 @@ class AqEquil(object):
                     if isinstance(self.logK_S_db["ligand_basis"][i], str):
                         # add a basis species representing the pseudoelement
                         basis = self.logK_S_db["ligand_basis"][i]
-                        
+
                         if basis not in list(self.thermo_db["name"]):
                             b_df = pd.DataFrame(
                                 {'name':[self.logK_S_db["ligand_basis"][i]],
@@ -3808,6 +3827,7 @@ class AqEquil(object):
                             self.thermo_db = pd.concat([self.thermo_db, b_df], ignore_index=True)
 
                     if self.logK_S_db["name"][i] not in self.thermo_db["name"] and self.logK_S_db["name"][i] not in self.logK_db["name"]:
+
                         s_df = pd.DataFrame(
                                 {'name':[self.logK_S_db["name"][i]],
                                  'abbrv':[""],
@@ -3985,8 +4005,8 @@ class AqEquil(object):
                        "Are these headers spelled correctly in the file?")
                 self.err_handler.raise_exception(msg)
 
-            # does Cl-, O2(g), and O2 exist in the file?
-            required_species = ["Cl-", "O2", "O2(g)"]
+            # does O2(g), and O2 exist in the file?
+            required_species = ["O2", "O2(g)"]
             missing_species = []
             for species in required_species:
                 if species not in list(thermo_df["name"]):
@@ -4038,14 +4058,14 @@ class AqEquil(object):
                 exclude_category_R = {}
             exclude_category_R = ro.ListVector(exclude_category_R)
 
-            capture = R_output()
-            capture.capture_r_output(debug=DEBUGGING_R)
-
             r_redox_dissrxns = pkg_resources.resource_string(
                 __name__, 'redox_and_dissrxns.r').decode("utf-8")
 
             ro.r(r_redox_dissrxns)
-            
+
+            capture = R_output()
+            capture.capture_r_output(debug=DEBUGGING_R)
+        
             thermo_df = _clean_rpy2_pandas_conversion(thermo_df)
 
             ro.conversion.py2rpy(thermo_df)
@@ -6020,6 +6040,7 @@ class Speciation(object):
             "log_fugacity" : ("log fugacity", "log(bar)"),
             "fugacity" : ("fugacity", "bar"),
             "bar" : ("", "bar"),
+            "affinity_kcal" : ("saturation index", "kcal/mol"),
         }
         
         out = unit_name_dict.get(subheader)

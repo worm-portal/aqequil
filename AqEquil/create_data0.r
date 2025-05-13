@@ -297,12 +297,11 @@ create_data0 <- function(thermo_df,
     output <- sprintf(template, formatted_name, date, keys, formatted_charge, volume, n_elements, element_list, n_species, species_list, name, logK_list)
     
     if(name == "O2"){
+      # temporary placeholder values that are overwritten with calculated values later.
       O2_entry <- "\\+-+\nO2\n.*=O2\n         2.6560    3.0310    3.1080    3.0350\n         2.8740    2.6490    2.3540    1.8830"
       data0_template <- sub(O2_entry, paste0(output), data0_template)
-    }else if(name == "OH-"){
-      OH_entry <- "\\+-+\nOH-\n.*=OH-\n        14.9400   13.2710   12.2550   11.6310\n        11.2840   11.1670   11.3000   11.8280"
-      data0_template <- sub(OH_entry, paste0(output), data0_template)
     }else if(name == "H2O(g)"){
+      # temporary placeholder values that are overwritten with calculated values later.
       steam_entry <- "\\+-+\nH2O\\(g\\)\n.*=H2O\\(g\\)\n         2.2990    0.9950   -0.0060   -0.6630\n        -1.1560   -1.5340   -1.8290   -2.0630"
       data0_template <- sub(steam_entry, paste0(output), data0_template)
     }else{
@@ -552,7 +551,6 @@ create_data0 <- function(thermo_df,
     Cl_neutral_ion_type <- 0
     O2_neutral_ion_type <- -1
     O2g_neutral_ion_type <- 0
-    OH_neutral_ion_type <- 0
     H2O_neutral_ion_type <- 0
     H_neutral_ion_type <- 0
   }else if(water_model == "DEW"){
@@ -565,12 +563,11 @@ create_data0 <- function(thermo_df,
     Cl_neutral_ion_type <- 0
     O2_neutral_ion_type <- 0
     O2g_neutral_ion_type <- 0
-    OH_neutral_ion_type <- 0
     H2O_neutral_ion_type <- 0
     H_neutral_ion_type <- 0
   }
 
-  for (sp in c("Cl-", "O2", "O2(g)", "OH-", "H2O", "H+")){
+  for (sp in c("Cl-", "O2", "O2(g)", "H2O", "H+")){
       if(sp == "Cl-"){
         spec_name <- "Cl-"
         spec_azero <- as.character(format(round(Cl_azero, 4), nsmall = 4, scientific=F))
@@ -583,10 +580,6 @@ create_data0 <- function(thermo_df,
         spec_name <- "O2(g)"
         spec_azero <- as.character(format(round(O2g_azero, 4), nsmall = 4, scientific=F))
         neutral_ion_type <- O2g_neutral_ion_type
-      }else if(sp == "OH-"){
-        spec_name <- "OH-"
-        spec_azero <- as.character(format(round(OH_azero, 4), nsmall = 4, scientific=F))
-        neutral_ion_type <- OH_neutral_ion_type
       }else if(sp == "H2O"){
         spec_name <- "H2O"
         spec_azero <- as.character(format(round(H2O_azero, 4), nsmall = 4, scientific=F))
@@ -600,7 +593,7 @@ create_data0 <- function(thermo_df,
   }
 
   for(i in 1:length(azero_vec)){
-      if(add_obigt_df[i, "name"] %in% c("Cl-", "O2", "OH-", "H2O", "H+")){
+      if(add_obigt_df[i, "name"] %in% c("Cl-", "O2", "H2O", "H+")){
         next
       }else if(add_obigt_df[i, "state"] == "aq"){
         spec_name <- names(azero_vec)[i]

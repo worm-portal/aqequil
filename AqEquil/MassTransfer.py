@@ -19,7 +19,7 @@ from natsort import natsorted
 from .AqSpeciation import Speciation, AqEquil
 from WORMutils import Error_Handler, chemlabel, format_equation, check_balance
 
-FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "Cl-", "e-", "OH-", "O2", "H2O(g)"]
+FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "e-", "OH-", "O2", "H2O(g)"]
 
 
 def _format_pseudoelement_name(e):
