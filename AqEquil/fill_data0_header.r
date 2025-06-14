@@ -88,22 +88,31 @@ fill_data0_head <- function(data0_template, db, grid_temps, grid_press,
   # Calculate the "log k for eh reaction" grid.
   # From eq. 9 in EQPT user manual (version 7.0) by Daveler and Wolery:
   if(length(grid_temps_original) >= 8){
-    logK_Eh_vals <- subcrt(c("H2O", "O2", "e-", "H+"),
-                           c(-2, 1, 4, 4),
-                           c("liq", "gas", "aq", "aq"),
-                           T=grid_temps,
-                           P=round(grid_press, 9),
-                           exceed.rhomin=TRUE,
-                           exceed.Ttr=TRUE)$out$logK
+      
+    suppressMessages({
+        logK_Eh_vals <- subcrt(c("H2O", "O2", "e-", "H+"),
+                               c(-2, 1, 4, 4),
+                               c("liq", "gas", "aq", "aq"),
+                               T=grid_temps,
+                               P=round(grid_press, 9),
+                               exceed.rhomin=TRUE,
+                               exceed.Ttr=TRUE)$out$logK
+    })
+      
   }else if(length(grid_temps_original) == 1){
-    logK_Eh_vals <- subcrt(c("H2O", "O2", "e-", "H+"),
-                           c(-2, 1, 4, 4),
-                           c("liq", "gas", "aq", "aq"),
-                           T=grid_temps[1],
-                           P=round(grid_press[1], 9),
-                           exceed.rhomin=TRUE,
-                           exceed.Ttr=TRUE)$out$logK
+      
+    suppressMessages({
+        logK_Eh_vals <- subcrt(c("H2O", "O2", "e-", "H+"),
+                               c(-2, 1, 4, 4),
+                               c("liq", "gas", "aq", "aq"),
+                               T=grid_temps[1],
+                               P=round(grid_press[1], 9),
+                               exceed.rhomin=TRUE,
+                               exceed.Ttr=TRUE)$out$logK
+    })
+      
     logK_Eh_vals <- c(logK_Eh_vals, rep(0, 7))
+      
   }
       
   logk_grid_f <- as.character(format(round(logK_Eh_vals, 4), nsmall = 4))

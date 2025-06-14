@@ -17,7 +17,8 @@ import numbers
 import roman
 from natsort import natsorted
 from .AqSpeciation import Speciation, AqEquil
-from WORMutils import Error_Handler, chemlabel, format_equation, check_balance
+from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, assign_worm_db_col_dtypes
+import time
 
 FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "e-", "OH-", "O2", "H2O(g)"]
 
@@ -293,7 +294,7 @@ def react(speciation,
                 ae.err_handler.raise_exception(("Error: could not move", path_6i+"/"+file_6p, "to", path_6p+"/"+filename_6p))
         else:
             ae.err_handler.raise_exception("Error: multiple pickup files detected for one mass transfer calculation.")
-        
+
         if not EQ6_errors_found:
             m = Mass_Transfer(thermo=speciation.thermo,
                               six_o_file='rxn_6o/'+filename_6o,
@@ -345,7 +346,7 @@ def react(speciation,
         __delete_dir("rxn_6i")
         __delete_dir("rxn_6p")
         __delete_dir("rxn_6o")
-    
+
     return speciation
 
 
@@ -463,7 +464,13 @@ class Mass_Transfer:
 
             # these operations require a WORM-style thermodynamic database CSV
             obigt = pyCHNOSZ.thermo().OBIGT
-            pyCHNOSZ.thermo(OBIGT = obigt.loc[ obigt.name.isin(FIXED_SPECIES), : ])
+
+            obigt.name.isin(FIXED_SPECIES)
+
+            obigt = assign_worm_db_col_dtypes(obigt)
+            
+            pyCHNOSZ.thermo(OBIGT=obigt.loc[ obigt.name.isin(FIXED_SPECIES), : ], messages=False)
+
             _ = pyCHNOSZ.add_OBIGT(self.thermo.csv_db, force=True, messages=False)
             
             self.df = copy.deepcopy(self.thermo.csv_db)
@@ -498,7 +505,7 @@ class Mass_Transfer:
             self.basis_df = None
             self.basis_aux_df = None
             self.df_cr = None
-        
+
         self.misc_params = self.__get_misc_params()
         self.dissolved_elements_molal = self.__get_dissolved_elements(unit="molality")
         self.dissolved_elements_ppm = self.__get_dissolved_elements(unit="ppm")
@@ -527,7 +534,7 @@ class Mass_Transfer:
         self.basis_molality = self.__get_basis_species(unit="molality")
         self.basis_ppm = self.__get_basis_species(unit="ppm")
         self.basis_logact = self.__get_basis_species(unit="logact") # this one needs to be after __get_aq_distribution()
-
+        
         if format_element_names:
             try:
                 # format element names in case there are redox-isolated elements
@@ -543,7 +550,6 @@ class Mass_Transfer:
             self.moles_minerals = self.moles_product_minerals
 
         self.mass_contribution_dict = self.__get_mass_contribution()
-            
             
     def __get_misc_params(self):
         

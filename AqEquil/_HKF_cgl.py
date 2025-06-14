@@ -3,21 +3,7 @@ import numpy as np
 import math
 import copy
 import warnings
-import rpy2.robjects as ro
-from rpy2.robjects.packages import importr
-
-def water(props, water_model, T=25, P=1):
-    
-    if not isinstance(props, list):
-        props = [props]
-    
-    chnosz = importr("CHNOSZ")
-    chnosz.water(water_model)
-    return chnosz.water(ro.StrVector([str(p) for p in props]), T=T, P=P, P1=False)
-
-def entropy(formula):
-    chnosz = importr("CHNOSZ")
-    return float(chnosz.entropy(formula))
+from pyCHNOSZ import entropy, water
 
 def calc_logK(OBIGT_df, Tc, P, TP_i, water_model):
     
@@ -56,7 +42,8 @@ def calc_G_TP(OBIGT, Tc, P, water_model):
     
     # add a row for water
     if "H2O" not in list(OBIGT["name"]):
-        OBIGT = pd.concat([OBIGT, pd.DataFrame({"name": "H2O", "tag": "nan", "G_TP": float(ro.conversion.rpy2py(water("G", water_model, T=Tc+273.15, P=P))["G"].iloc[0])}, index=[OBIGT.shape[0]])], ignore_index=True)
+        water(water_model, messages=False)
+        OBIGT = pd.concat([OBIGT, pd.DataFrame({"name": "H2O", "tag": "nan", "G_TP": water("G", T=Tc+273.15, P=P, messages=False).iloc[0]["G"]}, index=[OBIGT.shape[0]])], ignore_index=True)
         rows_added += 1
 
     # add a row for protons
@@ -172,8 +159,9 @@ def hkf(property=None, parameters=None, T=298.15, P=1,
       # using DEW model: get beta to calculate dgdP
       H2O_props += ["alpha", "daldT", "beta"]
     
-    H2O_PrTr = ro.conversion.rpy2py(water(H2O_props, water_model, T=Tr, P=Pr)) # pyCHNOSZ's water function does not handle lists yet, hence splitting this into two steps
-    H2O_PT = ro.conversion.rpy2py(water(H2O_props, water_model, T=T, P=P)) # pyCHNOSZ's water function does not handle lists yet, hence splitting this into two steps
+    water(water_model, messages=False)
+    H2O_PrTr = water(H2O_props, T=Tr, P=Pr, messages=False)
+    H2O_PT = water(H2O_props, T=T, P=P, messages=False)
     
     ZBorn = -1 / H2O_PT.loc["1", "epsilon"]
     ZBorn_PrTr = -1 / H2O_PrTr.loc["1", "epsilon"]

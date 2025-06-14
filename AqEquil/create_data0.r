@@ -56,7 +56,9 @@ create_data0 <- function(thermo_df,
                          verbose){
     
   # set water model
-  water(water_model)
+  suppressMessages({
+      water(water_model)
+  })
     
   # initialize lists and vectors
   azero_vec <- c()
