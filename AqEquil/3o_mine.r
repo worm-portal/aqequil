@@ -77,6 +77,7 @@ mine_3o <- function(this_file,
   sample_3o[["H2O_density"]] <- isolate_block(str=extractme, begin_str="^.*Solution density =\\s+", end_str="\\s+.*$")
   sample_3o[["H2O_molality"]] <- 55.348/as.numeric(sample_3o[["H2O_density"]])
   sample_3o[["H2O_log_molality"]] <- log10(sample_3o[["H2O_molality"]])
+  sample_3o[["ionic_strength"]] <- isolate_block(str=extractme, begin_str="^.*Ionic strength \\(I\\)=\\s+", end_str="\\s+.*$")
 
   ### Begin extracting 'Distribution of Aqueous Solute Species' ###
   if (get_aq_dist){

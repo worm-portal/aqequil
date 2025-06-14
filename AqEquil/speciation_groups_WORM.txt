@@ -522,3 +522,5 @@ rhodium(III) 1: Rh+3 RhOH+2 RhO+ Rh(SO4)2- Rh(SO4)3-3 RhCl+2 RhCl2+ RhCl3 RhCl4-
 silver(I) 1: Ag+ Ag(CO3)- Ag(CO3)2-3 AgCl4-3 AgNO3 AgO- AgOH AgCl AgCl2- AgCl3-2 Ag(Ac) Ag(Ac)2- Ag(HS)2- AgF
 
 silver(II) 1: Ag+2
+
+cyclohexanecarboxylic acid 1: cyclohexanecarbox-acid cyclohexanecarboxylate

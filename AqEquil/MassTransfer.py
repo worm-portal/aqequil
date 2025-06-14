@@ -557,6 +557,7 @@ class Mass_Transfer:
         Eh_vals = []
         pe_vals = []
         aw_vals = []
+        IS_vals = []
         for line in self.six_o_file_lines:
             if "                    Xi=" in line:
                 recording = True
@@ -591,6 +592,10 @@ class Mass_Transfer:
                 splitstrings = line.strip().split(" ")
                 aw = [float(v) for v in splitstrings if v not in ['', "Activity", "of", "water="]][0]
                 aw_vals.append(aw)
+            elif " Ionic strength (I)=" in line and recording:
+                splitstrings = line.strip().split(" ")
+                IS = [float(v) for v in splitstrings if v not in ['', "Ionic", "strength", "(I)=", "molal"]][0]
+                IS_vals.append(IS)
             if "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" in line:
                 recording = False
 
@@ -605,6 +610,7 @@ class Mass_Transfer:
             "Eh(v)":Eh_vals,
             "pe":pe_vals,
             "aw":aw_vals,
+            "Ionic strength (molal)":IS_vals,
         })
         
         return df
@@ -1128,6 +1134,7 @@ class Mass_Transfer:
         
         self.T = float(self.misc_params["Temp(C)"][0])
         self.P = float(self.misc_params["Press(bars)"][0])
+        self.IS = float(self.misc_params["Ionic strength (molal)"][0])
         self.path_margin = path_margin
         
         minerals_formed = [m for m in self.moles_minerals.columns if m != "Xi"]
@@ -1169,7 +1176,7 @@ class Mass_Transfer:
         if len(all_elements_of_interest) == 2:
             fig, _ , _ = self.__plot_reaction_path_main(
                                                 triad = all_elements_of_interest,
-                                                T=self.T, P=self.P,
+                                                T=self.T, P=self.P, IS=self.IS,
                                                 path_margin=self.path_margin,
                                                 flip_xy=flip_xy,
                                                 show_annotation=show_annotation,
@@ -1261,7 +1268,7 @@ class Mass_Transfer:
                     
                     # do a quick first pass at making figures to see which points are projections.
                     fig, pred_minerals_from_fields, pred_minerals_from_lines = self.__plot_reaction_path_main(
-                                                        triad, T=self.T, P=self.P,
+                                                        triad, T=self.T, P=self.P, IS=self.IS,
                                                         show_nonparticipating_mineral_lines=False, # no need for this in first pass
                                                         minerals_to_show=[], # no need for this in first pass
                                                         path_margin=self.path_margin,
@@ -1317,7 +1324,7 @@ class Mass_Transfer:
             for i,triad in enumerate(element_plot_triad):
                 # re-run figure generation, passing in a list of which points are projected.
                 fig, _ , _ = self.__plot_reaction_path_main(
-                                    triad, T=self.T, P=self.P,
+                                    triad, T=self.T, P=self.P, IS=self.IS,
                                     path_margin=self.path_margin,
                                     flip_xy=flip_xy,
                                     show_annotation=show_annotation,
@@ -1587,7 +1594,10 @@ class Mass_Transfer:
         
         args = {plot_basis_x:plot_x_range+[res],
                 plot_basis_y:plot_y_range+[res],
-                "T":self.T, "P":self.P, "messages":messages}
+                "T":self.T, "P":self.P,
+                "IS":self.IS,
+                #"IS":0,
+                "messages":messages}
         
         if field_minerals_exist:
             
@@ -1597,7 +1607,10 @@ class Mass_Transfer:
                 
                 args_temp = {plot_basis_x:[x_vals[i], x_vals[i], 1],
                              plot_basis_y:[y_vals[i], y_vals[i], 1],
-                             "T":self.T, "P":self.P, "messages":messages}
+                             "T":self.T, "P":self.P,
+                             "IS":self.IS,
+                             #"IS":0,
+                             "messages":messages}
                 
                 a = pyCHNOSZ.affinity(**args_temp)
                 e = pyCHNOSZ.equilibrate(a, balance=self.__get_basis_from_elem(div_var_name), messages=messages)
@@ -1650,9 +1663,9 @@ class Mass_Transfer:
 
 
     @staticmethod
-    def __calc_dissrxn_logK(mineral, T, P):
+    def __calc_dissrxn_logK(mineral, T, P, IS):
 
-        logK = pyCHNOSZ.subcrt([mineral], coeff=[-1], property='logK', T=T, P=P,
+        logK = pyCHNOSZ.subcrt([mineral], coeff=[-1], property='logK', T=T, P=P, IS=IS,
                       show=False, messages=False)["out"]["logK"].item()
         
         return logK
@@ -1773,7 +1786,7 @@ class Mass_Transfer:
 
     
     def __plot_reaction_path_main(self,
-                                  triad, T=25, P=1, path_margin=0.25,
+                                  triad, T=25, P=1, IS=0, path_margin=0.25,
                                   flip_xy=False,
                                   show_annotation=False,
                                   annotation_coords=[0,0],
@@ -1939,7 +1952,7 @@ class Mass_Transfer:
                     
                 eoi = self.__get_elem_ox_of_interest_in_minerals(mineral)
 
-                logK = self.__calc_dissrxn_logK(mineral, T, P)
+                logK = self.__calc_dissrxn_logK(mineral, T, P, IS)
                 mineral_formula_dict = self.__get_mineral_elem_ox_dict_interest(mineral)
 
                 xlab,ylab = self.__get_xy_labs(basis_species_x, basis_species_y)
@@ -3069,6 +3082,7 @@ class Mass_Transfer:
                               stoich,
                               T=T,
                               P=list(self.misc_params["Press(bars)"])[i],
+                              IS=0, # ionic strength of 0 ensures that the logK calculated is standard, as required
                               show=False,
                               messages=print_logK_messages).out["logK"]
 

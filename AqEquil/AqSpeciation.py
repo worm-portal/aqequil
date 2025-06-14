@@ -67,7 +67,8 @@ import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
 pandas2ri.activate()
 
-from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook, R_output
+from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook
+from wormutils_r import R_output
 
 
 def r_print(text="R TEST PRINT"):
@@ -2223,6 +2224,7 @@ class AqEquil(object):
                 "H2O_density": float(sample.rx2('H2O_density')[0]),
                 "H2O_molality": float(sample.rx2('H2O_molality')[0]),
                 "H2O_log_molality": float(sample.rx2('H2O_log_molality')[0]),
+                "ionic_strength": float(sample.rx2('ionic_strength')[0]),
                 }
 
             if get_aq_dist:
@@ -5568,6 +5570,7 @@ class Speciation(object):
                 "Press(bars)" : [self.sample_data[sample]['pressure']],
                 "pH" : [-self.sample_data[sample]['aq_distribution']["log_activity"]['H+']],
                 "logfO2" : [self.sample_data[sample]["fugacity"]["log_fugacity"]["O2(g)"]],
+                "ionic strength (molal)" : [self.sample_data[sample]["ionic_strength"]],
             }))
         df_misc_params = pd.concat(df_misc_param_row_list)
         df_misc_params.insert(0, "Xi", 0)
@@ -5724,8 +5727,6 @@ class Speciation(object):
                         "is not recognized. Try 'cal', 'kcal', 'J', or 'kJ'.")
             R = 8.314/r_div  # gas constant, unit = [cal/mol/K]
 
-
-
         if "k" in y_units:
             k_div = 1000
         else:
@@ -5746,6 +5747,7 @@ class Speciation(object):
                               stoich,
                               T=T,
                               P=list(self.misc_params["Press(bars)"])[i],
+                              IS=0, # ionic strength of 0 ensures that the logK calculated is standard, as required
                               show=False,
                               messages=print_logK_messages).out["logK"]
 
