@@ -117,7 +117,6 @@ def load(filename, messages=True, hide_traceback=True):
     
     if os.path.getsize(filename) > 0:
         with open(filename, 'rb') as handle:
-            #speciation = dill.load(handle)
             speciation = pd.compat.pickle_compat.load(handle) 
             if messages:
                 print("Loaded '{}'".format(filename))
@@ -329,7 +328,7 @@ class AqEquil(object):
         
         half_rxn_data = pkg_resources.resource_stream(__name__, "half_cell_reactions.csv")
         self.half_cell_reactions = pd.read_csv(half_rxn_data) #define the input file (dataframe of redox pairs)
-        self._half_cell_reactions_originalcopy = copy.deepcopy(self.half_cell_reactions)
+        self._half_cell_reactions_original_copy = copy.deepcopy(self.half_cell_reactions)
         
         self.verbose = verbose
         self.hide_traceback = hide_traceback
@@ -1974,11 +1973,16 @@ class AqEquil(object):
         
         if get_mass_contribution:
             mass_contribution = r_df_to_pd(batch_3o.rx2('mass_contribution'))
-        df_report = r_df_to_pd(batch_3o.rx2('report'))
+            #mass_contribution = ############################
         
+        df_report = r_df_to_pd(batch_3o.rx2('report'))
         report_divs = batch_3o.rx2('report_divs')
+        
+        # convert report_divs into a python dictionary
+        report_divs = dict(zip(report_divs.names, list(report_divs)))
+        report_divs = {k:list(v) for k,v in zip(report_divs.keys(), report_divs.values())}
 
-        input_cols = list(report_divs.rx2('input'))
+        input_cols = report_divs['input']
         df_input = df_report[input_cols].copy()
         
         # add a pressure column to df_input
@@ -1986,13 +1990,13 @@ class AqEquil(object):
         sample_data = batch_3o.rx2('sample_data')
         for sample in sample_data:
             df_input.loc[str(sample.rx2('name')[0]), "Pressure_bar"] = float(sample.rx2('pressure')[0])
-        report_divs[0] = convert_to_RVector(input_cols + ["Pressure_bar"])
+        report_divs['input'] = input_cols + ["Pressure_bar"]
             
         # handle headers and subheaders of input section
         headers = [col.split("_")[0] for col in list(df_input.columns)]
         headers = ["pH" if header == "H+" else header for header in headers]
         headers = [header+"_(input)" if header not in ["Temperature", "logfO2", "Pressure"]+exclude else header for header in headers]
-        report_divs[0] = convert_to_RVector(headers) # modify headers in the 'input' section, report_divs[0]
+        report_divs['input'] = headers # modify headers in the 'input' section of report_divs
         subheaders = [subheader[1] if len(subheader) > 1 else "" for subheader in [
             col.split("_") for col in list(df_input.columns)]]
         multicolumns = pd.MultiIndex.from_arrays(
@@ -2003,7 +2007,7 @@ class AqEquil(object):
         df_join = df_input
 
         if get_aq_dist:
-            aq_distribution_cols = list(report_divs.rx2('aq_distribution'))
+            aq_distribution_cols = report_divs['aq_distribution']
             df_aq_distribution = df_report[aq_distribution_cols]
             df_aq_distribution = df_aq_distribution.apply(pd.to_numeric, errors='coerce')
             
@@ -2020,13 +2024,12 @@ class AqEquil(object):
             df_aq_distribution.columns = multicolumns
             
             # ensure final pH column is included in report_divs aq_distribution section
-            aq_dist_indx = list(report_divs.names).index("aq_distribution")
-            report_divs[aq_dist_indx] = convert_to_RVector(list(headers))
+            report_divs["aq_distribution"] = list(headers)
             
             df_join = df_join.join(df_aq_distribution)
 
         if get_mineral_sat:
-            mineral_sat_cols = list(report_divs.rx2('mineral_sat'))
+            mineral_sat_cols = report_divs['mineral_sat']
             mineral_sat_cols = [col for col in mineral_sat_cols if col != "df"] # TO DO: why is df appearing in mineral sat cols and redox sections?
             df_mineral_sat = df_report[mineral_sat_cols]
             df_mineral_sat = df_mineral_sat.apply(pd.to_numeric, errors='coerce')
@@ -2048,7 +2051,7 @@ class AqEquil(object):
             df_join = df_join.join(df_mineral_sat)
 
         if get_redox:
-            redox_cols = list(report_divs.rx2('redox'))
+            redox_cols = report_divs['redox']
             redox_cols = [col for col in redox_cols if col != "df"] # TO DO: why is df appearing in mineral sat cols and redox sections?
             df_redox = df_report[redox_cols]
             df_redox = df_redox.apply(pd.to_numeric, errors='coerce')
@@ -2074,7 +2077,7 @@ class AqEquil(object):
             df_join = df_join.join(df_redox)
 
         if get_charge_balance:
-            charge_balance_cols = list(report_divs.rx2('charge_balance'))
+            charge_balance_cols = report_divs['charge_balance']
             df_charge_balance = df_report[charge_balance_cols]
             df_charge_balance = df_charge_balance.apply(pd.to_numeric, errors='coerce')
 
@@ -2088,8 +2091,8 @@ class AqEquil(object):
             df_join = df_join.join(df_charge_balance)
             
         if get_ion_activity_ratios:
-            if type(report_divs.rx2('ion_activity_ratios')) != rpy2.rinterface_lib.sexp.NULLType:
-                ion_activity_ratio_cols = list(report_divs.rx2('ion_activity_ratios'))
+            if 'ion_activity_ratios' in list(report_divs.keys()):
+                ion_activity_ratio_cols = report_divs['ion_activity_ratios']
 
                 df_ion_activity_ratios = df_report[ion_activity_ratio_cols]
                 df_ion_activity_ratios = df_ion_activity_ratios.apply(pd.to_numeric, errors='coerce')
@@ -2103,7 +2106,7 @@ class AqEquil(object):
                 df_join = df_join.join(df_ion_activity_ratios)
             
         if get_fugacity:
-            fugacity_cols = list(report_divs.rx2('fugacity'))
+            fugacity_cols = report_divs['fugacity']
             fugacity_cols = [col for col in fugacity_cols if col != "df"] # TO DO: why is df appearing in fugacity, mineral sat cols and redox sections?
             df_fugacity = df_report[fugacity_cols]
             df_fugacity = df_fugacity.apply(pd.to_numeric, errors='coerce')
@@ -2117,7 +2120,7 @@ class AqEquil(object):
             df_join = df_join.join(df_fugacity)
 
         if get_basis_totals:
-            sc_cols = list(report_divs.rx2('basis_totals'))
+            sc_cols = report_divs['basis_totals']
             df_sc = df_report[sc_cols]
             df_sc = df_sc.apply(pd.to_numeric, errors='coerce')
             
@@ -2230,7 +2233,7 @@ class AqEquil(object):
         speciation = Speciation(out_dict, hide_traceback=self.hide_traceback)
 
         speciation.half_cell_reactions = self.half_cell_reactions
-        speciation._half_cell_reactions_originalcopy = self._half_cell_reactions_originalcopy
+        speciation._half_cell_reactions_original_copy = self._half_cell_reactions_original_copy
         
         if report_filename != None:
             if ".csv" in report_filename[-4:]:
@@ -4148,8 +4151,8 @@ class Speciation(object):
         Pandas dataframe reporting major results of speciation calculation in
         across all samples.
     
-    report_divs : rpy2 ListVector
-        An rpy2 ListVector of column names within the different sections of the
+    report_divs : dict
+        An dictionary of column names within the different sections of the
         speciation report.
     
     sample_data : dict
@@ -4176,12 +4179,6 @@ class Speciation(object):
         
         for k in args:
             setattr(self, k, args[k])
-
-        if 'report_divs' in list(self.__dict__.keys()):
-            # create a dict of report categories and their child columns
-            self.report_category_dict = {}
-            for cat in [str(s) for s in list(self.report_divs.names)]:
-                self.report_category_dict[cat] = list(self.report_divs.rx2(cat))
 
         if 'verbose' not in list(self.__dict__.keys()):
             self.verbose = 1
@@ -4428,7 +4425,7 @@ class Speciation(object):
         Reset the half_cell_reactions table back to its original default. Takes
         no parameters.
         """
-        self.half_cell_reactions = copy.deepcopy(self._half_cell_reactions_originalcopy)
+        self.half_cell_reactions = copy.deepcopy(self._half_cell_reactions_original_copy)
         if self.verbose > 0:
                 print("The table of half reactions half_cell_reactions has been reset.")
 
@@ -5825,11 +5822,11 @@ class Speciation(object):
             self.report = self.report.reindex(level=0, columns=col_order) # restore column order
 
             # update the report category dictionary so y_type_plain appears as a category with relevant columns
-            if y_type_plain not in list(self.report_category_dict.keys()):
-                self.report_category_dict[y_type_plain] = headers
+            if y_type_plain not in list(self.report_divs.keys()):
+                self.report_divs[y_type_plain] = headers
             else:
-                self.report_category_dict[y_type_plain] = self.report_category_dict[y_type_plain]+headers
-                self.report_category_dict[y_type_plain]= list(collections.OrderedDict.fromkeys(self.report_category_dict[y_type_plain]))
+                self.report_divs[y_type_plain] = self.report_divs[y_type_plain]+headers
+                self.report_divs[y_type_plain]= list(collections.OrderedDict.fromkeys(self.report_divs[y_type_plain]))
 
         # create a formatted reaction to add to self.reactions_for_plotting
         # so that it can be invoked in a plot
@@ -5882,6 +5879,8 @@ class Speciation(object):
         
         if filename[-11:] != '.speciation':
             filename = filename + '.speciation'
+        
+        self.batch_3o.ro = None
         
         with open(filename, 'wb') as handle:
             dill.dump(self, handle, protocol=dill.HIGHEST_PROTOCOL)
@@ -6000,14 +5999,14 @@ class Speciation(object):
             columns in a section (if a section name is provided).
         """
         
-        names_length = len(self.report_category_dict.keys())
+        names_length = len(self.report_divs.keys())
         
         if col==None and names_length>0:
-            return list(self.report_category_dict.keys())
+            return list(self.report_divs.keys())
         
         if names_length>0:
-            if col in list(self.report_category_dict.keys()):
-                return list(self.report_category_dict[col])
+            if col in list(self.report_divs.keys()):
+                return list(self.report_divs[col])
         
         if isinstance(col, str):
             col = [col]
