@@ -31,15 +31,14 @@ import time
 
 from urllib.request import urlopen
 from io import StringIO
-
 import warnings
-
 import subprocess
-import pkg_resources
 import pandas as pd
 import numpy as np
 from chemparse import parse_formula
-from IPython.core.display import display, HTML
+
+from IPython.display import display, HTML
+
 import periodictable
 from collections import Counter
 
@@ -60,14 +59,16 @@ with warnings.catch_warnings():
     warnings.simplefilter("ignore", UserWarning)
     import rpy2.robjects as ro
     import rpy2.rinterface_lib
+    from rpy2.rinterface_lib.sexp import NACharacterType
 
-from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook, assign_worm_db_col_dtypes
+from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook, assign_worm_db_col_dtypes, import_package_file
 from wormutils_r import R_output, pd_to_r_df, r_df_to_pd, convert_to_RVector, rpy2float
 
 
 def r_print(text="R TEST PRINT"):
         # tests that R output is being captured and reported correctly
-        r_print = pkg_resources.resource_string(__name__, 'r_print.r').decode("utf-8")
+        r_print = import_package_file(__name__, 'r_print.r')
+
         ro.r(r_print)
         capture = R_output()
         capture.capture_r_output(debug=DEBUGGING_R)
@@ -325,9 +326,8 @@ class AqEquil(object):
 
         if not isinstance(suppress_redox, list):
             suppress_redox = []
-        
-        half_rxn_data = pkg_resources.resource_stream(__name__, "half_cell_reactions.csv")
-        self.half_cell_reactions = pd.read_csv(half_rxn_data) #define the input file (dataframe of redox pairs)
+
+        self.half_cell_reactions = import_package_file(__name__, 'half_cell_reactions.csv')
         self._half_cell_reactions_original_copy = copy.deepcopy(self.half_cell_reactions)
         
         self.verbose = verbose
@@ -1122,9 +1122,9 @@ class AqEquil(object):
         elif logK_extrapolate=="no fit":
             return np.nan, "no fit"
         
-        # turns off poor polyfit warning
-        # TODO: restore polyfit warning setting afterward
-        warnings.simplefilter('ignore', np.RankWarning)
+        # # turns off poor polyfit warning
+        # # TODO: restore polyfit warning setting afterward
+        # warnings.simplefilter('ignore', np.RankWarning)
         
         if len(T_grid) >= 4:
             if (len(T_grid) % 2) == 0:
@@ -1696,7 +1696,8 @@ class AqEquil(object):
             capture = R_output()
             capture.capture_r_output(debug=DEBUGGING_R)
         
-            r_check_TP_grid = pkg_resources.resource_string(__name__, 'check_TP_grid.r').decode("utf-8")
+
+            r_check_TP_grid = import_package_file(__name__, 'check_TP_grid.r')
         
             ro.r(r_check_TP_grid)
 
@@ -1744,9 +1745,9 @@ class AqEquil(object):
         # preprocess for EQ3 using R scripts
         capture = R_output()
         capture.capture_r_output(debug=DEBUGGING_R)
+
+        r_prescript = import_package_file(__name__, 'preprocess_for_EQ3.r')
         
-        r_prescript = pkg_resources.resource_string(
-            __name__, 'preprocess_for_EQ3.r').decode("utf-8")
         ro.r(r_prescript)
         
         input_processed_list = ro.r.preprocess(input_filename=input_filename,
@@ -1935,9 +1936,10 @@ class AqEquil(object):
         # mine output
         capture = R_output()
         capture.capture_r_output(debug=DEBUGGING_R)
-        
-        r_3o_mine = pkg_resources.resource_string(
-            __name__, '3o_mine.r').decode("utf-8")
+
+
+        r_3o_mine = import_package_file(__name__, '3o_mine.r')
+
         ro.r(r_3o_mine)
         
         batch_3o = ro.r.main_3o_mine(
@@ -1973,7 +1975,9 @@ class AqEquil(object):
         
         if get_mass_contribution:
             mass_contribution = r_df_to_pd(batch_3o.rx2('mass_contribution'))
-            #mass_contribution = ############################
+
+            # replace rpy2 NA characters with float NAN
+            mass_contribution = mass_contribution.map(lambda x: float("NaN") if isinstance(x, NACharacterType) else x)
         
         df_report = r_df_to_pd(batch_3o.rx2('report'))
         report_divs = batch_3o.rx2('report_divs')
@@ -2284,9 +2288,8 @@ class AqEquil(object):
 
         capture = R_output()
         capture.capture_r_output(debug=DEBUGGING_R)
-        
-        r_check_TP_grid = pkg_resources.resource_string(
-            __name__, 'check_TP_grid.r').decode("utf-8")
+
+        r_check_TP_grid = import_package_file(__name__, 'check_TP_grid.r')
         
         ro.r(r_check_TP_grid)
 
@@ -2451,9 +2454,8 @@ class AqEquil(object):
         # handle data0 header section
         capture = R_output()
         capture.capture_r_output(debug=DEBUGGING_R)
-        
-        r_fill_data0_header = pkg_resources.resource_string(
-            __name__, 'fill_data0_header.r').decode("utf-8")
+
+        r_fill_data0_header = import_package_file(__name__, 'fill_data0_header.r')
         
         ro.r(r_fill_data0_header)
         
@@ -2720,8 +2722,9 @@ class AqEquil(object):
                         sp_press_grid.append(p)
                         
                 if dynamic_db:
-                    sp_press_grid_numeric = [pyCHNOSZ.water("Psat", T=273.15+T, messages=False).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
-                    grid_press_list_numeric = [pyCHNOSZ.water("Psat", T=273.15+T, messages=False).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
+                    #sp_press_grid_numeric = [pyCHNOSZ.water("Psat", T=273.15+T, messages=False).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
+                    sp_press_grid_numeric = [pyCHNOSZ.water("Psat", T=273.15+T, messages=False).iloc[0].iloc[0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
+                    grid_press_list_numeric = [pyCHNOSZ.water("Psat", T=273.15+T, messages=False).iloc[0].iloc[0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
 
                     sp_temps_grid_psatted = []
                     for ii,T in enumerate(sp_temps_grid):
@@ -2984,17 +2987,15 @@ class AqEquil(object):
             solid_solution_df = pd_to_r_df(self.thermo.solid_solution_db)
         else:
             solid_solution_df = ro.r("NULL")
-        
-        template = pkg_resources.resource_string(
-            __name__, 'data0.min').decode("utf-8")
+
+        template = import_package_file(__name__, 'data0.min')
         
         out_list = self.thermo.out_list
     
         capture = R_output()
         capture.capture_r_output(debug=DEBUGGING_R)
-    
-        r_create_data0 = pkg_resources.resource_string(
-            __name__, 'create_data0.r').decode("utf-8")
+
+        r_create_data0 = import_package_file(__name__, 'create_data0.r')
         
         ro.r(r_create_data0)
         
@@ -3988,8 +3989,7 @@ class AqEquil(object):
                 exclude_category_R = {}
             exclude_category_R = ro.ListVector(exclude_category_R)
 
-            r_redox_dissrxns = pkg_resources.resource_string(
-                __name__, 'redox_and_dissrxns.r').decode("utf-8")
+            r_redox_dissrxns = import_package_file(__name__, 'redox_and_dissrxns.r')
 
             ro.r(r_redox_dissrxns)
 
@@ -4194,9 +4194,7 @@ class Speciation(object):
             with open(self.custom_grouping_filepath) as file:
                 lines = [line.rstrip() for line in file]
         else:
-            stream = pkg_resources.resource_stream(__name__, "speciation_groups_WORM.txt")
-            with stream as s:
-                content = s.read().decode()
+            content = import_package_file(__name__, 'speciation_groups_WORM.txt')
             content = content.split("\n")
             lines = [line.rstrip() for line in content]
 
