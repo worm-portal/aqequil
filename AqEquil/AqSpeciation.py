@@ -483,6 +483,17 @@ class AqEquil(object):
         
         return False
 
+
+    @staticmethod
+    def _ensure_newline_ending(filename):
+        """Ensure CSV file ends with newline to prevent warnings in R"""
+        if os.path.getsize(filename) > 0:  # Check file isn't empty
+            with open(filename, 'rb') as f:
+                f.seek(-1, 2)  # Go to last byte
+                if f.read(1) != b'\n':
+                    with open(filename, 'a') as f:
+                        f.write('\n')
+
     
     def _check_sample_input_file(self, input_filename, exclude, db,
                                        dynamic_db, charge_balance_on,
@@ -494,6 +505,9 @@ class AqEquil(object):
         
         # does the input file exist? Is it a CSV?
         if self.__file_exists(input_filename):
+            
+            self._ensure_newline_ending(input_filename)
+            
             df_in = pd.read_csv(input_filename, header=None) # no headers for now so colname dupes can be checked
         else:
             self.err_handler.raise_exception("_check_sample_input() error!")
@@ -1606,7 +1620,7 @@ class AqEquil(object):
                 print("Getting", self.thermo.thermo_db_filename, "ready. This will take a moment...")
                 
             thermo_df, data0_file_lines, grid_temps, grid_press, data0_lettercode, water_model, P1, plot_poly_fit = self.create_data0(**db_args)
-        
+
         if self.thermo.custom_data0 and not dynamic_db:
             self.__mk_check_del_directory('eqpt_files')
             if self.thermo.thermo_db_type != "data1":
@@ -1774,7 +1788,7 @@ class AqEquil(object):
         self.__mk_check_del_directory('rxn_3p')
         if dynamic_db:
             self.__mk_check_del_directory('rxn_data0')
-        
+
         # Has the user been warned about redox column during write_3i_file()?
         # Prevents repeated warnings.
         warned_about_redox_column = False
@@ -1791,7 +1805,7 @@ class AqEquil(object):
             df = self.df_input_processed.iloc[[sample_row_index]] # double brackets to keep as df row instead of series
             
             samplename = str(df.index[0])
-            
+
             # handle dynamic data0 creation
             if dynamic_db:
 
@@ -1807,7 +1821,7 @@ class AqEquil(object):
                                   logK_extrapolate=logK_extrapolate,
                                   dynamic_db=dynamic_db,
                                   verbose=verbose)
-                
+
                 if self.thermo.thermo_db_type != "data1":
                     self.runeqpt(data0_lettercode, dynamic_db=True)
                 
@@ -1825,7 +1839,7 @@ class AqEquil(object):
                 data1_path = os.getcwd()+"/eqpt_files" # creating a folder name without spaces to store the data1 overcomes the problem where environment variables with spaces do not work properly when assigned to EQ36DA
 
                 data0_path = "data0." + data0_lettercode
-                
+
             else:
                 pressure_bar = list(input_processed_list.rx2("pressure_bar"))[sample_row_index]
                 data1_path = self.thermo.eq36da
@@ -1869,7 +1883,6 @@ class AqEquil(object):
             filename_3i = self.df_input_processed.index[sample_row_index]+".3i"
             filename_3o = filename_3i[:-1] + 'o'
             filename_3p = filename_3i[:-1] + 'p'
-            
             
             if dynamic_db:
                 dynamic_db_name = self.thermo.thermo_db_filename
@@ -1928,7 +1941,7 @@ class AqEquil(object):
             # delete straggling data1 files generated after running eq3
             if os.path.exists("data1") and os.path.isfile("data1"):
                 os.remove("data1")
-
+        
         files_3o = [file+".3o" for file in self.df_input_processed.index]
         
         df_input_processed_names = convert_to_RVector(list(self.df_input_processed.columns))
@@ -1966,7 +1979,7 @@ class AqEquil(object):
         )
 
         capture.print_captured_r_output()
-        
+
         if len(batch_3o) == 0:
             self.err_handler.raise_exception("Could not compile a speciation report. This is "
                             "likely because errors occurred during "
@@ -2238,7 +2251,7 @@ class AqEquil(object):
 
         speciation.half_cell_reactions = self.half_cell_reactions
         speciation._half_cell_reactions_original_copy = self._half_cell_reactions_original_copy
-        
+
         if report_filename != None:
             if ".csv" in report_filename[-4:]:
                 out_dict["report"].to_csv(report_filename)
@@ -2313,7 +2326,7 @@ class AqEquil(object):
                                         res=500)
 
         capture.print_captured_r_output()
-
+        
         # calculate logK at each T and P for every species
         out_dfs = []
         for i,Tc in enumerate(grid_temps):
@@ -2339,7 +2352,7 @@ class AqEquil(object):
         
         # remove duplicate rows (e.g., for mineral polymorphs)
         dissrxn_logK = dissrxn_logK.drop_duplicates("name")
-        
+
         # handle free logK values
         free_logK_names = []
         if "logK1" in thermo_df.columns:

@@ -77,19 +77,6 @@ check_TP_grid <- function(grid_temps, grid_press, P1, water_model="SUPCRT92", ch
         }
     }
 
-    # for(T in grid_temps[1:4]){
-    #   if(is.na(poly_coeffs_1[1] + poly_coeffs_1[2]*T + poly_coeffs_1[3]*T^2 + poly_coeffs_1[4]*T^3)){
-          
-    #     stop(paste0("Error: Could not compute the coefficients of an interpolating polynomial
-    #                  for the first four values of the temperature grid: [", paste(grid_temps[1:4], collapse=", "), "]."))
-    #   }
-    # }
-    # for(T in grid_temps[4:8]){
-    #   if(is.na(poly_coeffs_2[1] + poly_coeffs_2[2]*T + poly_coeffs_2[3]*T^2 + poly_coeffs_2[4]*T^3)){
-    #     stop(paste0("Error: Could not compute the coefficients of an interpolating polynomial
-    #                  for the last five values of the temperature grid: [", paste(grid_temps[4:8], collapse=", "), "]."))
-    #   }
-    # }
   }else{
     poly_coeffs_1 <- 'None'
     poly_coeffs_2 <- 'None'

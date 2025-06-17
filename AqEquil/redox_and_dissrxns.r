@@ -788,9 +788,6 @@ suppress_redox_and_generate_dissrxns <- function(thermo_df,
 
   # specify molecules to balance H, O, and charge (Z)
   HOZ_balancers <- c("H+", "O2(g)", "H2O") # might be dataset-specific (e.g., "O2(g)")
-  
-#   # load thermodynamic data
-#   thermo_df <- read.csv(filename, stringsAsFactors=F)
     
   # remove leading and trailing whitespace from dissrxn and formula_ox columns
   ws_cols <- c("dissrxn", "formula_ox")
