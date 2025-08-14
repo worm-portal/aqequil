@@ -2531,6 +2531,7 @@ class AqEquil(object):
             Returned if `plot_out` is True.
 
         """
+
         if internal and len(self.logK_models.keys()) > 0:
             # use internally calculated logK models already stored...
             if name not in self.logK_models.keys():
@@ -3615,7 +3616,7 @@ class AqEquil(object):
             self.logK_S_db = self._exclude_category(df=self.logK_S_db, df_name=self.logK_S_db_filename)
 
             if self.logK_S_active:
-                
+
                 for i,sp in enumerate(self.logK_S_db["name"]):
 
                     i = self.logK_S_db.index[i]
@@ -3809,7 +3810,8 @@ class AqEquil(object):
             logK_list = []
             # based on Eq3 of Prapaipong & Shock 2001:
             for T_C in T_list:
-                delta_logK = (Delta_S/(2.303*R*298.15))*(T_C-25)
+                #delta_logK = (Delta_S/(2.303*R*298.15))*(T_C-25)
+                delta_logK = (Delta_S/(2.303*R*(T_C+273.15)))*(T_C-25)
                 logK_list.append(logK_25C + delta_logK)
             
             return logK_list
