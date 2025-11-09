@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
-import pyCHNOSZ
+import pychnosz                                                                                                                        
 from chemparse import parse_formula
 import copy
 import os
@@ -17,9 +17,10 @@ import numbers
 import roman
 from natsort import natsorted
 from .AqSpeciation import Speciation, AqEquil
-from WORMutils import Error_Handler, chemlabel, format_equation, check_balance
+from wormutils import Error_Handler, chemlabel, format_equation, check_balance, assign_worm_db_col_dtypes
+import time
 
-FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "Cl-", "e-", "OH-", "O2", "H2O(g)"]
+FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "e-", "OH-", "O2", "H2O(g)"]
 
 
 def _format_pseudoelement_name(e):
@@ -293,7 +294,7 @@ def react(speciation,
                 ae.err_handler.raise_exception(("Error: could not move", path_6i+"/"+file_6p, "to", path_6p+"/"+filename_6p))
         else:
             ae.err_handler.raise_exception("Error: multiple pickup files detected for one mass transfer calculation.")
-        
+
         if not EQ6_errors_found:
             m = Mass_Transfer(thermo=speciation.thermo,
                               six_o_file='rxn_6o/'+filename_6o,
@@ -345,7 +346,7 @@ def react(speciation,
         __delete_dir("rxn_6i")
         __delete_dir("rxn_6p")
         __delete_dir("rxn_6o")
-    
+
     return speciation
 
 
@@ -462,9 +463,15 @@ class Mass_Transfer:
         if isinstance(self.thermo.csv_db, pd.DataFrame):
 
             # these operations require a WORM-style thermodynamic database CSV
-            obigt = pyCHNOSZ.thermo().OBIGT
-            pyCHNOSZ.thermo(OBIGT = obigt.loc[ obigt.name.isin(FIXED_SPECIES), : ])
-            _ = pyCHNOSZ.add_OBIGT(self.thermo.csv_db, force=True, messages=False)
+            obigt = pychnosz.thermo().OBIGT
+
+            obigt.name.isin(FIXED_SPECIES)
+
+            obigt = assign_worm_db_col_dtypes(obigt)
+            
+            pychnosz.thermo(OBIGT=obigt.loc[ obigt.name.isin(FIXED_SPECIES), : ])
+
+            _ = pychnosz.add_OBIGT(self.thermo.csv_db, force=True, messages=False)
             
             self.df = copy.deepcopy(self.thermo.csv_db)
             
@@ -498,7 +505,7 @@ class Mass_Transfer:
             self.basis_df = None
             self.basis_aux_df = None
             self.df_cr = None
-        
+
         self.misc_params = self.__get_misc_params()
         self.dissolved_elements_molal = self.__get_dissolved_elements(unit="molality")
         self.dissolved_elements_ppm = self.__get_dissolved_elements(unit="ppm")
@@ -527,7 +534,7 @@ class Mass_Transfer:
         self.basis_molality = self.__get_basis_species(unit="molality")
         self.basis_ppm = self.__get_basis_species(unit="ppm")
         self.basis_logact = self.__get_basis_species(unit="logact") # this one needs to be after __get_aq_distribution()
-
+        
         if format_element_names:
             try:
                 # format element names in case there are redox-isolated elements
@@ -544,7 +551,6 @@ class Mass_Transfer:
 
         self.mass_contribution_dict = self.__get_mass_contribution()
             
-            
     def __get_misc_params(self):
         
         recording = False
@@ -557,6 +563,7 @@ class Mass_Transfer:
         Eh_vals = []
         pe_vals = []
         aw_vals = []
+        IS_vals = []
         for line in self.six_o_file_lines:
             if "                    Xi=" in line:
                 recording = True
@@ -591,6 +598,10 @@ class Mass_Transfer:
                 splitstrings = line.strip().split(" ")
                 aw = [float(v) for v in splitstrings if v not in ['', "Activity", "of", "water="]][0]
                 aw_vals.append(aw)
+            elif " Ionic strength (I)=" in line and recording:
+                splitstrings = line.strip().split(" ")
+                IS = [float(v) for v in splitstrings if v not in ['', "Ionic", "strength", "(I)=", "molal"]][0]
+                IS_vals.append(IS)
             if "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" in line:
                 recording = False
 
@@ -605,6 +616,7 @@ class Mass_Transfer:
             "Eh(v)":Eh_vals,
             "pe":pe_vals,
             "aw":aw_vals,
+            "Ionic strength (molal)":IS_vals,
         })
         
         return df
@@ -678,8 +690,10 @@ class Mass_Transfer:
         elif unit == "logact":
             
             cols_to_harvest = [b for b in basis_df.columns if b not in ["O2(g)", "H2O"]]
+
+            out = self.aq_distribution_logact[[c for c in cols_to_harvest if c in self.aq_distribution_logact.columns]]
             
-            return self.aq_distribution_logact[cols_to_harvest]
+            return out
         
         
         
@@ -1126,6 +1140,7 @@ class Mass_Transfer:
         
         self.T = float(self.misc_params["Temp(C)"][0])
         self.P = float(self.misc_params["Press(bars)"][0])
+        self.IS = float(self.misc_params["Ionic strength (molal)"][0])
         self.path_margin = path_margin
         
         minerals_formed = [m for m in self.moles_minerals.columns if m != "Xi"]
@@ -1167,7 +1182,7 @@ class Mass_Transfer:
         if len(all_elements_of_interest) == 2:
             fig, _ , _ = self.__plot_reaction_path_main(
                                                 triad = all_elements_of_interest,
-                                                T=self.T, P=self.P,
+                                                T=self.T, P=self.P, IS=self.IS,
                                                 path_margin=self.path_margin,
                                                 flip_xy=flip_xy,
                                                 show_annotation=show_annotation,
@@ -1259,7 +1274,7 @@ class Mass_Transfer:
                     
                     # do a quick first pass at making figures to see which points are projections.
                     fig, pred_minerals_from_fields, pred_minerals_from_lines = self.__plot_reaction_path_main(
-                                                        triad, T=self.T, P=self.P,
+                                                        triad, T=self.T, P=self.P, IS=self.IS,
                                                         show_nonparticipating_mineral_lines=False, # no need for this in first pass
                                                         minerals_to_show=[], # no need for this in first pass
                                                         path_margin=self.path_margin,
@@ -1315,7 +1330,7 @@ class Mass_Transfer:
             for i,triad in enumerate(element_plot_triad):
                 # re-run figure generation, passing in a list of which points are projected.
                 fig, _ , _ = self.__plot_reaction_path_main(
-                                    triad, T=self.T, P=self.P,
+                                    triad, T=self.T, P=self.P, IS=self.IS,
                                     path_margin=self.path_margin,
                                     flip_xy=flip_xy,
                                     show_annotation=show_annotation,
@@ -1560,11 +1575,11 @@ class Mass_Transfer:
     @staticmethod
     def __get_xy_labs(plot_basis_x, plot_basis_y):
         try:
-            xlab = pyCHNOSZ.ratlab(plot_basis_x)
+            xlab = pychnosz.ratlab_html(plot_basis_x)
         except:
             xlab = "log a"+chemlabel(plot_basis_x)
         try:
-            ylab = pyCHNOSZ.ratlab(plot_basis_y)
+            ylab = pychnosz.ratlab_html(plot_basis_y)
         except:
             ylab = "log a"+chemlabel(plot_basis_y)
 
@@ -1577,43 +1592,53 @@ class Mass_Transfer:
                                         field_minerals_exist=True, path_margin=0.25,
                                         plot_width=4, plot_height=3, ppi=122, res=300,
                                         annotation=None, annotation_coords=[0, 0],
-                                        messages=False):
-        
+                                        basis_state=None, species_state=None, messages=False):
+
         plot_x_range, plot_y_range = self.__get_plot_range(x_vals, y_vals)
 
         xlab,ylab = self.__get_xy_labs(plot_basis_x, plot_basis_y)
         
         args = {plot_basis_x:plot_x_range+[res],
                 plot_basis_y:plot_y_range+[res],
-                "T":self.T, "P":self.P, "messages":messages}
+                "T":self.T, "P":self.P,
+                "IS":self.IS,
+                #"IS":0,
+                "basis":basis_state,
+                "species":species_state,
+                "messages":messages}
         
         if field_minerals_exist:
             
             # check each value of Xi to see which mineral is most predominant
             pred_minerals_from_fields = []
             for i,val in enumerate(x_vals):
-                
+
                 args_temp = {plot_basis_x:[x_vals[i], x_vals[i], 1],
                              plot_basis_y:[y_vals[i], y_vals[i], 1],
-                             "T":self.T, "P":self.P, "messages":messages}
+                             "T":self.T, "P":self.P,
+                             "IS":self.IS,
+                             "basis":basis_state,
+                             "species":species_state,
+                             #"IS":0,
+                             "messages":messages}
                 
-                a = pyCHNOSZ.affinity(**args_temp)
-                e = pyCHNOSZ.equilibrate(a, balance=self.__get_basis_from_elem(div_var_name), messages=messages)
-                table = pyCHNOSZ.diagram(e, balance=self.__get_basis_from_elem(div_var_name), interactive=True, fig_out=False, plot_it=False, messages=messages)
-                
-                pred_minerals_from_fields.append(table["prednames"][0])
+                a = pychnosz.affinity(**args_temp)
+                e = pychnosz.equilibrate(a, balance=self.__get_basis_from_elem(div_var_name), messages=messages)
+                table = pychnosz.diagram(e, balance=self.__get_basis_from_elem(div_var_name), interactive=True, fig_out=False, plot_it=False, messages=messages)
+
+                pred_minerals_from_fields.append(table["df"]["prednames"][0])
             
-            a = pyCHNOSZ.affinity(**args)
-            e = pyCHNOSZ.equilibrate(a, balance=self.__get_basis_from_elem(div_var_name), messages=messages)
-            
-            table,fig = pyCHNOSZ.diagram_interactive(e,
-                                colormap=colormap, borders=borders,
+            a = pychnosz.affinity(**args)
+            e = pychnosz.equilibrate(a, balance=self.__get_basis_from_elem(div_var_name), messages=messages)
+
+            table,fig = pychnosz.diagram_interactive(e,
+                                fill=colormap, borders=borders,
                                 balance=self.__get_basis_from_elem(div_var_name),
                                 width=plot_width*ppi, height=plot_height*ppi,
                                 xlab=xlab, ylab=ylab, annotation=annotation,
                                 annotation_coords=annotation_coords,
                                 plot_it=False, messages=messages)
-            
+
             return table, fig, pred_minerals_from_fields
         
         else:
@@ -1621,6 +1646,7 @@ class Mass_Transfer:
             fig = go.Figure(go.Scatter(x=pd.Series(dtype=object),
                                        y=pd.Series(dtype=object),
                                        mode="markers",
+                                       showlegend=False,
                                        ),
                            layout_xaxis_range=plot_x_range,
                            layout_yaxis_range=plot_y_range,
@@ -1644,14 +1670,29 @@ class Mass_Transfer:
 
             fig.update_yaxes(autorange=True)
 
+            # Store config on figure so it persists when fig.show() is called later
+            config = {'displaylogo': False,
+                      'modeBarButtonsToRemove': ['zoom2d', 'pan2d', 'zoomIn2d', 'zoomOut2d',
+                                                 'autoScale2d', 'resetScale2d', 'toggleSpikelines',
+                                                 'hoverClosestCartesian', 'hoverCompareCartesian'],
+                      'toImageButtonOptions': {
+                          'format': 'png',
+                          'filename': 'reaction_path',
+                          'height': plot_height*ppi,
+                          'width': plot_width*ppi,
+                          'scale': 1,
+                      }}
+            fig._config = fig._config | config
+
             return None,fig,None # a table, diagram without regions, and a list of predicted minerals at each Xi
 
 
     @staticmethod
-    def __calc_dissrxn_logK(mineral, T, P):
+    def __calc_dissrxn_logK(mineral, T, P, IS, basis_state):
 
-        logK = pyCHNOSZ.subcrt([mineral], coeff=[-1], property='logK', T=T, P=P,
-                      show=False, messages=False)["out"]["logK"].item()
+        logK = pychnosz.subcrt([mineral], coeff=[-1], property='logK', T=T, P=P, #IS=IS,
+                               basis=basis_state,
+                               show=False, messages=False).out["logK"].item()
         
         return logK
 
@@ -1771,7 +1812,7 @@ class Mass_Transfer:
 
     
     def __plot_reaction_path_main(self,
-                                  triad, T=25, P=1, path_margin=0.25,
+                                  triad, T=25, P=1, IS=0, path_margin=0.25,
                                   flip_xy=False,
                                   show_annotation=False,
                                   annotation_coords=[0,0],
@@ -1812,9 +1853,9 @@ class Mass_Transfer:
         basis_sp_list = list(set([self.__get_basis_from_elem(e) for e in triad] + ["H+","H2O"]))
     
         try:
-            pyCHNOSZ.basis(basis_sp_list)
+            b = pychnosz.basis(basis_sp_list, global_state=False, messages=False)
         except:
-            pyCHNOSZ.basis(basis_sp_list + ["H2"])
+            b = pychnosz.basis(basis_sp_list + ["H2"], global_state=False, messages=False)
         
         elems = []
         for elem in triad:
@@ -1823,9 +1864,9 @@ class Mass_Transfer:
         mineral_names = []
         for elem in triad:
             elem = elem.split("+")[0].split("-")[0]
-            m_idx = pyCHNOSZ.retrieve((elem), list(set(["O", "H"]+elems)), state=["cr"], messages=False)
+            m_idx = pychnosz.retrieve((elem), list(set(["O", "H"]+elems)), state=["cr"], messages=False)
             if len(m_idx) > 0:
-                mineral_names += list(pyCHNOSZ.info(m_idx, messages=False)["name"])
+                mineral_names += list(pychnosz.info(list(m_idx), messages=False)["name"])
         
         # exclude inactive minerals
         mineral_names_active = [m for m in mineral_names if m in list(self.df["name"])]
@@ -1854,11 +1895,11 @@ class Mass_Transfer:
                 xy_minerals_to_plot.append(mineral_names[i])
 
         if len(x_minerals_to_plot) > 1:
-            pyCHNOSZ.species(x_minerals_to_plot, add=True)
+            spcs = pychnosz.species(x_minerals_to_plot, add=True, global_state=False, basis=b, messages=False)
         if len(y_minerals_to_plot) > 1:
-            pyCHNOSZ.species(y_minerals_to_plot, add=True)
+            spcs = pychnosz.species(y_minerals_to_plot, add=True, global_state=False, basis=b, messages=False)
         if len(xy_minerals_to_plot) > 1:
-            pyCHNOSZ.species(xy_minerals_to_plot, add=True)
+            spcs = pychnosz.species(xy_minerals_to_plot, add=True, global_state=False, basis=b, messages=False)
 
 #         print("x, y, xy")
 #         print(x_minerals_to_plot)
@@ -1881,7 +1922,7 @@ class Mass_Transfer:
         field_minerals_exist = True
         try:
             # get minerals relevant to plotted element pair
-            pyCHNOSZ.species(field_minerals_to_plot)#, add=True)
+            spcs = pychnosz.species(field_minerals_to_plot, global_state=False, basis=b, messages=False)#, add=True)
         except:
             field_minerals_exist = False
         
@@ -1909,7 +1950,7 @@ class Mass_Transfer:
             colormap=colormap, borders=borders,
             annotation_coords=annotation_coords,
             field_minerals_exist=field_minerals_exist, path_margin=self.path_margin,
-            annotation=annotation, messages=False)
+            annotation=annotation, basis_state=b, species_state=spcs, messages=False)
 
         # plot minerals with a single element of interest as a line
         plot_x_range, plot_y_range = self.__get_plot_range(x_vals, y_vals)
@@ -1937,7 +1978,7 @@ class Mass_Transfer:
                     
                 eoi = self.__get_elem_ox_of_interest_in_minerals(mineral)
 
-                logK = self.__calc_dissrxn_logK(mineral, T, P)
+                logK = self.__calc_dissrxn_logK(mineral, T, P, IS, b)
                 mineral_formula_dict = self.__get_mineral_elem_ox_dict_interest(mineral)
 
                 xlab,ylab = self.__get_xy_labs(basis_species_x, basis_species_y)
@@ -1983,6 +2024,7 @@ class Mass_Transfer:
                                name=mineral,
                                line=dict(color=color, width=line_width, dash=line_style),
                                hovertemplate=hovertemplate,
+                               showlegend=True,
                               ),
                 )
                 
@@ -1998,7 +2040,10 @@ class Mass_Transfer:
                                                    path_point_line_color=path_point_line_color,
                                                    projected_point_fill_color=projected_point_fill_color,
                                                    projected_point_line_color=projected_point_line_color)
-        
+
+            # Enable legend display
+            fig.update_layout(showlegend=True)
+
         pred_minerals_from_lines = x_minerals_to_plot+y_minerals_to_plot+xy_minerals_to_plot
         return fig, pred_minerals_from_fields, pred_minerals_from_lines
 
@@ -2934,7 +2979,7 @@ class Mass_Transfer:
             the figure.
             
         print_logK_messages : bool, default False
-            Print pyCHNOSZ messages while the logK of the reaction is
+            Print chnosz messages while the logK of the reaction is
             calculated?
             
         Returns
@@ -3062,13 +3107,14 @@ class Mass_Transfer:
                 divisor_i = divisor
             
             if y_type != "logQ":
-                logK = pyCHNOSZ.subcrt(
+                logK = pychnosz.subcrt(
                               species,
                               stoich,
                               T=T,
                               P=list(self.misc_params["Press(bars)"])[i],
-                              show=False,
-                              messages=print_logK_messages).out["logK"]
+                              IS=0, # ionic strength of 0 ensures that the logK calculated is standard, as required
+                              messages=print_logK_messages,
+                              show=False).out["logK"]
 
                 logK = float(logK.iloc[0])
 

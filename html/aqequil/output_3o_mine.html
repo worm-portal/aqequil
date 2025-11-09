@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>aqequil.output_3o_mine API documentation</title>
+<meta name="description" content="3o_mine.py - Python conversion of 3o_mine.r …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aqequil.output_3o_mine</code></h1>
+</header>
+<section id="section-intro">
+<p>3o_mine.py - Python conversion of 3o_mine.r</p>
+<p>Functions for mining EQ3 output (.3o) files.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aqequil.output_3o_mine.compile_report"><code class="name flex">
+<span>def <span class="ident">compile_report</span></span>(<span>data,<br>csv_filename,<br>aq_dist_type,<br>mineral_sat_type,<br>redox_type,<br>get_aq_dist,<br>get_mineral_sat,<br>get_redox,<br>get_charge_balance,<br>get_ion_activity_ratios,<br>get_fugacity,<br>get_basis_totals,<br>input_processed_df,<br>df_input_processed_names)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compile_report(data, csv_filename, aq_dist_type, mineral_sat_type,
+                   redox_type, get_aq_dist, get_mineral_sat, get_redox,
+                   get_charge_balance, get_ion_activity_ratios, get_fugacity,
+                   get_basis_totals, input_processed_df,
+                   df_input_processed_names):
+    &#34;&#34;&#34;
+    Compile a report from mined .3o data.
+
+    Returns
+    -------
+    dict
+        Report dictionary with &#39;report&#39; and &#39;divs&#39; keys
+    &#34;&#34;&#34;
+
+    report_list = {}
+    report_list[&#34;divs&#34;] = {}
+
+    # Initialize report with processed input file
+    report = input_processed_df.copy()
+    report.columns = df_input_processed_names
+
+    report_list[&#34;divs&#34;][&#34;input&#34;] = list(report.columns[1:])  # Exclude &#34;Sample&#34; column
+
+    # Create report versions of EQ3 output blocks
+    # Use suffixes=(&#39;&#39;,&#39;&#39;) to prevent pandas from adding _x, _y suffixes
+    # Instead, we&#39;ll handle duplicates by keeping only the first occurrence
+
+    if get_aq_dist:
+        aq_distribution = create_report_df(data=data, category=&#39;aq_distribution&#39;, out_type=aq_dist_type)
+        report = report.merge(aq_distribution, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+        report = report.drop(&#39;sample&#39;, axis=1)
+        report_list[&#34;divs&#34;][&#34;aq_distribution&#34;] = list(aq_distribution.columns[1:])
+
+    if get_mineral_sat:
+        mineral_sat = create_report_df(data=data, category=&#39;mineral_sat&#39;, out_type=mineral_sat_type)
+        report = report.merge(mineral_sat, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+        report = report.drop(&#39;sample&#39;, axis=1)
+        report_list[&#34;divs&#34;][&#34;mineral_sat&#34;] = list(mineral_sat.columns[1:])
+
+    if get_redox:
+        redox = create_report_df(data=data, category=&#39;redox&#39;, out_type=redox_type)
+        report = report.merge(redox, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+        report = report.drop(&#39;sample&#39;, axis=1)
+        report_list[&#34;divs&#34;][&#34;redox&#34;] = list(redox.columns[1:])
+
+    if get_charge_balance:
+        charge_balance = create_report_df(data=data, category=&#39;charge_balance&#39;, out_type=0)
+        report = report.merge(charge_balance, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+        report = report.drop(&#39;sample&#39;, axis=1)
+        report_list[&#34;divs&#34;][&#34;charge_balance&#34;] = list(charge_balance.columns[1:])
+
+    if get_ion_activity_ratios:
+        if any(&#39;ion_activity_ratios&#39; in data[sample] for sample in data):
+            ion_activity_ratios = create_report_df(data=data, category=&#39;ion_activity_ratios&#39;, out_type=0)
+            # Rename columns to add the suffix before merging to avoid conflicts
+            rename_dict = {col: col + &#39;_Log_ion-H+_activity_ratio&#39;
+                          for col in ion_activity_ratios.columns if col != &#39;sample&#39;}
+            ion_activity_ratios = ion_activity_ratios.rename(columns=rename_dict)
+            report = report.merge(ion_activity_ratios, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+            report = report.drop(&#39;sample&#39;, axis=1)
+            report_list[&#34;divs&#34;][&#34;ion_activity_ratios&#34;] = [col + &#39;_Log_ion-H+_activity_ratio&#39;
+                                                           for col in list(create_report_df(data=data, category=&#39;ion_activity_ratios&#39;, out_type=0).columns[1:])]
+
+    if get_fugacity:
+        fugacities = create_report_df(data=data, category=&#39;fugacity&#39;, out_type=0)
+        report = report.merge(fugacities, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+        report = report.drop(&#39;sample&#39;, axis=1)
+        report_list[&#34;divs&#34;][&#34;fugacity&#34;] = list(fugacities.columns[1:])
+
+    if get_basis_totals:
+        sc = create_report_df(data=data, category=&#39;basis_totals&#39;, out_type=3)  # 3 is the molality column
+        report = report.merge(sc, left_on=&#39;Sample&#39;, right_on=&#39;sample&#39;, how=&#39;inner&#39;, suffixes=(&#39;&#39;, &#39;&#39;))
+        report = report.drop(&#39;sample&#39;, axis=1)
+        report_list[&#34;divs&#34;][&#34;basis_totals&#34;] = list(sc.columns[1:])
+
+    report = report.set_index(&#39;Sample&#39;)
+
+    report_list[&#34;report&#34;] = report
+
+    return report_list</code></pre>
+</details>
+<div class="desc"><p>Compile a report from mined .3o data.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Report dictionary with 'report' and 'divs' keys</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.output_3o_mine.create_report_df"><code class="name flex">
+<span>def <span class="ident">create_report_df</span></span>(<span>data, category, out_type)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_report_df(data, category, out_type):
+    &#34;&#34;&#34;
+    Create report versions of data categories.
+
+    Parameters
+    ----------
+    data : dict
+        Sample data dictionary
+    category : str
+        Category name
+    out_type : int or str
+        Output type (column index or name)
+
+    Returns
+    -------
+    DataFrame
+        Report dataframe
+    &#34;&#34;&#34;
+
+    df_cat = {sample: data[sample].get(category) for sample in data if category in data[sample]}
+
+    # Get all unique species/columns
+    all_species = set()
+    for sample_df in df_cat.values():
+        if sample_df is not None:
+            if isinstance(sample_df, pd.DataFrame):
+                # Check if this is ion_activity_ratios with an &#39;ion&#39; column
+                if &#39;ion&#39; in sample_df.columns:
+                    all_species.update(sample_df[&#39;ion&#39;].tolist())
+                else:
+                    all_species.update(sample_df.index.tolist())
+            elif isinstance(sample_df, dict):
+                all_species.update(sample_df.keys())
+
+    all_species = sorted(list(all_species))
+
+    # Create result dataframe
+    result_data = []
+    for sample in df_cat:
+        row_data = {&#39;sample&#39;: sample}
+        sample_df = df_cat[sample]
+
+        if sample_df is not None:
+            if isinstance(sample_df, pd.DataFrame):
+                # Check if this DataFrame has an &#39;ion&#39; column (like ion_activity_ratios)
+                if &#39;ion&#39; in sample_df.columns:
+                    # Use the &#39;ion&#39; column to identify rows
+                    for species in all_species:
+                        matching_rows = sample_df[sample_df[&#39;ion&#39;] == species]
+                        if len(matching_rows) &gt; 0:
+                            if isinstance(out_type, int):
+                                row_data[species] = matching_rows.iloc[0].iloc[out_type]
+                            else:
+                                row_data[species] = matching_rows.iloc[0][out_type] if out_type in sample_df.columns else np.nan
+                        else:
+                            row_data[species] = np.nan
+                else:
+                    # Use the index like before
+                    for species in all_species:
+                        if species in sample_df.index:
+                            if isinstance(out_type, int):
+                                row_data[species] = sample_df.loc[species].iloc[out_type] if len(sample_df.loc[species].shape) &gt; 0 else sample_df.loc[species]
+                            else:
+                                row_data[species] = sample_df.loc[species, out_type] if out_type in sample_df.columns else np.nan
+                        else:
+                            row_data[species] = np.nan
+            elif isinstance(sample_df, dict):
+                for species in all_species:
+                    row_data[species] = sample_df.get(species, np.nan)
+
+        result_data.append(row_data)
+
+    df_result = pd.DataFrame(result_data)
+
+    # Sort columns alphabetically (except &#39;sample&#39;)
+    cols = [&#39;sample&#39;] + sorted([col for col in df_result.columns if col != &#39;sample&#39;])
+    df_result = df_result[cols]
+
+    return df_result</code></pre>
+</details>
+<div class="desc"><p>Create report versions of data categories.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>data</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Sample data dictionary</dd>
+<dt><strong><code>category</code></strong> :&ensp;<code>str</code></dt>
+<dd>Category name</dd>
+<dt><strong><code>out_type</code></strong> :&ensp;<code>int</code> or <code>str</code></dt>
+<dd>Output type (column index or name)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>DataFrame</code></dt>
+<dd>Report dataframe</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.output_3o_mine.isolate_block"><code class="name flex">
+<span>def <span class="ident">isolate_block</span></span>(<span>string, begin_str, end_str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def isolate_block(string, begin_str, end_str):
+    &#34;&#34;&#34;Isolate a substring by trimming off the portions before and after it.&#34;&#34;&#34;
+    result = re.sub(begin_str, &#39;&#39;, string, flags=re.DOTALL)
+    result = re.sub(end_str, &#39;&#39;, result, flags=re.DOTALL)
+    return result</code></pre>
+</details>
+<div class="desc"><p>Isolate a substring by trimming off the portions before and after it.</p></div>
+</dd>
+<dt id="aqequil.output_3o_mine.main_3o_mine"><code class="name flex">
+<span>def <span class="ident">main_3o_mine</span></span>(<span>files_3o,<br>get_aq_dist,<br>get_mass_contribution,<br>get_mineral_sat,<br>get_redox,<br>get_charge_balance,<br>get_ion_activity_ratios,<br>get_fugacity,<br>get_basis_totals,<br>get_solid_solutions,<br>mass_contribution_other,<br>csv_filename,<br>aq_dist_type,<br>mineral_sat_type,<br>redox_type,<br>input_filename,<br>input_pressures,<br>batch_3o_filename,<br>df_input_processed,<br>df_input_processed_names,<br>verbose)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main_3o_mine(files_3o,
+                 get_aq_dist,
+                 get_mass_contribution,
+                 get_mineral_sat,
+                 get_redox,
+                 get_charge_balance,
+                 get_ion_activity_ratios,
+                 get_fugacity,
+                 get_basis_totals,
+                 get_solid_solutions,
+                 mass_contribution_other,
+                 csv_filename,
+                 aq_dist_type,
+                 mineral_sat_type,
+                 redox_type,
+                 input_filename,
+                 input_pressures,
+                 batch_3o_filename,
+                 df_input_processed,
+                 df_input_processed_names,
+                 verbose):
+    &#34;&#34;&#34;
+    Main function to mine multiple .3o files.
+
+    Returns
+    -------
+    dict
+        Batch data from all .3o files
+    &#34;&#34;&#34;
+
+    start_time = time.time()
+
+    # Instantiate an empty object to store data from all 3o files
+    batch_3o = {}
+    batch_3o[&#34;sample_data&#34;] = {}
+
+    if verbose &gt; 1:
+        print(&#34;Now processing EQ3 output files...&#34;)
+
+    # Create dict mapping files to pressures
+    pressure_dict = dict(zip(files_3o, input_pressures))
+
+    # Process each .3o file
+    for file in files_3o:
+
+        # Add this sample&#39;s aqueous data to list of all sample data
+        sample_3o = mine_3o(file,
+                           this_pressure=pressure_dict[file],
+                           get_aq_dist=get_aq_dist,
+                           get_mass_contribution=get_mass_contribution,
+                           get_mineral_sat=get_mineral_sat,
+                           get_redox=get_redox,
+                           get_charge_balance=get_charge_balance,
+                           get_ion_activity_ratios=get_ion_activity_ratios,
+                           get_fugacity=get_fugacity,
+                           get_basis_totals=get_basis_totals,
+                           get_solid_solutions=get_solid_solutions,
+                           mass_contribution_other=mass_contribution_other,
+                           verbose=verbose)
+
+        # If this file could be processed, add its data to the batch_3o object
+        if len(sample_3o) &gt; 1:
+            batch_3o[&#34;sample_data&#34;][sample_3o[&#34;name&#34;]] = sample_3o
+
+    if verbose &gt; 1:
+        print(&#34;Finished processing EQ3 output files...&#34;)
+
+    # Compile aqueous contribution data into a single melted dataframe and
+    # append it to the batch_3o object.
+    if get_mass_contribution and len(batch_3o[&#34;sample_data&#34;]) &gt; 0:
+        if verbose &gt; 1:
+            print(&#34;Now processing mass contribution data...&#34;)
+        batch_3o[&#34;mass_contribution&#34;] = melt_mass_contribution(batch_3o=batch_3o,
+                                                               other=mass_contribution_other,
+                                                               verbose=verbose)
+        if verbose &gt; 1:
+            print(&#34;Finished processing mass contribution data...&#34;)
+
+    if len(batch_3o[&#34;sample_data&#34;]) &gt; 0:
+        # Create a report summarizing 3o data from all samples
+        report_list = compile_report(data=batch_3o[&#34;sample_data&#34;],
+                                     csv_filename=csv_filename,
+                                     aq_dist_type=aq_dist_type,
+                                     mineral_sat_type=mineral_sat_type,
+                                     redox_type=redox_type,
+                                     get_aq_dist=get_aq_dist,
+                                     get_mineral_sat=get_mineral_sat,
+                                     get_redox=get_redox,
+                                     get_charge_balance=get_charge_balance,
+                                     get_ion_activity_ratios=get_ion_activity_ratios,
+                                     get_fugacity=get_fugacity,
+                                     get_basis_totals=get_basis_totals,
+                                     input_processed_df=df_input_processed,
+                                     df_input_processed_names=df_input_processed_names)
+
+        # Add the report to the batch_3o object
+        report = report_list[&#34;report&#34;]
+        batch_3o[&#34;report&#34;] = report
+        batch_3o[&#34;report_divs&#34;] = report_list[&#34;divs&#34;]
+    else:
+        return {}
+
+    # Store user input file data
+    batch_3o[&#34;input&#34;] = pd.read_csv(input_filename)
+
+    # Save the batch_3o object (would use pickle in Python)
+    if batch_3o_filename is not None:
+        import pickle
+        with open(batch_3o_filename, &#39;wb&#39;) as f:
+            pickle.dump(batch_3o, f)
+
+    time_elapsed = time.time() - start_time
+    if verbose &gt; 1:
+        print(f&#34;Finished mining .3o files. Time elapsed: {round(time_elapsed, 2)} seconds&#34;)
+
+    return batch_3o</code></pre>
+</details>
+<div class="desc"><p>Main function to mine multiple .3o files.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Batch data from all .3o files</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.output_3o_mine.melt_mass_contribution"><code class="name flex">
+<span>def <span class="ident">melt_mass_contribution</span></span>(<span>batch_3o, other=False, verbose=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def melt_mass_contribution(batch_3o, other=False, verbose=1):
+    &#34;&#34;&#34;
+    Melt aqueous contribution data from multiple samples into a single dataframe.
+
+    Parameters
+    ----------
+    batch_3o : dict
+        Batch data from multiple .3o files
+    other : bool
+        Include &#34;Other&#34; category
+    verbose : int
+        Verbosity level
+
+    Returns
+    -------
+    DataFrame
+        Melted mass contribution data
+    &#34;&#34;&#34;
+
+    # Initialize empty list for data
+    df_aq_cont_data = []
+
+    # Get all aqueous contribution data
+    mass_contributions = {sample: data.get(&#39;mass_contribution&#39;, {})
+                         for sample, data in batch_3o[&#34;sample_data&#34;].items()}
+
+    # Loop through each sample and basis species
+    for sample in mass_contributions:
+        if verbose &gt; 1:
+            print(f&#34;Processing mass contribution of basis species in {sample}...&#34;)
+        for basis in mass_contributions[sample]:
+            df = mass_contributions[sample][basis].copy()
+            df[&#39;basis&#39;] = basis
+            df[&#39;sample&#39;] = sample
+            df[&#39;species&#39;] = df.index
+            df = df.reset_index(drop=True)
+
+            if other:
+                percent = round(100 - sum(pd.to_numeric(df[&#39;percent&#39;], errors=&#39;coerce&#39;)), 2)
+                other_row = pd.DataFrame([{
+                    &#39;sample&#39;: sample,
+                    &#39;basis&#39;: basis,
+                    &#39;species&#39;: &#39;Other&#39;,
+                    &#39;factor&#39;: np.nan,
+                    &#39;molality&#39;: np.nan,
+                    &#39;percent&#39;: str(percent)
+                }])
+                df = pd.concat([df, other_row], ignore_index=True)
+
+            df_aq_cont_data.append(df)
+
+    if len(df_aq_cont_data) &gt; 0:
+        df_aq_cont = pd.concat(df_aq_cont_data, ignore_index=True)
+        df_aq_cont = df_aq_cont[[&#39;sample&#39;, &#39;basis&#39;, &#39;species&#39;, &#39;factor&#39;, &#39;molality&#39;, &#39;percent&#39;]]
+    else:
+        df_aq_cont = pd.DataFrame(columns=[&#39;sample&#39;, &#39;basis&#39;, &#39;species&#39;, &#39;factor&#39;, &#39;molality&#39;, &#39;percent&#39;])
+
+    return df_aq_cont</code></pre>
+</details>
+<div class="desc"><p>Melt aqueous contribution data from multiple samples into a single dataframe.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>batch_3o</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Batch data from multiple .3o files</dd>
+<dt><strong><code>other</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Include "Other" category</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Verbosity level</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>DataFrame</code></dt>
+<dd>Melted mass contribution data</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.output_3o_mine.mine_3o"><code class="name flex">
+<span>def <span class="ident">mine_3o</span></span>(<span>this_file,<br>this_pressure,<br>get_aq_dist=True,<br>get_mass_contribution=True,<br>get_mineral_sat=True,<br>get_redox=True,<br>get_charge_balance=True,<br>get_ion_activity_ratios=True,<br>get_fugacity=True,<br>get_basis_totals=True,<br>get_solid_solutions=True,<br>mass_contribution_other=True,<br>verbose=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def mine_3o(this_file,
+            this_pressure,
+            get_aq_dist=True,
+            get_mass_contribution=True,
+            get_mineral_sat=True,
+            get_redox=True,
+            get_charge_balance=True,
+            get_ion_activity_ratios=True,
+            get_fugacity=True,
+            get_basis_totals=True,
+            get_solid_solutions=True,
+            mass_contribution_other=True,
+            verbose=1):
+    &#34;&#34;&#34;
+    Mine data from a .3o EQ3 output file.
+
+    Parameters
+    ----------
+    this_file : str
+        Filename of .3o file
+    this_pressure : float
+        Pressure value
+    get_aq_dist : bool
+        Extract aqueous distribution data
+    get_mass_contribution : bool
+        Extract mass contribution data
+    get_mineral_sat : bool
+        Extract mineral saturation data
+    get_redox : bool
+        Extract redox data
+    get_charge_balance : bool
+        Extract charge balance data
+    get_ion_activity_ratios : bool
+        Extract ion activity ratios
+    get_fugacity : bool
+        Extract fugacity data
+    get_basis_totals : bool
+        Extract basis totals
+    get_solid_solutions : bool
+        Extract solid solution data
+    mass_contribution_other : bool
+        Include &#34;Other&#34; category in mass contribution
+    verbose : int
+        Verbosity level
+
+    Returns
+    -------
+    dict
+        Dictionary containing mined data
+    &#34;&#34;&#34;
+
+    # Set directory to rxn_3o folder where .3o files are kept
+    os.chdir(&#34;rxn_3o&#34;)
+
+    # Read .3o file as a string
+    with open(this_file, &#39;r&#39;) as f:
+        extractme = f.read()
+
+    # Get sample name
+    this_name = trimspace(isolate_block(extractme, begin_str=r&#39;^.*\|Sample:\s+&#39;, end_str=r&#39;\|\n\|.*$&#39;))
+
+    if verbose &gt; 1:
+        print(f&#34;Processing EQ3 output for {this_name}&#34;)
+
+    # Check if file experienced errors. If so, skip processing the file:
+    if &#34;Normal exit&#34; not in extractme or &#34;* Error&#34; in extractme:
+        os.chdir(&#34;../&#34;)
+        return {}
+
+    sample_3o = {}
+
+    sample_3o[&#34;filename&#34;] = this_file
+    sample_3o[&#34;name&#34;] = this_name
+
+    ### Begin mining temperature, pressure, water properties
+
+    # Mine params
+    sample_3o[&#34;temperature&#34;] = isolate_block(extractme, begin_str=r&#39;^.*Temperature=\s+&#39;, end_str=r&#39;\s+.*$&#39;)
+    sample_3o[&#34;pressure&#34;] = this_pressure
+    sample_3o[&#34;logact_H2O&#34;] = isolate_block(extractme, begin_str=r&#39;^.*Log activity of water=\s+&#39;, end_str=r&#39;\s+.*$&#39;)
+    sample_3o[&#34;H2O_density&#34;] = isolate_block(extractme, begin_str=r&#39;^.*Solution density =\s+&#39;, end_str=r&#39;\s+.*$&#39;)
+    sample_3o[&#34;H2O_molality&#34;] = 55.348 / float(sample_3o[&#34;H2O_density&#34;])
+    sample_3o[&#34;H2O_log_molality&#34;] = np.log10(sample_3o[&#34;H2O_molality&#34;])
+    sample_3o[&#34;ionic_strength&#34;] = isolate_block(extractme, begin_str=r&#39;^.*Ionic strength \(I\)=\s+&#39;, end_str=r&#39;\s+.*$&#39;)
+
+    ### Begin extracting &#39;Distribution of Aqueous Solute Species&#39;
+    if get_aq_dist:
+        # String to isolate the aqueous species distribution section:
+        front_trim = r&#34;^.*\n\n\n\n                --- Distribution of Aqueous Solute Species ---\n\n    Species                  Molality    Log Molality   Log Gamma  Log Activity\n\n\s+&#34;
+
+        # Isolate species distribution block
+        species_block = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n.*$&#34;)
+
+        # Split into substrings, each representing a separate row in the table
+        species_block = species_block.split(&#34;\n&#34;)
+
+        # Create an empty data frame to store results
+        df_data = []
+
+        # Convert into dataframe
+        for this_row in species_block:
+            # Mine row data
+            this_row = trimspace(this_row)
+            this_row_data = this_row.split()
+
+            if len(this_row_data) &gt;= 5:
+                df_data.append({
+                    &#39;species&#39;: this_row_data[0],
+                    &#39;molality&#39;: this_row_data[1],
+                    &#39;log_molality&#39;: this_row_data[2],
+                    &#39;log_gamma&#39;: this_row_data[3],
+                    &#39;log_activity&#39;: this_row_data[4]
+                })
+
+        if len(df_data) &gt; 0:
+            df = pd.DataFrame(df_data)
+
+            if &#34;H2O&#34; not in df[&#39;species&#39;].values:
+                # Add a row for water
+                df = pd.concat([df, pd.DataFrame([{
+                    &#39;species&#39;: &#39;H2O&#39;,
+                    &#39;molality&#39;: sample_3o[&#34;H2O_molality&#34;],
+                    &#39;log_molality&#39;: sample_3o[&#34;H2O_log_molality&#34;],
+                    &#39;log_gamma&#39;: 1,
+                    &#39;log_activity&#39;: sample_3o[&#34;logact_H2O&#34;]
+                }])], ignore_index=True)
+
+            # Set index as species names
+            df = df.set_index(&#39;species&#39;)
+        else:
+            # Create DataFrame with just water if no species found
+            df = pd.DataFrame([{
+                &#39;species&#39;: &#39;H2O&#39;,
+                &#39;molality&#39;: sample_3o[&#34;H2O_molality&#34;],
+                &#39;log_molality&#39;: sample_3o[&#34;H2O_log_molality&#34;],
+                &#39;log_gamma&#39;: 1,
+                &#39;log_activity&#39;: sample_3o[&#34;logact_H2O&#34;]
+            }])
+            df = df.set_index(&#39;species&#39;)
+
+        # Add aqueous block to this sample data
+        sample_3o[&#34;aq_distribution&#34;] = df
+
+    # End of &#39;aqueous distribution&#39; extraction
+
+    if get_mass_contribution:
+        ### Begin extracting &#39;Major Species by Contribution to Aqueous Mass Balances&#39;
+
+        # String to isolate the species saturation section:
+        front_trim = r&#34;^.*\n\n\n      --- Major Species by Contribution to Aqueous Mass Balances ---\n\n\n&#34;
+
+        # Isolate contribution block
+        contrib_block = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n\n\n.*$&#34;)
+
+        # Split into substrings, each representing a separate row in the table
+        contrib_block = contrib_block.split(&#34;\n&#34;)
+        # Remove blank lines
+        contrib_block = [line for line in contrib_block if line != &#34;&#34;]
+
+        # Loop through rows in this block and mine contributions
+        mine_vals = False
+        mass_contribution = {}
+        for this_row in contrib_block:
+            if &#34;Accounting for&#34; in this_row:
+                # Get basis species for this block
+                this_basis = this_row.replace(&#34; Species Accounting for 99% or More of Aqueous &#34;, &#34;&#34;)
+            elif &#34;Per Cent&#34; in this_row:
+                # Get ready to mine data for this basis species
+                mine_vals = True
+                df_basis_data = []
+            elif mine_vals and &#34; - - - - - - - - -&#34; not in this_row:
+                # Mine data from this row
+                row_data = trimspace(this_row)
+                row_data = row_data.split()
+                if len(row_data) &gt;= 4:
+                    df_basis_data.append({
+                        &#39;species&#39;: row_data[0],
+                        &#39;factor&#39;: row_data[1],
+                        &#39;molality&#39;: row_data[2],
+                        &#39;percent&#39;: row_data[3]
+                    })
+            elif &#34; - - - - - - - - -&#34; in this_row:
+                # Stop mining for this basis species
+                mine_vals = False
+                df_basis = pd.DataFrame(df_basis_data)
+                # Specify index for this contribution block
+                df_basis = df_basis.set_index(&#39;species&#39;)
+                # Add contribution data to list of sample data
+                mass_contribution[this_basis] = df_basis
+
+        sample_3o[&#34;mass_contribution&#34;] = mass_contribution
+
+    # End &#39;aqueous contribution&#39; extraction
+
+    ### Begin mining mineral saturation section
+    if get_mineral_sat:
+
+        # String to isolate the mineral saturation section:
+        front_trim = r&#34;^.*\n\n\n\n           --- Saturation States of Pure Solids ---\n\n       Phase                      Log Q/K    Affinity, kcal\n\n\s+&#34;
+
+        # Isolate mineral block
+        mineral_block = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n.*$&#34;)
+
+        # Split into substrings, each representing a separate row in the table
+        mineral_block = mineral_block.split(&#34;\n&#34;)
+
+        # Create an empty data frame to store results
+        df_data = []
+
+        # Convert into dataframe
+        for this_row in mineral_block:
+            # Get row data
+            this_row_data = trimspace(this_row).split()
+
+            if len(this_row_data) &gt;= 3:
+                df_data.append({
+                    &#39;mineral&#39;: this_row_data[0],
+                    &#39;logQoverK&#39;: this_row_data[1],
+                    &#39;affinity&#39;: this_row_data[2]
+                })
+
+        if len(df_data) &gt; 0:
+            df = pd.DataFrame(df_data)
+            df = df.set_index(&#39;mineral&#39;)
+        else:
+            # Create empty DataFrame with correct structure
+            df = pd.DataFrame(columns=[&#39;logQoverK&#39;, &#39;affinity&#39;])
+            df.index.name = &#39;mineral&#39;
+
+        # Add mineral saturation block to this sample data
+        sample_3o[&#34;mineral_sat&#34;] = df
+
+        if get_solid_solutions:
+            if &#34;--- Saturation States of Hypothetical Solid Solutions ---&#34; in extractme:
+                # String to isolate the solid solution saturation section:
+                front_trim = r&#34;^.*\n\n\n                --- Saturation States of Hypothetical Solid Solutions ---\n\n&#34;
+
+                # Isolate solid solution block
+                ss_block = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n                     --- Fugacities ---.*$&#34;)
+
+                if ss_block != &#34; None&#34;:
+
+                    # Split into substrings, each representing a separate solid solution
+                    ss_block = ss_block.split(&#34;\n\n\n                --- &#34;)
+
+                    ss_entries = {}
+                    for ss_entry in ss_block:
+                        ss_entry_split = ss_entry.split(&#34; ---\n\n   &#34;)
+                        ss_name = ss_entry_split[0]
+                        ss_name = ss_name.replace(&#34;\n                --- &#34;, &#34;&#34;)  # Clean up first entry name
+
+                        if len(ss_entry_split) &gt; 1:
+                            ss_data = ss_entry_split[1]
+                            ss_data = ss_data.replace(&#34;Ideal solution\n\n    Component                    x           Log x   Log lambda  Log activity\n\n&#34;, &#34;&#34;)
+
+                            ss_split = ss_data.split(&#34;\n\n\n    Mineral                       Log Q/K         Aff, kcal    State\n\n&#34;)
+
+                            ss_dict = {}
+
+                            # Process ideal solution data
+                            if len(ss_split) &gt; 0:
+                                ideal_lines = ss_split[0].strip().split(&#34;\n&#34;)
+                                ideal_data = []
+                                for line in ideal_lines:
+                                    line = line.lstrip()
+                                    parts = re.split(r&#39;\s{2,}&#39;, line)
+                                    if len(parts) &gt;= 5:
+                                        # Skip header lines by checking if we can convert to float
+                                        try:
+                                            x_val = parts[1]
+                                            # Try to convert x_val to float to check if it&#39;s a data line
+                                            try:
+                                                x_val = float(x_val)
+                                            except:
+                                                x_val = 0
+                                            # Verify parts[2] is also numeric (not &#34;Log x&#34; header)
+                                            log_x = float(parts[2])
+                                            ideal_data.append({
+                                                &#39;component&#39;: parts[0],
+                                                &#39;x&#39;: x_val,
+                                                &#39;Log x&#39;: log_x,
+                                                &#39;Log lambda&#39;: float(parts[3]),
+                                                &#39;Log activity&#39;: float(parts[4])
+                                            })
+                                        except (ValueError, IndexError):
+                                            # Skip header or invalid lines
+                                            continue
+                                ss_dict[&#34;ideal solution&#34;] = pd.DataFrame(ideal_data)
+
+                            # Process mineral data
+                            if len(ss_split) &gt; 1:
+                                mineral_lines = ss_split[1].strip().split(&#34;\n&#34;)
+                                mineral_data = []
+                                for line in mineral_lines:
+                                    line = line.lstrip()
+                                    parts = re.split(r&#39;\s{2,}&#39;, line)
+                                    if len(parts) &gt;= 3:
+                                        try:
+                                            # Try to convert to float to verify it&#39;s a data line, not header
+                                            log_qk = float(parts[1])
+                                            aff_kcal = float(parts[2])
+                                            state = parts[3] if len(parts) &gt;= 4 else &#34;&#34;
+                                            mineral_data.append({
+                                                &#39;mineral&#39;: parts[0],
+                                                &#39;Log Q/K&#39;: log_qk,
+                                                &#39;Aff, kcal&#39;: aff_kcal,
+                                                &#39;State&#39;: state
+                                            })
+                                        except (ValueError, IndexError):
+                                            # Skip header or invalid lines
+                                            continue
+                                ss_dict[&#34;mineral&#34;] = pd.DataFrame(mineral_data)
+
+                            ss_entries[ss_name] = ss_dict
+
+                    sample_3o[&#34;solid_solutions&#34;] = ss_entries
+                else:
+                    sample_3o[&#34;solid_solutions&#34;] = None
+            else:
+                sample_3o[&#34;solid_solutions&#34;] = None
+
+    # End &#39;mineral saturation affinity&#39; extraction
+
+    ### Begin mining redox data
+    if get_redox:
+        # String to isolate the redox section:
+        front_trim = r&#34;^.*\n\n\n\n                --- Aqueous Redox Reactions ---\n\n   Couple                           Eh, volts      pe-      log fO2   Ah, kcal\n\n\s+&#34;
+
+        # Isolate redox block
+        redox_block = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n.*$&#34;)
+
+        # Split into substrings, each representing a separate row in the table
+        redox_block = redox_block.split(&#34;\n&#34;)
+
+        # Create an empty data frame to store results
+        df_data = []
+
+        # Convert into dataframe
+        for this_row in redox_block:
+
+            # Get row data
+            this_row_data = trimspace(this_row).split()
+
+            if len(this_row_data) &gt;= 5:
+                df_data.append({
+                    &#39;couple&#39;: this_row_data[0],
+                    &#39;Eh&#39;: this_row_data[1],
+                    &#39;pe&#39;: this_row_data[2],
+                    &#39;logfO2&#39;: this_row_data[3],
+                    &#39;Ah&#39;: this_row_data[4]
+                })
+
+        if len(df_data) &gt; 0:
+            df = pd.DataFrame(df_data)
+            df = df.set_index(&#39;couple&#39;)
+        else:
+            # Create empty DataFrame with correct structure
+            df = pd.DataFrame(columns=[&#39;Eh&#39;, &#39;pe&#39;, &#39;logfO2&#39;, &#39;Ah&#39;])
+            df.index.name = &#39;couple&#39;
+
+        # Add redox block to this sample data
+        sample_3o[&#34;redox&#34;] = df
+
+    # End redox extraction
+
+    ### Begin mining charge balance data
+    if get_charge_balance:
+        # String to isolate ionic strength:
+        front_trim = r&#34;^.*Ionic strength \(I\)=\s+&#34;
+
+        # Isolate ionic strength
+        IS = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\s+.*$&#34;)
+
+        # String to isolate stoichiometric ionic strength:
+        front_trim = r&#34;^.*Stoichiometric ionic strength=\s+&#34;
+
+        IS_stoich = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\s+.*$&#34;)
+
+        # String to isolate the electrical balance section:
+        front_trim = r&#34;^.*Sigma\(mz\) cations=\s+&#34;
+
+        elec_block = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n.*$&#34;)
+
+        # Split electrical block into strings and numerics
+        elec_parts = re.split(r&#39;=\s+|\n\s+&#39;, elec_block)
+
+        elec_dict = {
+            &#34;sigma(mz) cations&#34;: elec_parts[0],
+            &#34;sigma(mz) anions&#34;: elec_parts[2],
+            &#34;total charge&#34;: elec_parts[4],
+            &#34;mean charge&#34;: elec_parts[6],
+            &#34;charge imbalance&#34;: elec_parts[8]
+        }
+
+        # String to isolate charge balance:
+        front_trim = r&#34;^.*The electrical imbalance is:\n\n\s+&#34;
+
+        cbal_bal = isolate_block(extractme, begin_str=front_trim, end_str=r&#34;\n\n.*$&#34;)
+
+        # Split electrical block into strings and numerics
+        cbal_parts = re.split(r&#39; per cent|\n\s+&#39;, cbal_bal)
+
+        cbal_dict = {
+            &#34;charge imbalance % of total charge&#34;: cbal_parts[0],
+            &#34;charge imbalance % of mean charge&#34;: cbal_parts[2]
+        }
+
+        charge_balance_dict = {
+            &#34;ionic strength&#34;: IS,
+            &#34;stoichiometric ionic strength&#34;: IS_stoich,
+            **elec_dict,
+            **cbal_dict
+        }
+
+        sample_3o[&#34;charge_balance&#34;] = charge_balance_dict
+
+    # End charge balance extraction
+
+    if get_ion_activity_ratios:
+        ion_ratio_block = isolate_block(extractme, r&#34;^.*--- Ion-H\+ Activity Ratios ---\n\n&#34;, r&#34;\n\n.*$&#34;)
+        ion_ratio_block_split = ion_ratio_block.split(&#34;\n&#34;)
+        ion_ratio_block_split = [line.split(&#34;=&#34;) for line in ion_ratio_block_split]
+
+        if len(ion_ratio_block_split) &gt; 0 and len(ion_ratio_block_split[0]) &gt; 1:
+
+            ion_ratio_logs = [trimspace(item[0]) for item in ion_ratio_block_split if len(item) &gt; 1]
+            ion_ratio_values = []
+            for item in ion_ratio_block_split:
+                if len(item) &gt; 1:
+                    try:
+                        ion_ratio_values.append(float(item[1]))
+                    except:
+                        ion_ratio_values.append(np.nan)
+
+            which_to_divide = [&#34;/&#34; in log for log in ion_ratio_logs]
+
+            # Extract hydrogen exponents and ions
+            hydrogen_exponents = []
+            ions = []
+            for log in ion_ratio_logs:
+                cleaned = log.replace(&#34;Log ( a(&#34;, &#34;&#34;).replace(&#34; )&#34;, &#34;&#34;)
+                parts = re.split(r&#39;\)xx &#39;, cleaned)
+                if len(parts) &gt; 1:
+                    hydrogen_exponents.append(float(parts[1]))
+                else:
+                    hydrogen_exponents.append(np.nan)
+
+                ion_parts = re.split(r&#39;\) [x|/] a\(&#39;, cleaned)
+                if len(ion_parts) &gt; 0:
+                    ions.append(ion_parts[0])
+                else:
+                    ions.append(&#34;&#34;)
+
+            df_data = []
+            for i in range(len(ion_ratio_values)):
+                df_data.append({
+                    &#39;values&#39;: ion_ratio_values[i],
+                    &#39;H_exponent&#39;: hydrogen_exponents[i],
+                    &#39;divide&#39;: which_to_divide[i],
+                    &#39;ion&#39;: ions[i]
+                })
+
+            df = pd.DataFrame(df_data)
+            sample_3o[&#34;ion_activity_ratios&#34;] = df
+
+    ### Begin fugacity mining
+    if get_fugacity:
+        fugacity_block = isolate_block(extractme, r&#34;^.*--- Fugacities ---\n\n&#34;, r&#34;\n\n\n.*$&#34;)
+        lines = fugacity_block.split(&#34;\n&#34;)
+        lines = [re.sub(r&#39;\s+&#39;, &#39; &#39;, line.strip()) for line in lines]
+        lines = lines[2:]  # Skip header lines
+
+        df_data = []
+        for line in lines:
+            parts = line.split()
+            if len(parts) &gt;= 2:
+                df_data.append({
+                    &#39;gas&#39;: parts[0],
+                    &#39;log_fugacity&#39;: float(parts[1])
+                })
+
+        if len(df_data) &gt; 0:
+            df = pd.DataFrame(df_data)
+            df = df.set_index(&#39;gas&#39;)
+        else:
+            # Create empty DataFrame with correct structure
+            df = pd.DataFrame(columns=[&#39;log_fugacity&#39;])
+            df.index.name = &#39;gas&#39;
+
+        sample_3o[&#34;fugacity&#34;] = df
+
+    ### Begin sensible composition mining (&#34;basis totals&#34;)
+    if get_basis_totals:
+        sc_block = isolate_block(extractme, r&#34;^.*--- Sensible Composition of the Aqueous Solution ---\n\n&#34;, r&#34;\n\n   The above data have.*$&#34;)
+        lines = sc_block.split(&#34;\n&#34;)
+        lines = [re.sub(r&#39;\s+&#39;, &#39; &#39;, line.strip()) for line in lines]
+        lines = lines[2:]  # Skip header lines
+
+        df_data = []
+        for line in lines:
+            parts = line.split()
+            if len(parts) &gt;= 5:
+                df_data.append({
+                    &#39;species&#39;: parts[0] + &#34;_total&#34;,
+                    &#39;mg/L&#39;: float(parts[1]),
+                    &#39;mg/kg.sol&#39;: float(parts[2]),
+                    &#39;molarity&#39;: float(parts[3]),
+                    &#39;molality&#39;: float(parts[4])
+                })
+
+        if len(df_data) &gt; 0:
+            df = pd.DataFrame(df_data)
+            df = df.set_index(&#39;species&#39;)
+        else:
+            # Create empty DataFrame with correct structure
+            df = pd.DataFrame(columns=[&#39;mg/L&#39;, &#39;mg/kg.sol&#39;, &#39;molarity&#39;, &#39;molality&#39;])
+            df.index.name = &#39;species&#39;
+
+        sample_3o[&#34;basis_totals&#34;] = df
+
+    os.chdir(&#34;../&#34;)
+
+    return sample_3o</code></pre>
+</details>
+<div class="desc"><p>Mine data from a .3o EQ3 output file.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>this_file</code></strong> :&ensp;<code>str</code></dt>
+<dd>Filename of .3o file</dd>
+<dt><strong><code>this_pressure</code></strong> :&ensp;<code>float</code></dt>
+<dd>Pressure value</dd>
+<dt><strong><code>get_aq_dist</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract aqueous distribution data</dd>
+<dt><strong><code>get_mass_contribution</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract mass contribution data</dd>
+<dt><strong><code>get_mineral_sat</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract mineral saturation data</dd>
+<dt><strong><code>get_redox</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract redox data</dd>
+<dt><strong><code>get_charge_balance</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract charge balance data</dd>
+<dt><strong><code>get_ion_activity_ratios</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract ion activity ratios</dd>
+<dt><strong><code>get_fugacity</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract fugacity data</dd>
+<dt><strong><code>get_basis_totals</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract basis totals</dd>
+<dt><strong><code>get_solid_solutions</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Extract solid solution data</dd>
+<dt><strong><code>mass_contribution_other</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Include "Other" category in mass contribution</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Verbosity level</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Dictionary containing mined data</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.output_3o_mine.trimspace"><code class="name flex">
+<span>def <span class="ident">trimspace</span></span>(<span>string)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trimspace(string):
+    &#34;&#34;&#34;Trims away leading and trailing spaces and condenses multiple spaces between words.&#34;&#34;&#34;
+    return re.sub(r&#39;(?&lt;=\s)\s+|^\s+|\s+$&#39;, &#39;&#39;, string)</code></pre>
+</details>
+<div class="desc"><p>Trims away leading and trailing spaces and condenses multiple spaces between words.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aqequil" href="index.html">aqequil</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aqequil.output_3o_mine.compile_report" href="#aqequil.output_3o_mine.compile_report">compile_report</a></code></li>
+<li><code><a title="aqequil.output_3o_mine.create_report_df" href="#aqequil.output_3o_mine.create_report_df">create_report_df</a></code></li>
+<li><code><a title="aqequil.output_3o_mine.isolate_block" href="#aqequil.output_3o_mine.isolate_block">isolate_block</a></code></li>
+<li><code><a title="aqequil.output_3o_mine.main_3o_mine" href="#aqequil.output_3o_mine.main_3o_mine">main_3o_mine</a></code></li>
+<li><code><a title="aqequil.output_3o_mine.melt_mass_contribution" href="#aqequil.output_3o_mine.melt_mass_contribution">melt_mass_contribution</a></code></li>
+<li><code><a title="aqequil.output_3o_mine.mine_3o" href="#aqequil.output_3o_mine.mine_3o">mine_3o</a></code></li>
+<li><code><a title="aqequil.output_3o_mine.trimspace" href="#aqequil.output_3o_mine.trimspace">trimspace</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

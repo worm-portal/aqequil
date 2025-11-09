@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>aqequil.create_data0 API documentation</title>
+<meta name="description" content="Python implementation of create_data0.r
+Converts thermodynamic data into EQ3/6 data0 format">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aqequil.create_data0</code></h1>
+</header>
+<section id="section-intro">
+<p>Python implementation of create_data0.r
+Converts thermodynamic data into EQ3/6 data0 format</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aqequil.create_data0.create_data0"><code class="name flex">
+<span>def <span class="ident">create_data0</span></span>(<span>thermo_df,<br>element_df=None,<br>solid_solution_df=None,<br>db='',<br>water_model='SUPCRT92',<br>template='',<br>dissrxns=None,<br>basis_pref=None,<br>exceed_Ttr=False,<br>fixed_species=None,<br>redox_elem_states=None,<br>verbose=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_data0(thermo_df,
+                 element_df=None,
+                 solid_solution_df=None,
+                 db=&#34;&#34;,
+                 water_model=&#34;SUPCRT92&#34;,
+                 template=&#34;&#34;,
+                 dissrxns=None,
+                 basis_pref=None,
+                 exceed_Ttr=False,
+                 fixed_species=None,
+                 redox_elem_states=None,
+                 verbose=1):
+    &#34;&#34;&#34;
+    Main function to create a data0 file from thermodynamic data.
+
+    Parameters
+    ----------
+    thermo_df : DataFrame
+        Thermodynamic database
+    element_df : DataFrame, optional
+        Element database (not currently used, kept for compatibility)
+    solid_solution_df : DataFrame, optional
+        Solid solution database
+    db : str
+        Three-letter database code
+    water_model : str
+        Water model to use (SUPCRT92, IAPWS95, or DEW)
+    template : str
+        data0.min template content
+    dissrxns : dict
+        Dissociation reactions dictionary with &#39;basis_list&#39; key
+    basis_pref : list, optional
+        Basis preference list (not currently used)
+    exceed_Ttr : bool
+        Whether to exceed transition temperatures
+    fixed_species : list
+        List of fixed species (H2O, H+, O2(g), water, Cl-, e-)
+    verbose : int
+        Verbosity level (0, 1, or 2)
+
+    Returns
+    -------
+    str
+        Formatted data0 file content
+    &#34;&#34;&#34;
+
+    if fixed_species is None:
+        fixed_species = [&#34;H2O&#34;, &#34;H+&#34;, &#34;O2(g)&#34;, &#34;water&#34;, &#34;e-&#34;]
+
+    if dissrxns is None:
+        dissrxns = {&#34;basis_list&#34;: {}}
+
+    # Set water model
+    water(water_model, messages=False)
+
+    # Initialize data structures
+    azero_vec = {}
+    neutral_ion_type_vec = {}
+    dissociation_list = {}
+    tag_vec = {}
+
+    # Process each row in thermodynamic dataframe
+    for i in range(len(thermo_df)):
+        row = thermo_df.iloc[i]
+        species_name = row[&#34;name&#34;]
+
+        # Look up azero bdot param
+        azero_vec[species_name] = row[&#34;azero&#34;]
+
+        # Look up neutral ion type
+        neutral_ion_type_vec[species_name] = row[&#34;neutral_ion_type&#34;]
+
+        # Look up dissociation reaction
+        if pd.notna(row[&#34;dissrxn&#34;]) and row[&#34;dissrxn&#34;] != &#34;&#34; and species_name not in dissrxns:
+            dissrxn = row[&#34;dissrxn&#34;]
+        elif species_name in dissrxns:
+            # Use auto-balanced dissociation reaction
+            dissrxn = dissrxns[species_name]
+        elif row[&#34;tag&#34;] == &#34;basis&#34;:
+            # Basis species don&#39;t need dissociation reactions
+            dissrxn = None
+        else:
+            vmessage(f&#34;Error: dissociation reaction could not be generated for:&#34;, 1, verbose)
+            vmessage(species_name, 1, verbose)
+            dissrxn = None
+
+        # Parse dissociation reaction if not a basis species
+        if row[&#34;tag&#34;] != &#34;basis&#34; and dissrxn is not None:
+            dissrxn_parts = dissrxn.split()
+            dissrxn_names = dissrxn_parts[1::2]  # Get names (odd indices)
+            dissrxn_coefs = [float(c) for c in dissrxn_parts[0::2]]  # Get coeffs (even indices)
+            dissociation_list[species_name] = dict(zip(dissrxn_names, dissrxn_coefs))
+
+        # Look up tag
+        tag_vec[species_name] = row[&#34;tag&#34;]
+
+        # When redox is suppressed, auxiliary basis species representing pseudoelements
+        # should be promoted to strict basis species
+        if redox_elem_states and row[&#34;tag&#34;] == &#34;aux&#34;:
+            # Check if this auxiliary species represents a redox-suppressed oxidation state
+            # redox_elem_states format: {&#39;Fe&#39;: {&#39;Fe+2&#39;: &#39;Fejiip&#39;, &#39;Fe+3&#39;: &#39;Fejiiip&#39;}}
+            for element, ox_states_dict in redox_elem_states.items():
+                # Check if species_name matches any of the oxidation state keys (e.g., &#39;Fe+2&#39;, &#39;Fe+3&#39;)
+                if species_name in ox_states_dict.keys():
+                    # This aux species represents a pseudoelement, promote to basis
+                    tag_vec[species_name] = &#34;basis&#34;
+                    vmessage(f&#34;Promoting &#39;{species_name}&#39; from auxiliary to strict basis for redox suppression&#34;, 1, verbose)
+                    # Remove dissociation reaction since this is now a strict basis species
+                    if species_name in dissociation_list:
+                        del dissociation_list[species_name]
+                        vmessage(f&#34;Removed dissociation reaction for promoted species &#39;{species_name}&#39;&#34;, 1, verbose)
+                    break
+
+    # Initialize vector of name differences between CHNOSZ and data0
+    CHNOSZ_data0_name_diff = {}
+
+    add_obigt_df = thermo_df.copy()
+
+    # Remove raw line indicators &#39;\r&#39; in data0.min template
+    data0_template = template.replace(&#34;\r&#34;, &#34;&#34;)
+
+    # Initialize list to store names of skipped species
+    skipped_species = []
+
+    # Loop through species in thermo_df
+    for idx in range(len(thermo_df)):
+        entry = thermo_df.iloc[idx]
+        name = entry[&#34;name&#34;]
+
+        # Skip certain default basis species
+        if name in [&#34;O2(g)&#34;, &#34;H2O&#34;, &#34;H+&#34;]:
+            vmessage(f&#34;{name} is included as a basis species by default. Moving to the next species...&#34;, 2, verbose)
+            continue
+
+        # Skip species that have been promoted to strict basis (for redox suppression)
+        if name in tag_vec and tag_vec[name] == &#34;basis&#34;:
+            vmessage(f&#34;&#39;{name}&#39; was promoted to strict basis species. Skipping auxiliary/non-basis processing...&#34;, 2, verbose)
+            continue
+
+        # Skip polymorphs
+        if entry[&#34;state&#34;] in [f&#34;cr{i}&#34; for i in range(2, 21)]:
+            continue
+
+        date = str(entry[&#34;date&#34;])
+        date = date[:9]  # Truncate date if greater than 9 characters
+
+        elem = makeup(thermo_df.iloc[idx][&#34;formula_modded&#34;])  # Get elemental composition
+
+        aux_basis = False
+
+        # Check if this is a basis species
+        # basis_list can be either a dict (from Python) or an R object
+        if hasattr(dissrxns, &#39;rx2&#39;):  # R object
+            try:
+                basis_list = dissrxns.rx2(&#34;basis_list&#34;)
+                if hasattr(basis_list, &#39;names&#39;):  # R StrVector with names
+                    basis_list_names = [str(basis_list.rx2(k)[0]) for k in basis_list.names]
+                else:
+                    basis_list_names = []
+            except:
+                basis_list_names = []
+        elif &#34;basis_list&#34; in dissrxns:  # Python dict
+            basis_list = dissrxns[&#34;basis_list&#34;]
+            if hasattr(basis_list, &#39;items&#39;):  # It&#39;s a dict-like object
+                basis_list_names = [v[0] if isinstance(v, (list, tuple)) else v for v in basis_list.values()]
+            elif hasattr(basis_list, &#39;__iter__&#39;):  # It&#39;s an iterable
+                basis_list_names = [v[0] if isinstance(v, (list, tuple)) else v for v in basis_list]
+            else:
+                basis_list_names = []
+        else:
+            basis_list_names = []
+
+        if name in basis_list_names:
+            vmessage(f&#34;&#39;{name}&#39; (basis species) processed successfully.&#34;, 2, verbose)
+            continue
+        elif entry[&#34;tag&#34;] == &#34;basis&#34;:
+            vmessage(f&#34;&#39;{name}&#39; (basis species) processed successfully.&#34;, 2, verbose)
+            continue
+        elif entry[&#34;tag&#34;] == &#34;aux&#34;:
+            # Auxiliary basis species
+            aux_basis = True
+
+        # Format charge for this species&#39; data0 entry
+        if &#34;Z&#34; in elem:
+            charge = elem[&#34;Z&#34;]
+            elem = {k: v for k, v in elem.items() if k != &#34;Z&#34;}
+            formatted_charge = f&#34;{charge:.1f}&#34;
+        else:
+            formatted_charge = &#34;0.0&#34;
+
+        # Format the element block of this species&#39; data0 entry
+        # Layout: 3 elements per line, each line starts with 7 spaces
+        elem_list = []
+        elem_names = list(elem.keys())
+
+        for i, elem_name in enumerate(elem_names):
+            elem_val = s_d(elem[elem_name], 4)
+
+            # Conditional formatting based on position (3 elements per line)
+            if i % 3 == 0:  # First entry of a line (indices 0, 3, 6, 9, ...)
+                max_length = 8
+                end_char = &#34;&#34;
+                if len(elem_name) != 2:
+                    elem_name = elem_name + &#34; &#34;
+            elif (i + 1) % 3 == 0 and i != len(elem_names) - 1:  # Last entry of a line (not final element)
+                max_length = 15
+                end_char = &#34;\n&#34;
+            else:  # Middle entry of a line
+                max_length = 15
+                end_char = &#34;&#34;
+                if len(elem_name) != 2:
+                    elem_name = elem_name + &#34; &#34;
+
+            # Paste together value and element name
+            pasted_entry = f&#34;{elem_val} {elem_name}&#34;
+
+            # Get decimal position and format spaces accordingly
+            decimal_position = pasted_entry.index(&#34;.&#34;)
+            pasted_entry = &#34; &#34; * (max_length - decimal_position) + pasted_entry + end_char
+
+            # Add entry to element list
+            elem_list.append(pasted_entry)
+
+        n_elements = str(len(elem_list))
+        element_list = &#34;&#34;.join(elem_list)
+
+        # Format the dissociation reaction block of this species&#39; data0 entry
+        if name in dissociation_list:
+            species_name_list = list(dissociation_list[name].keys())
+            species_val_list = list(dissociation_list[name].values())
+        else:
+            species_name_list = []
+            species_val_list = []
+
+        n_species = len(species_name_list)
+        nchar = 25  # spaces taken by entries in dissociation reaction (25 char)
+
+        # Convert species names to their data0 counterparts
+        for j, species in enumerate(species_name_list):
+            if species in CHNOSZ_data0_name_diff:
+                species_name_list[j] = CHNOSZ_data0_name_diff[species]
+
+        logK_list = f&#34;logK_grid_{name}&#34;
+
+        # Loop through species in dissociation reaction and format for data0
+        spec_list = []
+
+        for i in range(n_species):
+            # Get species value and name
+            species_val = f&#34;{species_val_list[i]:.4f}&#34;
+            species_name = species_name_list[i]
+
+            # Conditional formatting based on position
+            # Always put 2 species per line (matching R behavior)
+            # i=0, 2, 4, ... are first entries of lines
+            # i=1, 3, 5, ... are second entries of lines (add newline after)
+            if i % 2 == 0:  # First entry of a line (i=0, 2, 4, ...)
+                max_length = 7
+                end_char = &#34;&#34;
+                species_name = fillspace(species_name, nchar)
+            elif i % 2 == 1 and i != n_species - 1:  # Second entry of a line, not last (i=1, 3, 5, ...)
+                max_length = 8
+                end_char = &#34;\n&#34;
+            else:  # Last entry (odd index, last species)
+                max_length = 8
+                end_char = &#34;&#34;
+                species_name = fillspace(species_name, nchar)
+
+            # Paste together coeff and element name
+            pasted_entry = f&#34;{species_val}  {species_name}&#34;
+
+            # Get decimal position and format spaces accordingly
+            decimal_position = pasted_entry.index(&#34;.&#34;)
+            pasted_entry = &#34; &#34; * (max_length - decimal_position) + pasted_entry + end_char
+
+            # Add entry to element list
+            spec_list.append(pasted_entry)
+
+        # Instantiate template and begin formatting aq, cr, gas, liq entries
+        species_list = &#34;&#34;.join(spec_list)
+        n_species = str(n_species)
+
+        template_fmt = (&#34;+--------------------------------------------------------------------\n%s\n&#34;
+                       &#34;    date last revised = %s\n%s\n     charge  =   %s\n%s\n&#34;
+                       &#34;     %s element(s):\n%s\n     %s species in aqueous dissociation reaction:      \n%s\n&#34;
+                       &#34;**** logK grid [T, P @ Miscellaneous parameters]=%s\n%s&#34;)
+
+        if entry[&#34;state&#34;] == &#34;aq&#34;:
+            formatted_name = name
+            volume = &#34;*&#34;
+            if aux_basis:
+                keys = &#34; keys   = aux              active&#34;
+                insertline_regex = r&#34;\+-+\naqueous species&#34;
+                insertline = &#34;+--------------------------------------------------------------------\naqueous species&#34;
+            else:
+                keys = &#34; keys   = aqueous          active&#34;
+                insertline_regex = r&#34;\+-+\nsolids&#34;
+                insertline = &#34;+--------------------------------------------------------------------\nsolids&#34;
+        elif entry[&#34;state&#34;] == &#34;cr&#34;:
+            formatted_name = fillspace(name, 24) + entry[&#34;formula&#34;]
+            tag = tag_vec[entry[&#34;name&#34;]]
+            formatted_tag = fillspace(tag, 17)
+            keys = f&#34; keys   = solid            {formatted_tag}active&#34;
+            formatted_V0PrTr = fillspace(str(entry[&#34;V&#34;]), 9, spaces_after=False)
+            volume = f&#34;     V0PrTr = {formatted_V0PrTr} cm**3/mol&#34;
+            insertline_regex = r&#34;\+-+\nliquids&#34;
+            insertline = &#34;+--------------------------------------------------------------------\nliquids&#34;
+        elif entry[&#34;state&#34;] == &#34;gas&#34;:
+            formatted_name = name
+            tag = tag_vec[entry[&#34;name&#34;]]
+            formatted_tag = fillspace(tag, 17)
+            keys = f&#34; keys   = gas              {formatted_tag}active&#34;
+            volume = &#34;     V0PrTr = 24465.000 cm**3/mol  (source = ideal gas law)&#34;
+            insertline_regex = r&#34;\+-+\nsolid solutions&#34;
+            insertline = &#34;+--------------------------------------------------------------------\nsolid solutions&#34;
+        elif entry[&#34;state&#34;] == &#34;liq&#34;:
+            formatted_name = fillspace(name, 24) + entry[&#34;formula&#34;]
+            tag = tag_vec[entry[&#34;name&#34;]]
+            formatted_tag = fillspace(tag, 17)
+            keys = f&#34; keys   = liquid           {formatted_tag}active&#34;
+            formatted_V0PrTr = fillspace(str(entry[&#34;V&#34;]), 9, spaces_after=False)
+            volume = f&#34;     V0PrTr = {formatted_V0PrTr} cm**3/mol&#34;
+            insertline_regex = r&#34;\+-+\ngases&#34;
+            insertline = &#34;+--------------------------------------------------------------------\ngases&#34;
+        else:
+            raise ValueError(f&#34;Error: in {entry[&#39;name&#39;]} ... {entry[&#39;state&#39;]} &#34;
+                           &#34;is not a recognized state. Must be aq, gas, cr, liq, or ss.&#34;)
+
+        # Append to aq, solid, gas, or liq portion of data0.min template
+        output = template_fmt % (formatted_name, date, keys, formatted_charge, volume,
+                                n_elements, element_list, n_species, species_list,
+                                name, logK_list)
+
+        if name == &#34;O2&#34;:
+            # Temporary placeholder values that are overwritten with calculated values later
+            # Need DOTALL flag so . matches newlines
+            O2_entry = r&#34;\+-+\nO2\n.*?=O2\n         2.6560    3.0310    3.1080    3.0350\n         2.8740    2.6490    2.3540    1.8830&#34;
+            data0_template = re.sub(O2_entry, output, data0_template, flags=re.DOTALL)
+        elif name == &#34;H2O(g)&#34;:
+            # Temporary placeholder values that are overwritten with calculated values later
+            # Need DOTALL flag so . matches newlines
+            steam_entry = r&#34;\+-+\nH2O\(g\)\n.*?=H2O\(g\)\n         2.2990    0.9950   -0.0060   -0.6630\n        -1.1560   -1.5340   -1.8290   -2.0630&#34;
+            data0_template = re.sub(steam_entry, output, data0_template, flags=re.DOTALL)
+        else:
+            data0_template = re.sub(insertline_regex, output + &#34;\n&#34; + insertline, data0_template)
+
+        vmessage(f&#34;&#39;{name}&#39; processed successfully.&#34;, 2, verbose)
+
+    # Handle basis species
+    basis_entry_template = (&#34;+--------------------------------------------------------------------\n%s\n&#34;
+                           &#34;    date last revised =  %s\n keys   = basis            active\n&#34;
+                           &#34;     charge  =   %s\n     %s element(s):\n%s&#34;)
+
+    # Extract basis list
+    if hasattr(dissrxns, &#39;rx2&#39;):  # R object
+        try:
+            basis_list = dissrxns.rx2(&#34;basis_list&#34;)
+            if hasattr(basis_list, &#39;names&#39;):  # R StrVector with names
+                basis_items = [str(basis_list.rx2(k)[0]) for k in basis_list.names]
+            else:
+                basis_items = []
+        except:
+            basis_items = []
+    elif &#34;basis_list&#34; in dissrxns:  # Python dict
+        basis_list = dissrxns[&#34;basis_list&#34;]
+        if hasattr(basis_list, &#39;items&#39;):  # Dict-like
+            basis_items = list(basis_list.values())
+        elif hasattr(basis_list, &#39;__iter__&#39;):  # Iterable
+            basis_items = list(basis_list)
+        else:
+            basis_items = []
+    else:
+        basis_items = []
+
+    # Add promoted auxiliary basis species (for redox suppression)
+    if redox_elem_states:
+        for species_name, tag in tag_vec.items():
+            if tag == &#34;basis&#34; and species_name not in basis_items:
+                # Check if this was promoted from aux
+                species_row = thermo_df[thermo_df[&#39;name&#39;] == species_name]
+                if len(species_row) &gt; 0 and species_row.iloc[0][&#39;tag&#39;] == &#39;aux&#39;:
+                    basis_items.append(species_name)
+                    vmessage(f&#34;Adding promoted species &#39;{species_name}&#39; to basis section&#34;, 1, verbose)
+
+    for basis_item in basis_items:
+        # Handle both single values and tuples/lists
+        if isinstance(basis_item, (list, tuple)):
+            basis = basis_item[0]
+        else:
+            basis = basis_item
+
+        # Skip hard-coded EQ3 basis species
+        if basis in fixed_species:
+            continue
+
+        # Get the date on the basis species entry
+        try:
+            date_basis = info(info(basis, messages=False), messages=False)[&#34;date&#34;]
+            # Handle pandas Series or scalar
+            if hasattr(date_basis, &#39;iloc&#39;):
+                date_basis = str(date_basis.iloc[0])
+            else:
+                date_basis = str(date_basis)
+        except:
+            date_basis = &#34;01-jan-1970&#34;
+
+        # Get the basis species formula
+        basis_formula_matches = add_obigt_df[add_obigt_df[&#34;name&#34;] == basis][&#34;formula_modded&#34;]
+        if len(basis_formula_matches) &gt; 0:
+            basis_formula = basis_formula_matches.iloc[0]
+        else:
+            continue
+
+        # Get the elemental makeup of the basis species
+        elem_list_basis = makeup(basis_formula)
+
+        # Extract charge from elemental composition
+        if &#34;Z&#34; in elem_list_basis:
+            charge_basis = elem_list_basis[&#34;Z&#34;]
+            elem_list_basis = {k: v for k, v in elem_list_basis.items() if k != &#34;Z&#34;}
+            formatted_charge_basis = f&#34;{charge_basis:.1f}&#34;
+        else:
+            formatted_charge_basis = &#34;0.0&#34;
+
+        # Begin formatting for data0 entry
+        n_elem_basis = len(elem_list_basis)
+        elem_list_basis_names = list(elem_list_basis.keys())
+        elem_list_basis_coefs = [f&#34;{elem_list_basis[k]:.4f}&#34; for k in elem_list_basis_names]
+        elem_list_basis_formatted = &#34;&#34;
+
+        for i in range(len(elem_list_basis_names)):
+            if i == 0:
+                sp = &#34;      &#34;
+            else:
+                sp = &#34;              &#34;
+            elem_list_basis_formatted += f&#34;{sp}{elem_list_basis_coefs[i]} {elem_list_basis_names[i]}&#34;
+
+        basis_entry = basis_entry_template % (basis, date_basis, formatted_charge_basis,
+                                              n_elem_basis, elem_list_basis_formatted)
+
+        # Add basis entry to data0.min template
+        # Use count=1 to only replace the first occurrence (like R&#39;s sub() function)
+        basis_insertline_regex = r&#34;\+--------------------------------------------------------------------\nO2\(g\)&#34;
+        basis_insertline = &#34;+--------------------------------------------------------------------\nO2(g)&#34;
+
+        data0_template = re.sub(basis_insertline_regex, basis_entry + &#34;\n&#34; + basis_insertline,
+                               data0_template, count=1)
+
+    # Handle elements
+    # CRITICAL: Elements must be ordered to match basis species order for EQPT
+    # The n-th basis species must contain the n-th element
+
+    # Build ordered element list from basis species
+    ordered_elements = []
+
+    # Hardcoded basis species in template: H2O, H+, plhold, O2(g)
+    # H2O contains O and H
+    ordered_elements.append(&#39;O&#39;)
+    ordered_elements.append(&#39;H&#39;)
+    # plhold contains pl
+    ordered_elements.append(&#39;pl&#39;)
+
+    # Now add elements from basis_items (the basis species we&#39;re adding)
+    for basis_item in basis_items:
+        # Handle both single values and tuples/lists
+        if isinstance(basis_item, (list, tuple)):
+            basis = basis_item[0]
+        else:
+            basis = basis_item
+
+        # Skip if already in fixed_species (will be handled by template)
+        if basis in fixed_species:
+            continue
+
+        # Get the formula for this basis species
+        basis_formula_matches = add_obigt_df[add_obigt_df[&#34;name&#34;] == basis][&#34;formula_modded&#34;]
+        if len(basis_formula_matches) == 0:
+            vmessage(f&#34;Warning: Could not find formula for basis species {basis}&#34;, 1, verbose)
+            continue
+
+        basis_formula = basis_formula_matches.iloc[0]
+
+        try:
+            # Get elemental composition
+            elem_makeup = makeup(basis_formula)
+
+            # Find the non-H-O element (this is the element this basis species represents)
+            elem_for_basis = None
+            for elem in elem_makeup.keys():
+                if elem not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]:
+                    elem_for_basis = elem
+                    break
+
+            if elem_for_basis and elem_for_basis not in ordered_elements:
+                ordered_elements.append(elem_for_basis)
+        except Exception as e:
+            vmessage(f&#34;Warning: Could not parse formula for {basis}: {e}&#34;, 1, verbose)
+
+    # O2(g) is last in template - it uses O which is already in the list
+    # So we don&#39;t need to add anything for O2(g)
+
+    # Now format the element block
+    elem_temp_lines = []
+    for elem in ordered_elements:
+        try:
+            weight = f&#34;{mass(elem):.5f}&#34;.strip()
+        except:
+            # Special handling for placeholder element and pseudoelements
+            if elem == &#39;pl&#39;:
+                weight = &#34;1.00000&#34;
+            elif elem.endswith(&#39;p&#39;) or elem.endswith(&#39;n&#39;) or elem.endswith(&#39;z&#39;):
+                # Pseudoelement - extract the base element name
+                # e.g., Fejiip -&gt; Fe, Fejiiip -&gt; Fe
+                base_elem_match = re.match(r&#39;([A-Z][a-z]?)j&#39;, elem)
+                if base_elem_match:
+                    base_elem = base_elem_match.group(1)
+                    try:
+                        weight = f&#34;{mass(base_elem):.5f}&#34;.strip()
+                    except:
+                        weight = &#34;1.00000&#34;
+                else:
+                    weight = &#34;1.00000&#34;
+            else:
+                weight = &#34;1.00000&#34;
+
+        # Format: element name, spaces, atomic weight (total 18 chars)
+        elem_temp_lines.append(elem + &#34; &#34; * (18 - (len(elem) + len(weight))) + weight)
+
+    # Join the elements back together
+    elem_block = &#34;\n&#34;.join(elem_temp_lines)
+
+    # Insert the full element block into the data0 template
+    data0_template = re.sub(r&#34;elements\n\+-+\n.*\n\+-+\nbasis species&#34;,
+                           &#34;elements\n+--------------------------------------------------------------------\n&#34; + elem_block +
+                           &#34;\n+--------------------------------------------------------------------\nbasis species&#34;,
+                           data0_template, flags=re.DOTALL)
+
+    vmessage(&#34;Handling solid solutions...&#34;, 2, verbose)
+
+    # Handle solid solutions
+    if solid_solution_df is not None and len(solid_solution_df) &gt; 0:
+        for i in range(len(solid_solution_df)):
+            entry = solid_solution_df.iloc[i]
+            name = entry[&#34;name&#34;]
+
+            vmessage(f&#34;Processing {name}&#34;, 2, verbose)
+
+            date = entry[&#34;date&#34;]
+            species_name_list = entry[&#34;components&#34;].split()
+            nextflag = False
+
+            # Check if all components are in the database
+            for species in species_name_list:
+                if species not in add_obigt_df[&#34;name&#34;].values:
+                    vmessage(f&#34;Error encountered when processing the solid solution &#39;{name}&#39;: &#34;
+                           f&#34;&#39;{species}&#39; was not found in the data file as a pure mineral. Skipping it...&#34;,
+                           1, verbose)
+                    nextflag = True
+                    break
+                elif species in skipped_species:
+                    vmessage(f&#34;Error encountered when processing the solid solution &#39;{name}&#39;: &#34;
+                           f&#34;the dissociation reaction for &#39;{species}&#39; contained one or more NAs &#34;
+                           &#34;in its logK grid. Skipping it...&#34;, 1, verbose)
+                    nextflag = True
+                    break
+
+            if nextflag:
+                continue
+
+            n_species = len(species_name_list)
+            species_val_list = [1] * n_species
+            nchar = 23  # spaces taken by entries in ss endmember list
+
+            # Loop through species and format for data0
+            spec_list = []
+            for j in range(n_species):
+                # Get species value and name
+                species_val = f&#34;{species_val_list[j]:.4f}&#34;
+                species_name = species_name_list[j]
+
+                # Conditional formatting based on position (0-indexed, so even=line start, odd=line end)
+                if j % 2 == 0:  # Even index: first entry of a line (left column)
+                    max_length = 7
+                    end_char = &#34;&#34;
+                    species_name = fillspace(species_name, nchar)
+                elif j % 2 == 1 and j != n_species - 1:  # Odd index: second entry of a line (right column), not last
+                    max_length = 8
+                    end_char = &#34;\n&#34;
+                else:  # Odd index but last entry
+                    max_length = 8
+                    end_char = &#34;&#34;
+                    species_name = fillspace(species_name, nchar)
+
+                # Paste together value and element name
+                pasted_entry = f&#34;{species_val}  {species_name}&#34;
+
+                # Get decimal position and format spaces accordingly
+                # Note: index() returns 0-based position, but R&#39;s gregexpr returns 1-based
+                # To match R behavior, add 1 to convert to 1-based indexing
+                decimal_position = pasted_entry.index(&#34;.&#34;) + 1
+                pasted_entry = &#34; &#34; * (max_length - decimal_position) + pasted_entry + end_char
+
+                # Add entry to element list
+                spec_list.append(pasted_entry)
+
+            species_list = &#34;&#34;.join(spec_list)
+            n_species = str(n_species)
+
+            ss_template = (&#34;+--------------------------------------------------------------------\n%s\n&#34;
+                          &#34;    date last revised = %s\n%s\n  %s components\n%s\n type   = %s\n%s\n%s&#34;)
+
+            model_param_list = [entry[f&#34;mp{i}&#34;] for i in range(1, 7)]
+            site_param_list = [entry[f&#34;sp{i}&#34;] for i in range(1, 7)]
+
+            model_param_list = &#34; &#34;.join([s_d(p, 3) for p in model_param_list])
+            site_param_list = &#34; &#34;.join([s_d(p, 3) for p in site_param_list])
+
+            if float(entry[&#34;n_model_params&#34;]) &gt; 0:
+                model_param_template = f&#34;  {entry[&#39;n_model_params&#39;]} model parameters\n{model_param_list}&#34;
+            else:
+                model_param_template = &#34;  0 model parameters&#34;
+
+            if float(entry[&#34;n_site_params&#34;]) &gt; 0:
+                site_param_template = f&#34;  {entry[&#39;n_site_params&#39;]} site parameters\n{site_param_list}&#34;
+            else:
+                site_param_template = &#34;  0 site parameters&#34;
+
+            # Format solid solution entry
+            formatted_name = fillspace(name, 24) + entry[&#34;formula&#34;]
+            tag = entry[&#34;tag&#34;]
+            formatted_tag = fillspace(tag, 17)
+            keys = f&#34; keys   = ss               {formatted_tag}active&#34;
+
+            insertline_regex = r&#34;\+-+\nreferences&#34;
+            insertline = &#34;+--------------------------------------------------------------------\nreferences&#34;
+
+            # Create output for solid solution entries
+            output = ss_template % (formatted_name, date, keys, n_species, species_list,
+                                   entry[&#34;type&#34;], model_param_template, site_param_template)
+
+            data0_template = re.sub(insertline_regex, output + &#34;\n&#34; + insertline, data0_template)
+    else:
+        vmessage(&#34;No solid solutions supplied. Moving on...&#34;, 2, verbose)
+
+    def add_bdot_line(spec_name, spec_azero, neutral_ion_type):
+        &#34;&#34;&#34;Add a bdot parameter line to the data0 template&#34;&#34;&#34;
+        nonlocal data0_template
+
+        # Handle NaN values in neutral_ion_type
+        if pd.isna(neutral_ion_type):
+            neutral_ion_type_str = &#34;&#34;
+        else:
+            neutral_ion_type_str = str(int(neutral_ion_type))
+
+        # Format: species_name + variable spaces + azero (total width 38) + 4 spaces + neutral_ion_type (right-aligned in 2 chars)
+        # This accommodates azero values from 1-99 (e.g., &#34;9.0000&#34; is 6 chars, &#34;11.0000&#34; is 7 chars)
+        # Calculate spacing: len(name) + spaces + len(azero) = 38
+        spaces_needed = 38 - len(spec_name) - len(spec_azero)
+        name_and_azero = spec_name + &#34; &#34; * spaces_needed + spec_azero
+        neutral_ion_type_part = neutral_ion_type_str.rjust(2)
+
+        bdot_entry = name_and_azero + &#34;    &#34; + neutral_ion_type_part
+
+        # Add bdot entry to data0.min template
+        bdot_insertline_regex = r&#34;\+--------------------------------------------------------------------\nelements&#34;
+        bdot_insertline = &#34;+--------------------------------------------------------------------\nelements&#34;
+        data0_template = re.sub(bdot_insertline_regex, bdot_entry + &#34;\n&#34; + bdot_insertline,
+                               data0_template)
+
+    # Format basis and non-basis species for bdot parameter section
+    if water_model in [&#34;SUPCRT92&#34;, &#34;IAPWS95&#34;]:
+        # azero and neutral ion type parameter defaults for fixed species
+        Cl_azero = 3
+        O2_azero = 3
+        O2g_azero = 3
+        OH_azero = 3
+        H2O_azero = 3
+        H_azero = 9
+        Cl_neutral_ion_type = 0
+        O2_neutral_ion_type = -1
+        O2g_neutral_ion_type = 0
+        H2O_neutral_ion_type = 0
+        H_neutral_ion_type = 0
+    elif water_model == &#34;DEW&#34;:
+        Cl_azero = 3.7
+        O2_azero = -0.5
+        O2g_azero = 0
+        OH_azero = 3.7
+        H2O_azero = 0
+        H_azero = 3.7
+        Cl_neutral_ion_type = 0
+        O2_neutral_ion_type = 0
+        O2g_neutral_ion_type = 0
+        H2O_neutral_ion_type = 0
+        H_neutral_ion_type = 0
+
+    # Add fixed species to bdot section
+    for sp in [&#34;Cl-&#34;, &#34;O2&#34;, &#34;O2(g)&#34;, &#34;H2O&#34;, &#34;H+&#34;]:
+        if sp == &#34;Cl-&#34;:
+            spec_name = &#34;Cl-&#34;
+            spec_azero = f&#34;{Cl_azero:.4f}&#34;
+            neutral_ion_type = Cl_neutral_ion_type
+        elif sp == &#34;O2&#34;:
+            spec_name = &#34;O2&#34;
+            spec_azero = f&#34;{O2_azero:.4f}&#34;
+            neutral_ion_type = O2_neutral_ion_type
+        elif sp == &#34;O2(g)&#34;:
+            spec_name = &#34;O2(g)&#34;
+            spec_azero = f&#34;{O2g_azero:.4f}&#34;
+            neutral_ion_type = O2g_neutral_ion_type
+        elif sp == &#34;H2O&#34;:
+            spec_name = &#34;H2O&#34;
+            spec_azero = f&#34;{H2O_azero:.4f}&#34;
+            neutral_ion_type = H2O_neutral_ion_type
+        elif sp == &#34;H+&#34;:
+            spec_name = &#34;H+&#34;
+            spec_azero = f&#34;{H_azero:.4f}&#34;
+            neutral_ion_type = H_neutral_ion_type
+
+        add_bdot_line(spec_name, spec_azero, neutral_ion_type)
+
+    # Add all aqueous species to bdot section
+    for i in range(len(add_obigt_df)):
+        row = add_obigt_df.iloc[i]
+        if row[&#34;name&#34;] in [&#34;Cl-&#34;, &#34;O2&#34;, &#34;H2O&#34;, &#34;H+&#34;]:
+            continue
+        elif row[&#34;state&#34;] == &#34;aq&#34;:
+            spec_name = row[&#34;name&#34;]
+            spec_azero_val = azero_vec[row[&#34;name&#34;]]
+
+            if pd.isna(spec_azero_val) or np.isnan(spec_azero_val):
+                if row[&#34;z.T&#34;] != 0:
+                    if water_model in [&#34;SUPCRT92&#34;, &#34;IAPWS95&#34;]:
+                        spec_azero = &#34;4.0000&#34;
+                    elif water_model == &#34;DEW&#34;:
+                        spec_azero = &#34;3.7000&#34;
+                else:
+                    if water_model in [&#34;SUPCRT92&#34;, &#34;IAPWS95&#34;]:
+                        spec_azero = &#34;0.0000&#34;
+                    elif water_model == &#34;DEW&#34;:
+                        spec_azero = &#34;-0.5000&#34;
+            else:
+                spec_azero = f&#34;{spec_azero_val:.4f}&#34;
+
+            neutral_ion_type = neutral_ion_type_vec[row[&#34;name&#34;]]
+            add_bdot_line(spec_name, spec_azero, neutral_ion_type)
+
+    return data0_template</code></pre>
+</details>
+<div class="desc"><p>Main function to create a data0 file from thermodynamic data.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>thermo_df</code></strong> :&ensp;<code>DataFrame</code></dt>
+<dd>Thermodynamic database</dd>
+<dt><strong><code>element_df</code></strong> :&ensp;<code>DataFrame</code>, optional</dt>
+<dd>Element database (not currently used, kept for compatibility)</dd>
+<dt><strong><code>solid_solution_df</code></strong> :&ensp;<code>DataFrame</code>, optional</dt>
+<dd>Solid solution database</dd>
+<dt><strong><code>db</code></strong> :&ensp;<code>str</code></dt>
+<dd>Three-letter database code</dd>
+<dt><strong><code>water_model</code></strong> :&ensp;<code>str</code></dt>
+<dd>Water model to use (SUPCRT92, IAPWS95, or DEW)</dd>
+<dt><strong><code>template</code></strong> :&ensp;<code>str</code></dt>
+<dd>data0.min template content</dd>
+<dt><strong><code>dissrxns</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dissociation reactions dictionary with 'basis_list' key</dd>
+<dt><strong><code>basis_pref</code></strong> :&ensp;<code>list</code>, optional</dt>
+<dd>Basis preference list (not currently used)</dd>
+<dt><strong><code>exceed_Ttr</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to exceed transition temperatures</dd>
+<dt><strong><code>fixed_species</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of fixed species (H2O, H+, O2(g), water, Cl-, e-)</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Verbosity level (0, 1, or 2)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Formatted data0 file content</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.create_data0.fillspace"><code class="name flex">
+<span>def <span class="ident">fillspace</span></span>(<span>string, nspaces, spaces_after=True)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fillspace(string, nspaces, spaces_after=True):
+    &#34;&#34;&#34;
+    Create a string of a certain length by adding additional spaces.
+    e.g., &#34;H2O&#34; becomes &#34;H2O    &#34; if nspaces=7.
+    Spaces can be added before the string by specifying spaces_after=False
+    &#34;&#34;&#34;
+    try:
+        if spaces_after:
+            out = string + &#34; &#34; * (nspaces - len(string))
+        else:
+            out = &#34; &#34; * (nspaces - len(string)) + string
+    except:
+        out = &#34;&#34;
+    return out</code></pre>
+</details>
+<div class="desc"><p>Create a string of a certain length by adding additional spaces.
+e.g., "H2O" becomes "H2O
+" if nspaces=7.
+Spaces can be added before the string by specifying spaces_after=False</p></div>
+</dd>
+<dt id="aqequil.create_data0.s_d"><code class="name flex">
+<span>def <span class="ident">s_d</span></span>(<span>x, k)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def s_d(x, k):
+    &#34;&#34;&#34;
+    Specify how many decimals are printed.
+    e.g. 12.433 becomes &#34;12.4330&#34; if k=4
+    &#34;&#34;&#34;
+    return f&#34;{float(x):.{k}f}&#34;.strip()</code></pre>
+</details>
+<div class="desc"><p>Specify how many decimals are printed.
+e.g. 12.433 becomes "12.4330" if k=4</p></div>
+</dd>
+<dt id="aqequil.create_data0.vmessage"><code class="name flex">
+<span>def <span class="ident">vmessage</span></span>(<span>m, vlevel, verbose)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def vmessage(m, vlevel, verbose):
+    &#34;&#34;&#34;Print messages if &#39;verbose&#39; setting &gt;= vlevel of message.&#34;&#34;&#34;
+    if verbose &gt;= vlevel:
+        print(m)</code></pre>
+</details>
+<div class="desc"><p>Print messages if 'verbose' setting &gt;= vlevel of message.</p></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aqequil" href="index.html">aqequil</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aqequil.create_data0.create_data0" href="#aqequil.create_data0.create_data0">create_data0</a></code></li>
+<li><code><a title="aqequil.create_data0.fillspace" href="#aqequil.create_data0.fillspace">fillspace</a></code></li>
+<li><code><a title="aqequil.create_data0.s_d" href="#aqequil.create_data0.s_d">s_d</a></code></li>
+<li><code><a title="aqequil.create_data0.vmessage" href="#aqequil.create_data0.vmessage">vmessage</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # AqEquil
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10476850.svg)](https://doi.org/10.5281/zenodo.10476850)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13530217.svg)](https://doi.org/10.5281/zenodo.13530217)
 
 Boyer, G., Robare, J., Park, N., Ely, T., Shock, E.L.
 
@@ -14,7 +14,7 @@ Speciated fluids can be further reacted with minerals or other fluids in mass tr
 
 ## Requirements
 
-AqEquil has only been tested with Ubuntu 22.04.3 LTS.
+AqEquil has been tested with Ubuntu 22.04.3 LTS.
 
 This installation requires the Linux version of EQ3/6 v8.0a, which can downloaded [here](https://github.com/LLNL/EQ3_6). Installation instructions are provided there.
 

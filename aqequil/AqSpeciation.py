@@ -1,5 +1,4 @@
-DEBUGGING_R = False
-FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "Cl-", "e-", "OH-", "O2", "H2O(g)"]
+FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "e-", "OH-", "O2", "H2O(g)"] # ["H2O", "water", "e-", "H+"]
 WORM_THERMODYNAMIC_DATABASE_COLUMN_TYPE_DICT = {
         'name':'str', 'abbrv':'str', 'formula':'str',
         'state':'str', 'ref1':'str', 'ref2':'str',
@@ -31,22 +30,25 @@ import time
 
 from urllib.request import urlopen
 from io import StringIO
-
 import warnings
-
-warnings.simplefilter(action='ignore', category=FutureWarning) # TEMPORARY! Disable this once FutureWarning issues have been solved.
-
 import subprocess
-import pkg_resources
 import pandas as pd
 import numpy as np
 from chemparse import parse_formula
-from IPython.core.display import display, HTML
+
+from IPython.display import display, HTML
+
 import periodictable
 from collections import Counter
 
-import pyCHNOSZ
+import pychnosz
 from ._HKF_cgl import OBIGT2eos, calc_logK
+from .check_TP_grid import check_TP_grid
+from .preprocess_for_EQ3 import preprocess, write_3i_file
+from .output_3o_mine import main_3o_mine
+from .create_data0 import create_data0 as create_data0_py
+from .fill_data0_header import fill_data0_head
+
 
 # matplotlib for static plots
 import matplotlib
@@ -58,17 +60,10 @@ import plotly.io as pio
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-# rpy2 for Python and R integration
-import rpy2.rinterface_lib.callbacks
-import logging
-rpy2.rinterface_lib.callbacks.logger.setLevel(logging.ERROR) # will display errors, but not warnings
+from wormutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook, assign_worm_db_col_dtypes, import_package_file
 
-import rpy2.robjects as ro
-from rpy2.robjects import pandas2ri
-pandas2ri.activate()
-
-from WORMutils import Error_Handler, chemlabel, format_equation, check_balance, format_coeff, get_colors, isnotebook
-
+# Import new Python modules for dissociation reaction processing
+from .process_dissrxns import process_dissrxns
 
 def load(filename, messages=True, hide_traceback=True):
     
@@ -112,7 +107,6 @@ def load(filename, messages=True, hide_traceback=True):
     
     if os.path.getsize(filename) > 0:
         with open(filename, 'rb') as handle:
-            #speciation = dill.load(handle)
             speciation = pd.compat.pickle_compat.load(handle) 
             if messages:
                 print("Loaded '{}'".format(filename))
@@ -131,78 +125,10 @@ def _get_duplicates(array):
     return [k for k in c if c[k] > 1]
 
 
-def _convert_to_RVector(value, force_Rvec=True):
-    
-    """
-    Convert a value or list into an R vector of the appropriate type.
-    
-    Parameters
-    ----------
-    value : numeric or str, or list of numeric or str
-        Value to be converted.
-    
-    force_Rvec : bool, default True
-        If `value` is not a list, force conversion into a R vector?
-        False will return an int, float, or str if value is non-list.
-        True will always return an R vector.
-    
-    Returns
-    -------
-    int, float, str, or an rpy2 R vector
-        A value or R vector of an appropriate data type.
-    """
-
-    if not isinstance(value, list) and not force_Rvec:
-        return value
-    elif not isinstance(value, list) and force_Rvec:
-        value = [value]
-    else:
-        pass
-
-    if all(isinstance(x, bool) for x in value):
-        return ro.BoolVector(value)
-    elif all(isinstance(x, int) for x in value):
-        return ro.IntVector(value)
-    elif all(isinstance(x, float) or isinstance(x, int) for x in value):
-        return ro.FloatVector(value)
-    else:
-        return ro.StrVector([str(v) for v in value])
-
-    
-def _clean_rpy2_pandas_conversion(
-        df,
-        float_cols=["G", "H", "S", "Cp",
-                    "V", "a1.a", "a2.b",
-                    "a3.c", "a4.d", "c1.e",
-                    "c2.f", "omega.lambda", "z.T",
-                    "azero", "neutral_ion_type", "regenerate_dissrxn",
-                    "logK1", "logK2", "logK3", "logK4",
-                    "logK5", "logK6", "logK7", "logK8",
-                    "T1", "T2", "T3", "T4", "T5", "T6",
-                    "T7", "T8"],
-        str_cols=["name", "abbrv", "state", "formula",
-                  "ref1", "ref2", "date",
-                  "E_units", "tag", "dissrxn", "formula_ox",
-                  "formula_modded", "formula_ox_modded", 
-                  "P1", "P2", "P3", "P4", "P5", "P6",
-                  "P7", "P8"],
-        NA_string=""):
-
-    df.replace(NA_string, np.nan, inplace=True)
-    for col in float_cols:
-        if col in df.columns:
-            df[col] = df[col].astype(float)
-    for col in str_cols:
-        if col in df.columns:
-            df[col] = df[col].astype(str)
-    return df
-
-
 def _all_equal(iterable):
     # check that all elements of a list are equal
     g = itertools.groupby(iterable)
     return next(g, True) and not next(g, False)
-
 
 class AqEquil(object):
 
@@ -240,7 +166,7 @@ class AqEquil(object):
         - The URL of a data0 file, e.g.,
         "https://raw.githubusercontent.com/worm-portal/WORM-db/master/data0.wrm"
         - The URL of a CSV file containing thermodynamic data, e.g.,
-        "https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data.csv"
+        "https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data_latest.csv"
         
     solid_solutions : str
         Filepath of a CSV file containing parameters for solid solutions, e.g.,
@@ -277,6 +203,13 @@ class AqEquil(object):
         organic molecules.
         The purpose of this parameter is to quickly toggle:
         `exclude_category={'category_1':["organic_aq", "organic_cr"]}`
+
+    exclude_organics_except : list of str, optional
+        Suppress the formation of all organic molecules except for the ones
+        listed and their protonation states and complexes. For example:
+        `exclude_organics_except=['acetic-acid', 'formic-acid'],`
+        This will suppress all organics except acetic acid, formic acid,
+        acetate, formate, and all formate and acetate complexes.
     
     exclude_category : dict
         Exclude species from thermodynamic databases based on column values.
@@ -382,10 +315,9 @@ class AqEquil(object):
 
         if not isinstance(suppress_redox, list):
             suppress_redox = []
-        
-        half_rxn_data = pkg_resources.resource_stream(__name__, "half_cell_reactions.csv")
-        self.half_cell_reactions = pd.read_csv(half_rxn_data) #define the input file (dataframe of redox pairs)
-        self._half_cell_reactions_originalcopy = copy.deepcopy(self.half_cell_reactions)
+
+        self.half_cell_reactions = import_package_file(__name__, 'half_cell_reactions.csv')
+        self._half_cell_reactions_original_copy = copy.deepcopy(self.half_cell_reactions)
         
         self.verbose = verbose
         self.hide_traceback = hide_traceback
@@ -476,40 +408,7 @@ class AqEquil(object):
         
             self.data1 = self.thermo.data1
 
-            
-    def _capture_r_output(self):
-        """
-        Capture and create a list of R console messages
-        """
-        
-        # Record output #
-        self.stdout = []
-        self.stderr = []
-        
-        # If DEBUGGING_R==False, uses python to print R lines after executing an R block 
-        # If DEBUGGING_R==True, will ugly print from R directly. Allows printing from R to troubleshoot errors.
-        if not DEBUGGING_R:
-        
-            # Dummy functions #
-            def add_to_stdout(line): self.stdout.append(line)
-            def add_to_stderr(line): self.stderr.append(line)
 
-            # Keep the old functions #
-            self.stdout_orig = rpy2.rinterface_lib.callbacks.consolewrite_print
-            self.stderr_orig = rpy2.rinterface_lib.callbacks.consolewrite_warnerror
-
-            # Set the call backs #
-            rpy2.rinterface_lib.callbacks.consolewrite_print     = add_to_stdout
-            rpy2.rinterface_lib.callbacks.consolewrite_warnerror = add_to_stderr
-
-            
-    def _print_captured_r_output(self):
-        printable_lines = [line for line in self.stdout if line not in ['[1]', '\n']]
-        printable_lines = [line for line in printable_lines if re.search("^\s*\[[0-9]+\]$", line) is None]
-        printable_lines = [re.sub(r' \\n\"', "", line) for line in printable_lines]
-        [print(line[2:-1]) for line in printable_lines]
-
-        
     def _report_3o_6o_errors(self, lines, samplename):
 
         recording = False
@@ -573,17 +472,31 @@ class AqEquil(object):
         
         return False
 
+
+    @staticmethod
+    def _ensure_newline_ending(filename):
+        """Ensure CSV file ends with newline to prevent warnings in R"""
+        if os.path.getsize(filename) > 0:  # Check file isn't empty
+            with open(filename, 'rb') as f:
+                f.seek(-1, 2)  # Go to last byte
+                if f.read(1) != b'\n':
+                    with open(filename, 'a') as f:
+                        f.write('\n')
+
     
     def _check_sample_input_file(self, input_filename, exclude, db,
                                        dynamic_db, charge_balance_on,
                                        suppress_missing,
-                                       redox_suppression):
+                                       redox_suppression, redox_flag):
         """
         Check for problems in sample input file.
         """
         
         # does the input file exist? Is it a CSV?
         if self.__file_exists(input_filename):
+            
+            self._ensure_newline_ending(input_filename)
+            
             df_in = pd.read_csv(input_filename, header=None) # no headers for now so colname dupes can be checked
         else:
             self.err_handler.raise_exception("_check_sample_input() error!")
@@ -737,15 +650,13 @@ class AqEquil(object):
                         "unit 'pH'.")
                     err_list.append(err_species_pH)
 
-        
-        
         # are subheader units valid?
         subheaders = df_in_headercheck.iloc[0,]
         valid_subheaders = ["degC", "ppm", "ppb", "Suppressed", "Molality",
                             "Molarity", "mg/L", "mg/kg.sol", "Alk., eq/kg.H2O",
                             "Alk., eq/L", "Alk., eq/kg.sol", "Alk., mg/L CaCO3",
                             "Alk., mg/L HCO3-", "Log activity", "Log act combo",
-                            "Log mean act", "pX", "pH", "pHCl", "pmH", "pmX",
+                            "Log mean act", "pX", "pH", "pe", "pHCl", "pmH", "pmX",
                             "Hetero. equil.", "Homo. equil.", "Make non-basis",
                             "logfO2", "Mineral", "bar", "volts"]
         for i, subheader in enumerate(subheaders):
@@ -767,6 +678,69 @@ class AqEquil(object):
                 "'degC' in the second row, and a temperature value for each "
                 "sample in degrees Celsius.")
             err_list.append(err_temp)
+
+
+        # handle automatic selection of redox flag
+        if redox_flag == "auto":
+            redox_selection_made = False
+            if "logfO2" in df_in_headercheck.columns:
+                if df_in_headercheck["logfO2"][1] == "logfO2":
+                    redox_flag = "logfO2"
+                    redox_selection_made = True
+            if "O2" in df_in_headercheck.columns:
+                redox_flag = "O2"
+                redox_selection_made = True
+            if "Eh" in df_in_headercheck.columns:
+                if df_in_headercheck["Eh"][1] == "volts":
+                    redox_flag = "Eh"
+                    redox_selection_made = True
+            if "pe" in df_in_headercheck.columns:
+                if df_in_headercheck["pe"][1] == "pe":
+                    redox_flag = "pe"
+                    redox_selection_made = True
+            if "O2(g)" in df_in_headercheck.columns:
+                if df_in_headercheck["O2(g)"][1] == "Hetero. equil.":
+                    redox_flag = "O2(g)"
+                    redox_selection_made = True
+            if self.verbose > 0 and redox_selection_made and redox_flag != "O2":
+                print("The input file column '"+redox_flag+"' will be used to "
+                      "set sample redox state. If a another column is desired, "
+                      "set it manually using the redox_flag parameter.")
+            elif self.verbose > 0 and redox_selection_made and redox_flag == "O2":
+                redox_flag = "logfO2" # nothing else is needed here
+            elif self.verbose > 0:
+                print("A column to set sample redox state could not be "
+                      "automatically detected in the input file. Valid columns "
+                      "include 'logfO2' (with subheader 'logfO2'), 'O2' "
+                      "(with a valid concentration subheader), 'Eh' "
+                      "(with subheader 'volts'), 'pe' (with subheader 'pe'), and "
+                      "'O2(g)' (with subheader 'Hetero. equil.'). A "
+                      "default logfO2 value will be used to set sample redox "
+                      "state. It is also possible to set sample redox state "
+                      "based on a valid auxiliary basis species/basis species "
+                      "combo (e.g., Fe+3/Fe+2) by setting the redox_flag "
+                      "parameter to 'redox aux' and the redox_aux parameter to "
+                      "the name of the desired auxiliary basis species.")
+                redox_flag = "logfO2"
+        
+        # is the 'O2(g)' redox flag set up correctly?
+        if redox_flag == "O2(g)" or redox_flag == -3:
+            if "O2(g)" not in df_in_headercheck.columns:
+                err_O2g = ("The redox flag 'O2(g)' was selected but there is no "
+                           "O2(g) column in the input file.")
+                err_list.append(err_O2g)
+            else:
+                if df_in_headercheck["O2(g)"][1] != "Hetero. equil.":
+                    err_O2g = ("The redox flag 'O2(g)' was selected but the "
+                               "O2(g) column in the input file is set to not set to "
+                               "heterogeneous equilibrium with minerals, as is "
+                               "required. You can do this by changing the subheader "
+                               "of the O2(g) column from '"+df_in_headercheck["O2(g)"][1]+"' "
+                               "to 'Hetero. equil.' and then specifying the name "
+                               "of a mineral on each sample row that should be used "
+                               "to set redox state (e.g., hematite)."
+                              )
+                    err_list.append(err_O2g)
 
         # raise an exception that summarizes all errors found
         if len(err_list) > 0:
@@ -790,7 +764,7 @@ class AqEquil(object):
             sample_press = ['psat']*len(sample_temps)
         
         
-        return sample_temps, sample_press
+        return sample_temps, sample_press, redox_flag
         
 
     def __move_eqpt_extra_output(self):
@@ -1151,9 +1125,9 @@ class AqEquil(object):
         elif logK_extrapolate=="no fit":
             return np.nan, "no fit"
         
-        # turns off poor polyfit warning
-        # TODO: restore polyfit warning setting afterward
-        warnings.simplefilter('ignore', np.RankWarning)
+        # # turns off poor polyfit warning
+        # # TODO: restore polyfit warning setting afterward
+        # warnings.simplefilter('ignore', np.RankWarning)
         
         if len(T_grid) >= 4:
             if (len(T_grid) % 2) == 0:
@@ -1270,7 +1244,7 @@ class AqEquil(object):
                  input_filename,
                  logK_extrapolate=None,
                  activity_model="b-dot",
-                 redox_flag="logfO2",
+                 redox_flag="auto",
                  redox_aux="Fe+3",
                  default_logfO2=-6,
                  exclude=[],
@@ -1353,14 +1327,16 @@ class AqEquil(object):
             Activity model to use for speciation. Can be either "b-dot",
             or "davies". NOTE: the "pitzer" model is not yet implemented.
         
-        redox_flag : str, default "O2(g)"
+        redox_flag : str, default "auto"
             Determines which column in the sample input file sets the overall
             redox state of the samples. Options for redox_flag include 'O2(g)',
             'pe', 'Eh', 'logfO2', and 'redox aux'. The code will search your
             sample spreadsheet file (see `filename`) for a column corresponding
             to the option you chose:
-            
-            * 'O2(g)' with a valid subheader for a gas
+
+            * 'auto' to automatically decide which redox variable to use based
+              on the user's input file.
+            * 'O2(g)' set to heterogeneous equilibrium with a mineral
             * 'pe' with subheader pe
             * 'Eh' with subheader volts
             * 'logfO2' with subheader logfO2
@@ -1565,14 +1541,14 @@ class AqEquil(object):
         if "suppress_redox" in db_args.keys() and self.thermo.thermo_db_type != "data0" and self.thermo.thermo_db_type != "data1":
             if len(db_args["suppress_redox"]) > 0:
                 redox_suppression = True
-        
+
         # check input sample file for errors
         if activity_model != 'pitzer': # TODO: allow check_sample_input_file() to handle pitzer
-            sample_temps, sample_press = self._check_sample_input_file(
+            sample_temps, sample_press, redox_flag = self._check_sample_input_file(
                                           input_filename, exclude, db,
                                           dynamic_db, charge_balance_on, suppress_missing,
-                                          redox_suppression)
-        
+                                          redox_suppression, redox_flag)
+
         if aq_dist_type not in ["molality", "log_molality", "log_gamma", "log_activity"]:
             self.err_handler.raise_exception("Unrecognized aq_dist_type. Valid "
                 "options are 'molality', 'log_molality', 'log_gamma', 'log_activity'")
@@ -1582,8 +1558,8 @@ class AqEquil(object):
         if redox_type not in ["Eh", "pe", "logfO2", "Ah"]:
             self.err_handler.raise_exception("Unrecognized redox_type. Valid "
                 "options are 'Eh', 'pe', 'logfO2', or 'Ah'")
-        
-        if redox_flag == "O2(g)" or redox_flag == -3:
+
+        if redox_flag == "O2(g)" or redox_flag == "O2" or redox_flag == -3:
             redox_flag = -3
         elif redox_flag == "pe" or redox_flag == -2:
             redox_flag = -2
@@ -1594,22 +1570,24 @@ class AqEquil(object):
         elif redox_flag == "redox aux" or redox_flag == 1:
             redox_flag = 1
         else:
-            self.err_handler.raise_exception("Unrecognized redox flag. Valid options are 'O2(g)'"
-                                             ", 'pe', 'Eh', 'logfO2', 'redox aux'")
-
+            self.err_handler.raise_exception("Unrecognized redox flag. Valid "
+                    "options are 'auto', 'O2(g)', 'pe', 'Eh', 'logfO2', and "
+                    "'redox aux'")
+        
         # handle batch_3o naming
         if batch_3o_filename != None:
             if ".rds" in batch_3o_filename[-4:]:
                 batch_3o_filename = batch_3o_filename
             else:
-                batch_3o_filename = "batch_3o_{}.rds".format(data0_lettercode)
-        else:
-            batch_3o_filename = ro.r("NULL")
+                batch_3o_filename = "batch_3o_{}.pkl".format(data0_lettercode)
+        # else: keep batch_3o_filename as None
 
         # reset logK_models whenever speciate() is called
         # (prevents errors when speciations are run back-to-back)
         self.logK_models = {}
 
+        
+        
         # dynamic data0 creation per sample
         if dynamic_db:
             db_args["fill_data0"] = False
@@ -1628,9 +1606,9 @@ class AqEquil(object):
                     
             if self.verbose > 0:
                 print("Getting", self.thermo.thermo_db_filename, "ready. This will take a moment...")
-            
+                
             thermo_df, data0_file_lines, grid_temps, grid_press, data0_lettercode, water_model, P1, plot_poly_fit = self.create_data0(**db_args)
-            
+
         if self.thermo.custom_data0 and not dynamic_db:
             self.__mk_check_del_directory('eqpt_files')
             if self.thermo.thermo_db_type != "data1":
@@ -1660,7 +1638,7 @@ class AqEquil(object):
             
         else:
             data0_path = self.eq36da + "/data0." + data0_lettercode
-        
+
         # gather information from data0 file and perform checks
         if not dynamic_db:
             if os.path.exists(data0_path) and os.path.isfile(data0_path):
@@ -1712,39 +1690,26 @@ class AqEquil(object):
                               "15.5365", "39.7365", "85.8378", "165.2113"]
                 
             grid_press_numeric = [float(n) for n in grid_press]
-            if min(grid_press_numeric) == 1:
-                P1=True
-            else:
-                P1=False
-                
-            self._capture_r_output()
-        
-            r_check_TP_grid = pkg_resources.resource_string(__name__, 'check_TP_grid.r').decode("utf-8")
-        
-            ro.r(r_check_TP_grid)
-        
-            list_tp = ro.r.check_TP_grid(grid_temps=_convert_to_RVector(grid_temps),
-                                         grid_press=_convert_to_RVector(grid_press),
-                                         P1=P1,
-                                         water_model=water_model,
-                                         check_for_errors=False,
-                                         verbose=self.verbose)
-        
-            self._print_captured_r_output()
-            
-            grid_temps = list(list_tp.rx2("grid_temps"))
-            grid_press = list(list_tp.rx2("grid_press"))
-            poly_coeffs_1 = list_tp.rx2("poly_coeffs_1")
-            poly_coeffs_2 = list_tp.rx2("poly_coeffs_2")
+   
+            list_tp = check_TP_grid(grid_temps=grid_temps,
+                                    grid_press=grid_press,
+                                    P1=min(grid_press_numeric),
+                                    water_model=water_model,
+                                    check_for_errors=False,
+                                    verbose=self.verbose)
+
+            grid_temps = list_tp["grid_temps"]
+            grid_press = list_tp["grid_press"]
+            poly_coeffs_1 = list_tp["poly_coeffs_1"]
+            poly_coeffs_2 = list_tp["poly_coeffs_2"]
             
             
         else:
-            grid_temps = ro.r("NULL")
-            grid_press = ro.r("NULL")
-            poly_coeffs_1 = ro.r("NULL")
-            poly_coeffs_2 = ro.r("NULL")
+            grid_temps = None
+            grid_press = None
+            poly_coeffs_1 = None
+            poly_coeffs_2 = None
 
-        
         # handle Alter/Suppress options
         # e.g. [["CaCl+", "AugmentLogK", -1], ["CaOH+", "Suppress"]]
         alter_options_dict = {}
@@ -1758,37 +1723,27 @@ class AqEquil(object):
                 key = ao[0]
                 if ao[1] == "Suppress" and len(ao) == 2:
                     ao += ["0"]
-                alter_options_dict[key] = _convert_to_RVector(list(ao[1:]))
-        alter_options = ro.ListVector(alter_options_dict)
+                alter_options_dict[key] = list(ao[1:])
+        alter_options = alter_options_dict
         
         input_dir = "rxn_3i"
         output_dir = "rxn_3o"
         pickup_dir = "rxn_3p"
-            
-        # preprocess for EQ3 using R scripts
-        self._capture_r_output()
-        
-        r_prescript = pkg_resources.resource_string(
-            __name__, 'preprocess_for_EQ3.r').decode("utf-8")
-        ro.r(r_prescript)
-        
-        input_processed_list = ro.r.preprocess(input_filename=input_filename,
-                                               exclude=_convert_to_RVector(exclude),
-                                               grid_temps=_convert_to_RVector(grid_temps),
-                                               grid_press=_convert_to_RVector(grid_press),
+
+        # preprocess for EQ3
+        input_processed = preprocess(input_filename=input_filename,
+                                               exclude=exclude,
+                                               grid_temps=grid_temps,
+                                               grid_press=grid_press,
                                                strict_minimum_pressure=strict_minimum_pressure,
                                                dynamic_db=dynamic_db,
                                                poly_coeffs_1=poly_coeffs_1,
                                                poly_coeffs_2=poly_coeffs_2,
                                                water_model=water_model,
                                                verbose=self.verbose)
-        
-        
-        self._print_captured_r_output()
-        
-        self.df_input_processed = ro.conversion.rpy2py(input_processed_list.rx2("df"))
-        
-        
+
+        self.df_input_processed = input_processed["df"]
+
         if blanks_are_0:
             self.df_input_processed = self.df_input_processed.fillna(1E-18)
         
@@ -1797,28 +1752,28 @@ class AqEquil(object):
         self.__mk_check_del_directory('rxn_3p')
         if dynamic_db:
             self.__mk_check_del_directory('rxn_data0')
-        
+
         # Has the user been warned about redox column during write_3i_file()?
         # Prevents repeated warnings.
         warned_about_redox_column = False
         
-        self.batch_T = list(input_processed_list.rx2("temp_degC"))
-        self.batch_P = list(input_processed_list.rx2("pressure_bar"))
+        self.batch_T = input_processed["temp_degC"]
+        self.batch_P = input_processed["pressure_bar"]
         
         # create and run a 3i file for each sample
         for sample_row_index in range(0, self.df_input_processed.shape[0]):
             
-            temp_degC = list(input_processed_list.rx2("temp_degC"))[sample_row_index]
-            pressure_bar = list(input_processed_list.rx2("pressure_bar"))[sample_row_index]
+            temp_degC = input_processed["temp_degC"][sample_row_index]
+            pressure_bar = input_processed["pressure_bar"][sample_row_index]
 
             df = self.df_input_processed.iloc[[sample_row_index]] # double brackets to keep as df row instead of series
             
             samplename = str(df.index[0])
-            
+
             # handle dynamic data0 creation
             if dynamic_db:
-                
-                self.__fill_data0(thermo_df=ro.conversion.rpy2py(thermo_df),
+
+                self.__fill_data0(thermo_df=thermo_df,
                                   data0_file_lines=copy.deepcopy(data0_file_lines),
                                   grid_temps=[temp_degC],
                                   grid_press=[pressure_bar],
@@ -1830,7 +1785,7 @@ class AqEquil(object):
                                   logK_extrapolate=logK_extrapolate,
                                   dynamic_db=dynamic_db,
                                   verbose=verbose)
-                
+
                 if self.thermo.thermo_db_type != "data1":
                     self.runeqpt(data0_lettercode, dynamic_db=True)
                 
@@ -1848,30 +1803,27 @@ class AqEquil(object):
                 data1_path = os.getcwd()+"/eqpt_files" # creating a folder name without spaces to store the data1 overcomes the problem where environment variables with spaces do not work properly when assigned to EQ36DA
 
                 data0_path = "data0." + data0_lettercode
-                
+
             else:
-                pressure_bar = list(input_processed_list.rx2("pressure_bar"))[sample_row_index]
+                pressure_bar = input_processed["pressure_bar"][sample_row_index]
                 data1_path = self.thermo.eq36da
             
             # allowed aq block species are left after any category exclusion in db_args
             allowed_aq_block_species = ["all"]
             if dynamic_db:
                 allowed_aq_block_species = list(thermo_df["name"]) + FIXED_SPECIES
-            
-            # write 3i files
-            self._capture_r_output()
 
-            warned_about_redox_column = ro.r.write_3i_file(df=ro.conversion.py2rpy(df),
+            warned_about_redox_column = write_3i_file(df=df,
                                temp_degC=temp_degC,
                                pressure_bar=pressure_bar,
-                               minimum_pressure=input_processed_list.rx2("minimum_pressure"),
+                               minimum_pressure=input_processed["minimum_pressure"],
                                strict_minimum_pressure=strict_minimum_pressure,
                                pressure_override=dynamic_db,
                                suppress_missing=suppress_missing,
-                               exclude=input_processed_list.rx2("exclude"),
-                               allowed_aq_block_species=_convert_to_RVector(allowed_aq_block_species),
+                               exclude=input_processed["exclude"],
+                               allowed_aq_block_species=allowed_aq_block_species,
                                charge_balance_on=charge_balance_on,
-                               suppress=_convert_to_RVector(suppress),
+                               suppress=suppress,
                                alter_options=alter_options,
                                aq_scale=aq_scale,
                                get_solid_solutions=get_solid_solutions,
@@ -1884,14 +1836,11 @@ class AqEquil(object):
                                activity_model=activity_model,
                                verbose=self.verbose)
 
-            self._print_captured_r_output()
-        
             # run EQ3 on each 3i file
             samplename = self.df_input_processed.iloc[sample_row_index, self.df_input_processed.columns.get_loc("Sample")]
             filename_3i = self.df_input_processed.index[sample_row_index]+".3i"
             filename_3o = filename_3i[:-1] + 'o'
             filename_3p = filename_3i[:-1] + 'p'
-            
             
             if dynamic_db:
                 dynamic_db_name = self.thermo.thermo_db_filename
@@ -1928,11 +1877,11 @@ class AqEquil(object):
                 # capture everything after "start of the bottom half" of 3p
                 top_half = []
                 bottom_half = []
-                capture = False
+                capture_it = False
                 for line in lines:
                     if "Start of the bottom half of the input file" in line:
-                        capture = True
-                    if capture:
+                        capture_it = True
+                    if capture_it:
                         bottom_half.append(line)
                     else:
                         top_half.append(line)
@@ -1950,43 +1899,35 @@ class AqEquil(object):
             # delete straggling data1 files generated after running eq3
             if os.path.exists("data1") and os.path.isfile("data1"):
                 os.remove("data1")
-
+        
         files_3o = [file+".3o" for file in self.df_input_processed.index]
         
-        df_input_processed_names = _convert_to_RVector(list(self.df_input_processed.columns))
-        
-        # mine output
-        self._capture_r_output()
-        
-        r_3o_mine = pkg_resources.resource_string(
-            __name__, '3o_mine.r').decode("utf-8")
-        ro.r(r_3o_mine)
-        
-        batch_3o = ro.r.main_3o_mine(
-            files_3o=_convert_to_RVector(files_3o),
-            input_filename=input_filename,
-            input_pressures=_convert_to_RVector(list(input_processed_list.rx2("pressure_bar"))),
+        df_input_processed_names = list(self.df_input_processed.columns)
+
+        batch_3o = main_3o_mine(
+            files_3o=files_3o,
             get_aq_dist=get_aq_dist,
-            aq_dist_type=aq_dist_type,
             get_mass_contribution=get_mass_contribution,
-            mass_contribution_other=mass_contribution_other,
             get_mineral_sat=get_mineral_sat,
-            mineral_sat_type=mineral_sat_type,
             get_redox=get_redox,
-            redox_type=redox_type,
             get_charge_balance=get_charge_balance,
             get_ion_activity_ratios=get_ion_activity_ratios,
             get_fugacity=get_fugacity,
             get_basis_totals=get_basis_totals,
             get_solid_solutions=get_solid_solutions,
+            mass_contribution_other=mass_contribution_other,
+            csv_filename=report_filename,
+            aq_dist_type=aq_dist_type,
+            mineral_sat_type=mineral_sat_type,
+            redox_type=redox_type,
+            input_filename=input_filename,
+            input_pressures=input_processed["pressure_bar"],
             batch_3o_filename=batch_3o_filename,
-            df_input_processed=ro.conversion.py2rpy(self.df_input_processed),
+            df_input_processed=self.df_input_processed,
             df_input_processed_names=df_input_processed_names,
             verbose=self.verbose,
         )
 
-        self._print_captured_r_output()
-        
         if len(batch_3o) == 0:
             self.err_handler.raise_exception("Could not compile a speciation report. This is "
                             "likely because errors occurred during "
@@ -1994,27 +1935,26 @@ class AqEquil(object):
             return
         
         if get_mass_contribution:
-            mass_contribution = ro.conversion.rpy2py(batch_3o.rx2('mass_contribution'))
-        df_report = ro.conversion.rpy2py(batch_3o.rx2('report'))
-        
-        #df_input = ro.conversion.rpy2py(batch_3o.rx2('input'))
-        report_divs = batch_3o.rx2('report_divs')
+            mass_contribution = batch_3o['mass_contribution']
 
-        input_cols = list(report_divs.rx2('input'))
+        df_report = batch_3o['report']
+        report_divs = batch_3o['report_divs']
+
+        input_cols = report_divs['input']
         df_input = df_report[input_cols].copy()
         
         # add a pressure column to df_input
         df_input["Pressure_bar"] = pd.Series(dtype='float')
-        sample_data = batch_3o.rx2('sample_data')
-        for sample in sample_data:
-            df_input.loc[str(sample.rx2('name')[0]), "Pressure_bar"] = float(sample.rx2('pressure')[0])
-        report_divs[0] = _convert_to_RVector(input_cols + ["Pressure_bar"])
+        sample_data = batch_3o['sample_data']
+        for sample_name, sample in sample_data.items():
+            df_input.loc[sample['name'], "Pressure_bar"] = float(sample['pressure'])
+        report_divs['input'] = input_cols + ["Pressure_bar"]
             
         # handle headers and subheaders of input section
         headers = [col.split("_")[0] for col in list(df_input.columns)]
         headers = ["pH" if header == "H+" else header for header in headers]
         headers = [header+"_(input)" if header not in ["Temperature", "logfO2", "Pressure"]+exclude else header for header in headers]
-        report_divs[0] = _convert_to_RVector(headers) # modify headers in the 'input' section, report_divs[0]
+        report_divs['input'] = headers # modify headers in the 'input' section of report_divs
         subheaders = [subheader[1] if len(subheader) > 1 else "" for subheader in [
             col.split("_") for col in list(df_input.columns)]]
         multicolumns = pd.MultiIndex.from_arrays(
@@ -2025,7 +1965,7 @@ class AqEquil(object):
         df_join = df_input
 
         if get_aq_dist:
-            aq_distribution_cols = list(report_divs.rx2('aq_distribution'))
+            aq_distribution_cols = report_divs['aq_distribution']
             df_aq_distribution = df_report[aq_distribution_cols]
             df_aq_distribution = df_aq_distribution.apply(pd.to_numeric, errors='coerce')
             
@@ -2042,13 +1982,12 @@ class AqEquil(object):
             df_aq_distribution.columns = multicolumns
             
             # ensure final pH column is included in report_divs aq_distribution section
-            aq_dist_indx = list(report_divs.names).index("aq_distribution")
-            report_divs[aq_dist_indx] = _convert_to_RVector(list(headers))
+            report_divs["aq_distribution"] = list(headers)
             
             df_join = df_join.join(df_aq_distribution)
 
         if get_mineral_sat:
-            mineral_sat_cols = list(report_divs.rx2('mineral_sat'))
+            mineral_sat_cols = report_divs['mineral_sat']
             mineral_sat_cols = [col for col in mineral_sat_cols if col != "df"] # TO DO: why is df appearing in mineral sat cols and redox sections?
             df_mineral_sat = df_report[mineral_sat_cols]
             df_mineral_sat = df_mineral_sat.apply(pd.to_numeric, errors='coerce')
@@ -2070,7 +2009,7 @@ class AqEquil(object):
             df_join = df_join.join(df_mineral_sat)
 
         if get_redox:
-            redox_cols = list(report_divs.rx2('redox'))
+            redox_cols = report_divs['redox']
             redox_cols = [col for col in redox_cols if col != "df"] # TO DO: why is df appearing in mineral sat cols and redox sections?
             df_redox = df_report[redox_cols]
             df_redox = df_redox.apply(pd.to_numeric, errors='coerce')
@@ -2096,7 +2035,7 @@ class AqEquil(object):
             df_join = df_join.join(df_redox)
 
         if get_charge_balance:
-            charge_balance_cols = list(report_divs.rx2('charge_balance'))
+            charge_balance_cols = report_divs['charge_balance']
             df_charge_balance = df_report[charge_balance_cols]
             df_charge_balance = df_charge_balance.apply(pd.to_numeric, errors='coerce')
 
@@ -2110,14 +2049,15 @@ class AqEquil(object):
             df_join = df_join.join(df_charge_balance)
             
         if get_ion_activity_ratios:
-            if type(report_divs.rx2('ion_activity_ratios')) != rpy2.rinterface_lib.sexp.NULLType:
-                ion_activity_ratio_cols = list(report_divs.rx2('ion_activity_ratios'))
+            if 'ion_activity_ratios' in list(report_divs.keys()):
+                ion_activity_ratio_cols = report_divs['ion_activity_ratios']
 
                 df_ion_activity_ratios = df_report[ion_activity_ratio_cols]
                 df_ion_activity_ratios = df_ion_activity_ratios.apply(pd.to_numeric, errors='coerce')
 
                 # handle headers of df_ion_activity_ratios section
                 headers = df_ion_activity_ratios.columns
+                #headers = [header+"_Log_ion-H+_activity_ratio" for header in headers]
                 subheaders = ["Log ion-H+ activity ratio"]*len(headers)
                 multicolumns = pd.MultiIndex.from_arrays(
                     [headers, subheaders], names=['Sample', ''])
@@ -2125,7 +2065,7 @@ class AqEquil(object):
                 df_join = df_join.join(df_ion_activity_ratios)
             
         if get_fugacity:
-            fugacity_cols = list(report_divs.rx2('fugacity'))
+            fugacity_cols = report_divs['fugacity']
             fugacity_cols = [col for col in fugacity_cols if col != "df"] # TO DO: why is df appearing in fugacity, mineral sat cols and redox sections?
             df_fugacity = df_report[fugacity_cols]
             df_fugacity = df_fugacity.apply(pd.to_numeric, errors='coerce')
@@ -2139,7 +2079,7 @@ class AqEquil(object):
             df_join = df_join.join(df_fugacity)
 
         if get_basis_totals:
-            sc_cols = list(report_divs.rx2('basis_totals'))
+            sc_cols = report_divs['basis_totals']
             df_sc = df_report[sc_cols]
             df_sc = df_sc.apply(pd.to_numeric, errors='coerce')
             
@@ -2159,90 +2099,91 @@ class AqEquil(object):
         if get_mass_contribution:
             out_dict['mass_contribution'] = mass_contribution
 
-        sample_data = batch_3o.rx2('sample_data')
+        sample_data = batch_3o['sample_data']
 
         # assemble sample data
-        for i, sample in enumerate(sample_data):
+        for sample_name, sample in sample_data.items():
             dict_sample_data = {
-                "filename": str(sample.rx2('filename')[0]),
-                "name": str(sample.rx2('name')[0]),
-                "temperature": float(sample.rx2('temperature')[0]),
-                "pressure": float(sample.rx2('pressure')[0]),
-                "logact_H2O": float(sample.rx2('logact_H2O')[0]),
-                "H2O_density": float(sample.rx2('H2O_density')[0]),
-                "H2O_molality": float(sample.rx2('H2O_molality')[0]),
-                "H2O_log_molality": float(sample.rx2('H2O_log_molality')[0]),
+                "filename": sample['filename'],
+                "name": sample['name'],
+                "temperature": float(sample['temperature']),
+                "pressure": float(sample['pressure']),
+                "logact_H2O": float(sample['logact_H2O']),
+                "H2O_density": float(sample['H2O_density']),
+                "H2O_molality": float(sample['H2O_molality']),
+                "H2O_log_molality": float(sample['H2O_log_molality']),
+                "ionic_strength": float(sample['ionic_strength']),
                 }
 
             if get_aq_dist:
-                sample_aq_dist = ro.conversion.rpy2py(sample.rx2('aq_distribution'))
+                sample_aq_dist = sample['aq_distribution']
                 sample_aq_dist = sample_aq_dist.apply(pd.to_numeric, errors='coerce')
-                
+
                 sample_pH = -sample_aq_dist.loc["H+", "log_activity"]
-                out_dict["report"].loc[str(sample.rx2('name')[0]), "pH"] = sample_pH
-                
+                out_dict["report"].loc[sample['name'], "pH"] = sample_pH
+
                 dict_sample_data.update({"aq_distribution": sample_aq_dist})
 
             if get_mass_contribution:
-                sample_mass_contribution = mass_contribution[mass_contribution["sample"] == sample.rx2('name')[0]]
+                sample_mass_contribution = mass_contribution[mass_contribution["sample"] == sample['name']]
                 dict_sample_data.update(
                     {"mass_contribution": sample_mass_contribution})
 
             if get_mineral_sat:
-                dict_sample_data.update(
-                    {"mineral_sat": ro.conversion.rpy2py(sample.rx2('mineral_sat')).apply(pd.to_numeric, errors='coerce')})
+                mineral_sat_df = sample['mineral_sat']
+                mineral_sat_df = mineral_sat_df.apply(pd.to_numeric, errors='coerce')
+                dict_sample_data.update({"mineral_sat": mineral_sat_df})
                 # replace sample mineral_sat entry with None if there is no mineral saturation data.
                 if(len(dict_sample_data['mineral_sat'].index) == 1 and dict_sample_data['mineral_sat'].index[0] == 'None'):
                     dict_sample_data['mineral_sat'] = None
 
             if get_redox:
-                dict_sample_data.update(
-                    {"redox": ro.conversion.rpy2py(sample.rx2('redox')).apply(pd.to_numeric, errors='coerce')})
+                redox_df = sample['redox']
+                redox_df = redox_df.apply(pd.to_numeric, errors='coerce')
+                dict_sample_data.update({"redox": redox_df})
 
             if get_charge_balance:
-                dict_sample_data.update({"charge_balance": df_charge_balance.loc[sample.rx2('name')[0], :]})
-            
+                dict_sample_data.update({"charge_balance": df_charge_balance.loc[sample['name'], :]})
+
             if get_ion_activity_ratios:
-                
-                try:
-                    dict_sample_data.update(
-                        {"ion_activity_ratios": ro.conversion.rpy2py(sample.rx2('ion_activity_ratios'))})
-                except:
+                if 'ion_activity_ratios' in sample:
+                    dict_sample_data.update({"ion_activity_ratios": sample['ion_activity_ratios']})
+                else:
                     dict_sample_data['ion_activity_ratios'] = None
-            
+
             if get_fugacity:
-                dict_sample_data.update(
-                    {"fugacity": ro.conversion.rpy2py(sample.rx2('fugacity')).apply(pd.to_numeric, errors='coerce')})
+                fugacity_df = sample['fugacity']
+                fugacity_df = fugacity_df.apply(pd.to_numeric, errors='coerce')
+                dict_sample_data.update({"fugacity": fugacity_df})
                 # replace sample fugacity entry with None if there is no fugacity data.
                 if(len(dict_sample_data['fugacity'].index) == 1 and dict_sample_data['fugacity'].index[0] == 'None'):
                     dict_sample_data['fugacity'] = None
                 else:
                     dict_sample_data["fugacity"]["fugacity"] = 10**dict_sample_data["fugacity"]["log_fugacity"]
-                    
+
             if get_basis_totals:
-                sc_dist = ro.conversion.rpy2py(sample.rx2('basis_totals'))
+                sc_dist = sample['basis_totals']
                 sc_dist = sc_dist.apply(pd.to_numeric, errors='coerce')
                 dict_sample_data.update({"basis_totals": sc_dist})
 
             if get_solid_solutions:
-                sample_solid_solutions = batch_3o.rx2["sample_data"].rx2[str(sample.rx2('name')[0])].rx2["solid_solutions"]
+                sample_solid_solutions = sample.get('solid_solutions')
 
-                if not type(sample_solid_solutions.names) == rpy2.rinterface_lib.sexp.NULLType:
+                if sample_solid_solutions is not None:
 
                     ss_df_list = []
-                    for ss in list(sample_solid_solutions.names):
-                        df_ss_ideal = ro.conversion.rpy2py(sample_solid_solutions.rx2[str(ss)].rx2["ideal solution"])
-                        df_ss_mineral = ro.conversion.rpy2py(sample_solid_solutions.rx2[str(ss)].rx2["mineral"])
+                    for ss_name, ss_data in sample_solid_solutions.items():
+                        df_ss_ideal = ss_data["ideal solution"]
+                        df_ss_mineral = ss_data["mineral"]
                         df_merged = pd.merge(df_ss_mineral, df_ss_ideal, left_on='mineral', right_on='component', how='left')
-                        df_merged.insert(0, 'solid solution', ss)
+                        df_merged.insert(0, 'solid solution', ss_name)
                         del df_merged['component']
                         ss_df_list.append(df_merged)
-                
+
                     dict_sample_data.update(
                         {"solid_solutions": pd.concat(ss_df_list)})
 
-            out_dict["sample_data"].update(
-                {sample_data.names[i]: dict_sample_data})
+            out_dict["sample_data"].update({sample_name: dict_sample_data})
 
         out_dict.update({"batch_3o": batch_3o})
         
@@ -2251,8 +2192,8 @@ class AqEquil(object):
         speciation = Speciation(out_dict, hide_traceback=self.hide_traceback)
 
         speciation.half_cell_reactions = self.half_cell_reactions
-        speciation._half_cell_reactions_originalcopy = self._half_cell_reactions_originalcopy
-        
+        speciation._half_cell_reactions_original_copy = self._half_cell_reactions_original_copy
+
         if report_filename != None:
             if ".csv" in report_filename[-4:]:
                 out_dict["report"].to_csv(report_filename)
@@ -2300,34 +2241,24 @@ class AqEquil(object):
                    water_model, activity_model, P1, plot_poly_fit, logK_extrapolate,
                    dynamic_db, verbose):
 
-        self._capture_r_output()
-        
-        r_check_TP_grid = pkg_resources.resource_string(
-            __name__, 'check_TP_grid.r').decode("utf-8")
-        
-        ro.r(r_check_TP_grid)
-        
-        list_tp = ro.r.check_TP_grid(grid_temps=_convert_to_RVector(grid_temps),
-                                     grid_press=_convert_to_RVector(grid_press),
+
+        list_tp = check_TP_grid(grid_temps=grid_temps,
+                                     grid_press=grid_press,
                                      P1=P1,
                                      water_model=water_model,
                                      check_for_errors=True,
                                      verbose=self.verbose)
-        
-        self._print_captured_r_output()
-        
-        grid_temps = list(list_tp.rx2("grid_temps"))
-        grid_press = list(list_tp.rx2("grid_press"))
+
+        grid_temps = list_tp["grid_temps"]
+        grid_press = list_tp["grid_press"]
         
         if plot_poly_fit and len(grid_temps) >= 8:
             self.__plot_TP_grid_polyfit(xvals=grid_temps,
                                         yvals=grid_press,
-                                        poly_coeffs_1=list(list_tp.rx2("poly_coeffs_1")),
-                                        poly_coeffs_2=list(list_tp.rx2("poly_coeffs_2")),
+                                        poly_coeffs_1=list_tp["poly_coeffs_1"],
+                                        poly_coeffs_2=list_tp["poly_coeffs_2"],
                                         res=500)
 
-        self._print_captured_r_output()
-        
         # calculate logK at each T and P for every species
         out_dfs = []
         for i,Tc in enumerate(grid_temps):
@@ -2353,7 +2284,7 @@ class AqEquil(object):
         
         # remove duplicate rows (e.g., for mineral polymorphs)
         dissrxn_logK = dissrxn_logK.drop_duplicates("name")
-        
+
         # handle free logK values
         free_logK_names = []
         if "logK1" in thermo_df.columns:
@@ -2399,7 +2330,7 @@ class AqEquil(object):
                 msg = ("The following species are duplicated between the "
                        "thermodynamic datafiles used: " + ",".join(sp_errs))
                 self.err_handler.raise_exception(msg)
-        
+
         # calculate and process logK values of species in the OBIGT-style datasheet
         for idx in range(0, dissrxn_logK.shape[0]):
 
@@ -2465,30 +2396,24 @@ class AqEquil(object):
             if "logK_grid_"+name in data0_file_lines:
                 data0_file_lines[data0_file_lines.index("logK_grid_"+name)] = logK_list
 
-        # handle data0 header section
-        self._capture_r_output()
-        
-        r_fill_data0_header = pkg_resources.resource_string(
-            __name__, 'fill_data0_header.r').decode("utf-8")
-        
-        ro.r(r_fill_data0_header)
-        
-        data0_file_lines = ro.r.fill_data0_head(data0_template=data0_file_lines,
-                                       db=db,
-                                       grid_temps=_convert_to_RVector(grid_temps),
-                                       grid_press=_convert_to_RVector(grid_press),
-                                       water_model=water_model,
-                                       activity_model=activity_model)
-        
-        self._print_captured_r_output()
-        
+        # handle data0 header section using Python version
+        data0_file_lines = fill_data0_head(data0_template=data0_file_lines,
+                                           db=db,
+                                           grid_temps=grid_temps,
+                                           grid_press=grid_press,
+                                           water_model=water_model,
+                                           activity_model=activity_model)
+
         with open("data0."+db, 'w') as f:
             for item in data0_file_lines:
                 f.write("%s" % item)
-                
-    def plot_logK_fit(self, name, plot_out=False, res=200, internal=True, logK_extrapolate=None, T_vals=[]):
+
+    
+    def plot_logK_fit(self, name, plot_out=False, res=200, internal=True,
+                      logK_extrapolate=None, T_vals=[], plot_association=False):
         """
-        Plot the fit of logK values used in the speciation.
+        Plot the fit of dissociation reaction logK values used in the
+        speciation.
 
         Parameters
         ----------
@@ -2518,6 +2443,10 @@ class AqEquil(object):
             used to estimate the logK values at the temperatures specified in
             the list given to this parameter. This is useful for visualizing
             logK extrapolation options defined by `logK_extrapolate`.
+
+        plot_association : bool, default False
+            Plot species association constants instead of dissociation
+            constants?
         
         Returns
         ----------
@@ -2525,6 +2454,7 @@ class AqEquil(object):
             Returned if `plot_out` is True.
 
         """
+
         if internal and len(self.logK_models.keys()) > 0:
             # use internally calculated logK models already stored...
             if name not in self.logK_models.keys():
@@ -2583,6 +2513,9 @@ class AqEquil(object):
                     "values, temperature values, or pressure values. It is "
                     "possible that this is a strict basis species with no "
                     "dissociation reaction for which to calculate logK values.")
+
+        if plot_association:
+            logK_grid = [-y for y in logK_grid]
         
         fig = px.scatter(x=T_grid, y=logK_grid)
         
@@ -2652,7 +2585,7 @@ class AqEquil(object):
                     
                 if logK_extrapolate == "no fit":
                     vline_y_vals = [min(logK_grid)-0.15*(max(logK_grid)-min(logK_grid)), logK_grid[i]]
-                    logK_label = "calculated LogK value(s)"
+                    logK_label = "calculated dissociation reaction LogK value(s)"
                     annotation = ("LogK values are calculated from<br>ΔG of dissociation into basis species"
                                   "<br>at the T and P of the speciated samples<br>and do not require a fit.")
 
@@ -2662,6 +2595,7 @@ class AqEquil(object):
                     fig.update_layout(yaxis_range=[logK_grid[0]-1,logK_grid[0]+1])
                     vline_y_vals = [logK_grid[0]-1, logK_grid[0]]
 
+                
                 fig.add_trace(
                     go.Scatter(x=[gt, gt],
                                y=vline_y_vals,
@@ -2700,7 +2634,7 @@ class AqEquil(object):
             are permitted in the context of grid_temps and grid_press, then
             return their indices.
             """
-            
+        
             if not isinstance(grid_press, list):
                 # "Psat" to ["psat"]
                 grid_press_list = [grid_press.lower()]
@@ -2723,11 +2657,12 @@ class AqEquil(object):
                         sp_press_grid.append(p)
                     elif not math.isnan(p):
                         sp_press_grid.append(p)
-
+                        
                 if dynamic_db:
-                    sp_press_grid_numeric = [pyCHNOSZ.water("Psat", T=273.15+T).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
-                    grid_press_list_numeric = [pyCHNOSZ.water("Psat", T=273.15+T).iloc[0][0] if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
-    
+                    #sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
+                    sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
+                    grid_press_list_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
+
                     sp_temps_grid_psatted = []
                     for ii,T in enumerate(sp_temps_grid):
                         if T < 100 and sp_press_grid_numeric[ii] == 1:
@@ -2793,7 +2728,7 @@ class AqEquil(object):
 
             # loop through valid species and reject them if their dissociation reactions
             # contain species that have been rejected.
-            
+
             valid_sp_i = list(dict.fromkeys(valid_sp_i))
             while True:
                 valid_sp_i_before = copy.deepcopy(valid_sp_i)
@@ -2808,7 +2743,7 @@ class AqEquil(object):
             
             for i,n in enumerate(reject_names):
                 self.thermo._reject_species(name=n, reason=reject_reasons[i])
-       
+        
             return valid_sp_i
             
             
@@ -2882,7 +2817,7 @@ class AqEquil(object):
             calculation. 2 for all messages, 1 for errors or warnings only,
             0 for silent.
         """
-        
+
         thermo_df = self.thermo.thermo_db
         db_logK = self.thermo.logK_db
         water_model = self.thermo.water_model
@@ -2949,7 +2884,7 @@ class AqEquil(object):
                 print("WARNING: one or more pressures in 'grid_press' is above "
                       "{} bar".format(max_P)+", the maximum valid "
                       "pressure for the {} water model.".format(water_model))
-            
+        
         if water_model != "SUPCRT92":
             print("WARNING: water models other than SUPCRT92 are not yet fully supported.")
         
@@ -2970,7 +2905,7 @@ class AqEquil(object):
             else:
                 grid_or_sample_press = grid_press
             
-            free_logK_df = _clean_rpy2_pandas_conversion(self.thermo.logK_db)
+            free_logK_df = assign_worm_db_col_dtypes(self.thermo.logK_db)
 
             valid_i = self.__get_i_of_valid_free_logK_sp(
                 free_logK_df,
@@ -2983,47 +2918,52 @@ class AqEquil(object):
             free_logK_df_valid = copy.deepcopy(free_logK_df.iloc[valid_i])
             thermo_df = pd.concat([thermo_df, free_logK_df_valid], ignore_index=True)
             
-            thermo_df = _clean_rpy2_pandas_conversion(thermo_df)
+            thermo_df = assign_worm_db_col_dtypes(thermo_df)
         
         if self.thermo.solid_solutions_active:
-            solid_solution_df = ro.conversion.py2rpy(self.thermo.solid_solution_db)
+            solid_solution_df = self.thermo.solid_solution_db
         else:
-            solid_solution_df = ro.r("NULL")
-        
-        template = pkg_resources.resource_string(
-            __name__, 'data0.min').decode("utf-8")
-        
+            solid_solution_df = None
+
+        template = import_package_file(__name__, 'data0.min')
+
         out_list = self.thermo.out_list
-    
-        self._capture_r_output()
-    
-        r_create_data0 = pkg_resources.resource_string(
-            __name__, 'create_data0.r').decode("utf-8")
-        
-        ro.r(r_create_data0)
-        
-        # assemble data0 file
-        data0_file_lines = ro.r.create_data0(
-                          thermo_df=ro.conversion.py2rpy(thermo_df),
+
+        # Extract dissrxns, basis_pref, and redox_elem_states from out_list
+        # out_list is an R list with 'dissrxns', 'basis_pref', and 'redox_elem_states' components
+        if hasattr(out_list, 'rx2'):
+            # If out_list is still an R object, pass the R objects directly
+            dissrxns = out_list.rx2("dissrxns")
+            basis_pref = out_list.rx2("basis_pref")
+            redox_elem_states = out_list.rx2("redox_elem_states") if "redox_elem_states" in list(out_list.names) else {}
+        else:
+            # Already a Python dict
+            dissrxns = out_list.get("dissrxns", {})
+            basis_pref = out_list.get("basis_pref", [])
+            redox_elem_states = out_list.get("redox_elem_states", {})
+
+        # assemble data0 file using Python version
+        data0_file_lines = create_data0_py(
+                          thermo_df=thermo_df,
+                          element_df=None,
                           solid_solution_df=solid_solution_df,
                           db=db,
                           water_model=water_model,
                           template=template,
-                          dissrxns=out_list.rx2("dissrxns"),
-                          basis_pref=out_list.rx2("basis_pref"),
+                          dissrxns=dissrxns,
+                          basis_pref=basis_pref,
                           exceed_Ttr=exceed_Ttr,
-                          fixed_species=_convert_to_RVector(FIXED_SPECIES),
+                          fixed_species=FIXED_SPECIES,
+                          redox_elem_states=redox_elem_states,
                           verbose=self.verbose,
                           )
-        
-        self._print_captured_r_output()
-        
-        data0_file_lines = data0_file_lines[0].split("\n")
+
+        data0_file_lines = data0_file_lines.split("\n")
         
         if fill_data0:
-            
+
             # begin TP-dependent processes
-            self.__fill_data0(thermo_df=ro.conversion.rpy2py(thermo_df),
+            self.__fill_data0(thermo_df=thermo_df,
                               data0_file_lines=copy.deepcopy(data0_file_lines),
                               grid_temps=grid_temps,
                               grid_press=grid_press,
@@ -3053,7 +2993,13 @@ class AqEquil(object):
         def __init__(self, AqEquil_instance):
 
             self.AqEquil_instance = AqEquil_instance
-            
+
+            # Initialize CHNOSZ thermodynamic system if not already initialized
+            # This must happen BEFORE loading custom element databases
+            thermo_sys = pychnosz.thermo()
+            if not thermo_sys.is_initialized():
+                thermo_sys.reset(messages=False)
+
             # attributes to add to AqEquil class
             self.db = self.AqEquil_instance.db
             self.elements = self.AqEquil_instance.elements
@@ -3139,7 +3085,7 @@ class AqEquil(object):
                 if self.db == "WORM":
                     if self.verbose > 0:
                         print("Loading Water-Organic-Rock-Microbe (WORM) thermodynamic databases...")
-                    self.db = "https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data.csv"
+                    self.db = "https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data_latest.csv"
                     self._set_active_db(db=self.db, download_csv_files=download_csv_files)
                     if self.elements == None:
                         self._load_elements("https://raw.githubusercontent.com/worm-portal/WORM-db/master/elements.csv", source="URL", download_csv_files=download_csv_files)
@@ -3260,7 +3206,8 @@ class AqEquil(object):
         def _remove_missing_G_species(self):
             # remove species that are missing a gibbs free energy value.
             # handle minerals first. Reject any that have missing G in any polymorph.
-            mineral_name_reject = list(set(self.csv_db[(self.csv_db["G"].isnull()) & (self.csv_db['state'].str.contains('cr'))]["name"]))
+            # Berman minerals are be allowed through despite having missing Gibbs.
+            mineral_name_reject = list(set(self.csv_db[(self.csv_db["G"].isnull()) & (self.csv_db['state'].str.contains('cr')) & (self.csv_db['model'].str.contains('CGL'))]["name"]))
             
             idx = list(self.csv_db[self.csv_db["name"].isin(mineral_name_reject)].index)
             names = self.csv_db["name"].loc[idx]
@@ -3413,7 +3360,7 @@ class AqEquil(object):
                         "\n\t db='https://raw.githubusercontent.com/worm-portal/WORM-db/master/data0.wrm'"
                         "\n\t (note the data0 file in the URL must have 'data0.' followed by a three letter code)"
                         "\n - a URL directing to a valid csv file. e.g.,"
-                        "\n\t db='https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data.csv'")
+                        "\n\t db='https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data_latest.csv'")
 
                 self.db = db
             
@@ -3501,6 +3448,11 @@ class AqEquil(object):
                 if self.verbose > 0:
                     print("Element database", self.element_db_filename, "is active.")
                 self.element_active = True
+
+                # Update CHNOSZ's global thermo object with the element database
+                # This is needed for functions like entropy() and mass() to work with custom elements
+                if self.element_db is not None:
+                    pychnosz.thermo(element=self.element_db)
             else:
                 if self.verbose > 0:
                     print("Element database is not active because the active thermodynamic database is a", self.thermo_db_type, "and not a CSV.")
@@ -3605,7 +3557,7 @@ class AqEquil(object):
             self.logK_S_db = self._exclude_category(df=self.logK_S_db, df_name=self.logK_S_db_filename)
 
             if self.logK_S_active:
-                
+
                 for i,sp in enumerate(self.logK_S_db["name"]):
 
                     i = self.logK_S_db.index[i]
@@ -3621,20 +3573,21 @@ class AqEquil(object):
                     T_list = [float(T) for T in T_list]
 
                     Delta_S = float(self.logK_S_db["DeltaS"][i])
-                    
+
+
                     if IS_ref > 0:
                         # extrapolate to ionic strength 0
                         
                         # collect azero values for metal, ligand, and complex
-                        metal_name = self.logK_S_db["metal_name"][i]
-
-                        if self.thermo_db["name"].isin([metal_name]).any():
-                            metal_azero = list(self.thermo_db[self.thermo_db["name"] == metal_name]["azero"])[0]
-                            metal_charge = float(list(self.thermo_db[self.thermo_db["name"] == metal_name]["z.T"])[0])
-#                         elif:
-#                             # todo: get metal azero and charge from other databases, e.g., logK db
-#                             pass
-                        elif metal_name == "H+":
+                        cation_name = self.logK_S_db["cation_name"][i]
+    
+                        if self.thermo_db["name"].isin([cation_name]).any():
+                            metal_azero = list(self.thermo_db[self.thermo_db["name"] == cation_name]["azero"])[0]
+                            metal_charge = float(list(self.thermo_db[self.thermo_db["name"] == cation_name]["z.T"])[0])
+    #                         elif:
+    #                             # todo: get metal azero and charge from other databases, e.g., logK db
+    #                             pass
+                        elif cation_name == "H+":
                             metal_azero = 4
                             metal_charge = 1
                         else:
@@ -3643,8 +3596,8 @@ class AqEquil(object):
                         
                         ligand_name = self.logK_S_db["ligand_name"][i]
                         ligand_basis = self.logK_S_db["ligand_basis"][i]
-
-
+    
+    
                         if isinstance(self.logK_S_db["ligand_charge"][i], float):
                             ligand_charge = float(self.logK_S_db["ligand_charge"][i])
                         elif self.thermo_db["name"].isin([ligand_name]).any():
@@ -3662,7 +3615,7 @@ class AqEquil(object):
                             # self.err_handler.raise_exception("The ligand '"+ligand_name+"' was not found in the "
                             #         "currently loaded databases. Is this ligand present in the database? Was this "
                             #         "ligand excluded (e.g., exclude_organics=True)?")
-
+    
                         if isinstance(self.logK_S_db["ligand_azero"][i], float):
                             ligand_azero = float(self.logK_S_db["ligand_azero"][i])
                         elif self.thermo_db["name"].isin([ligand_name]).any():
@@ -3672,12 +3625,12 @@ class AqEquil(object):
                         else:
                             # todo: elif ligand_name in logK database names, get azero from there...
                             # or maybe this is not necessary if logK is merged with thermo_db at this point
-
+    
                             ligand_azero = 4 # acceptable placeholder azero for charged species
-
+    
                     
                         dissrxn = self.logK_S_db["dissrxn"][i].split(" ")
-                        n_metal = float(dissrxn[dissrxn.index(metal_name)-1])
+                        n_metal = float(dissrxn[dissrxn.index(cation_name)-1])
                         if ligand_name in dissrxn:
                             n_ligand = float(dissrxn[dissrxn.index(ligand_name)-1])
                         elif ligand_basis in dissrxn:
@@ -3686,7 +3639,7 @@ class AqEquil(object):
                             # todo: throw error
                             pass
                         n_complex = -float(dissrxn[dissrxn.index(sp)-1])
-                        
+
                         complex_charge = n_metal*metal_charge + n_ligand*ligand_charge
                         complex_azero = self.logK_S_db["azero"][i]
                         
@@ -3729,10 +3682,13 @@ class AqEquil(object):
 
                             self.element_db = pd.concat([self.element_db, e_df], ignore_index=True)
 
+                            # Update CHNOSZ's thermo object with the modified element database
+                            pychnosz.thermo(element=self.element_db)
+
                     if isinstance(self.logK_S_db["ligand_basis"][i], str):
                         # add a basis species representing the pseudoelement
                         basis = self.logK_S_db["ligand_basis"][i]
-                        
+
                         if basis not in list(self.thermo_db["name"]):
                             b_df = pd.DataFrame(
                                 {'name':[self.logK_S_db["ligand_basis"][i]],
@@ -3760,6 +3716,7 @@ class AqEquil(object):
                             self.thermo_db = pd.concat([self.thermo_db, b_df], ignore_index=True)
 
                     if self.logK_S_db["name"][i] not in self.thermo_db["name"] and self.logK_S_db["name"][i] not in self.logK_db["name"]:
+
                         s_df = pd.DataFrame(
                                 {'name':[self.logK_S_db["name"][i]],
                                  'abbrv':[""],
@@ -3791,28 +3748,16 @@ class AqEquil(object):
 
         def _est_logK_S(self, T_list, logK_25C, Delta_S):
 
-            R = 8.31446261815324/4.184 # cal/(mol K)
-
-            # solve for G of reaction:
-            # ∆_r G°= -2.303RT logK
-            G_25 = -2.303*R*298.15*logK_25C # in cal/mol
-
-            # solve for H of reaction:
-            # ∆_r G°= ∆_r H°-T∆_r S°
-            H = G_25 + 298.15*Delta_S # in cal/mol
+            R = 8.31446261815324/4.184 # cal/mol/K
+            T = 298.15
 
             logK_list = []
+            # based on Eq3 of Prapaipong & Shock 2001:
             for T_C in T_list:
-
-                T_K = T_C+273.15 # convert C to Kelvin
-
-                # estimate G at temperature
-                G_T = H - T_K*Delta_S
-
-                # convert G to logK
-                logK_T = G_T/(-2.303*R*T_K)
-                logK_list.append(logK_T)
-
+                #delta_logK = (Delta_S/(2.303*R*298.15))*(T_C-25)
+                delta_logK = (Delta_S/(2.303*R*(T_C+273.15)))*(T_C-25)
+                logK_list.append(logK_25C + delta_logK)
+            
             return logK_list
 
 
@@ -3861,6 +3806,21 @@ class AqEquil(object):
                 self.csv_db_source = "URL"
 
             self.csv_db = self.csv_db.astype(WORM_THERMODYNAMIC_DATABASE_COLUMN_TYPE_DICT)
+
+            # Special handling for missing 'model' column
+            if 'model' not in self.csv_db.columns:
+                # Create model column with proper values
+                # - aqueous species (state == 'aq') get 'HKF'
+                # - non-aqueous species get 'CGL'
+                self.csv_db['model'] = self.csv_db['state'].apply(lambda x: 'HKF' if x == 'aq' else 'CGL')
+
+                # Issue a warning to inform the user
+                warnings.warn(
+                    "The 'model' column was not found in the thermodynamic database CSV. "
+                    "Auto-generating 'model' column: 'HKF' for aqueous species (state='aq'), "
+                    "'CGL' for all other species.",
+                    UserWarning
+                )
 
             # Check that thermodynamic database input files exist and are formatted correctly.
             self._check_csv_db()
@@ -3950,8 +3910,8 @@ class AqEquil(object):
                        "Are these headers spelled correctly in the file?")
                 self.err_handler.raise_exception(msg)
 
-            # does Cl-, O2(g), and O2 exist in the file?
-            required_species = ["Cl-", "O2", "O2(g)"]
+            # does O2(g), and O2 exist in the file?
+            required_species = ["O2", "O2(g)"]
             missing_species = []
             for species in required_species:
                 if species not in list(thermo_df["name"]):
@@ -3971,8 +3931,6 @@ class AqEquil(object):
                                                   exceed_Ttr=True):
             
             thermo_df = self.thermo_db
-            
-            suppress_redox = _convert_to_RVector(suppress_redox)
 
             # if elements are being redox-suppressed, exclude all species with a
             # formula containing one or more of the redox-suppressed elements if the
@@ -3997,49 +3955,52 @@ class AqEquil(object):
                               "'formula_ox' column of the thermodynamic database: "
                               ""+str(sp_names_to_exclude))
 
-            if len(self.exclude_category) > 0:
-                exclude_category_R =  {k:_convert_to_RVector(l) for k,l in zip(self.exclude_category.keys(), self.exclude_category.values())}
-            else:
-                exclude_category_R = {}
-            exclude_category_R = ro.ListVector(exclude_category_R)
+            # Use Python-based dissociation reaction processing instead of R
+            thermo_df = assign_worm_db_col_dtypes(thermo_df)
 
-            self.AqEquil_instance._capture_r_output()
+            # Load the thermodynamic database into pyCHNOSZ before processing dissociation reactions
+            # This ensures that CHNOSZ has access to all species in the database
+            if self.verbose > 0:
+                print("Loading thermodynamic database into pyCHNOSZ...")
 
-            r_redox_dissrxns = pkg_resources.resource_string(
-                __name__, 'redox_and_dissrxns.r').decode("utf-8")
+            # Replace the default OBIGT database with user-supplied database
+            # Keep only fixed species from the original OBIGT database
+            # Filter out species that return NaN (not in default OBIGT)
+            fixed_indices = pychnosz.info(FIXED_SPECIES, messages=False)
+            fixed_indices_clean = [idx for idx in fixed_indices if not pd.isna(idx)]
+            pychnosz.thermo(OBIGT=pychnosz.thermo().OBIGT.loc[fixed_indices_clean])
 
-            ro.r(r_redox_dissrxns)
-            
-            thermo_df = _clean_rpy2_pandas_conversion(thermo_df)
+            # Add all species from the user-supplied thermodynamic database
+            pychnosz.add_OBIGT(thermo_df, messages=False)
 
-            ro.conversion.py2rpy(thermo_df)
+            # Call the Python function for processing dissociation reactions
+            # Note: redox suppression will still be handled by R for now
+            # This Python version handles dissociation reaction checking and generation
+            # Get list of already-rejected species (e.g., from exclude_category)
+            already_rejected = list(self.df_rejected_species['name']) if len(self.df_rejected_species) > 0 else []
 
-            self.out_list = ro.r.suppress_redox_and_generate_dissrxns(
-                                   thermo_df=ro.conversion.py2rpy(thermo_df),
-                                   water_model=self.water_model,
-                                   exceed_Ttr=exceed_Ttr,
-                                   suppress_redox=suppress_redox,
-                                   exclude_category=exclude_category_R,
-                                   element_df=ro.conversion.py2rpy(self.element_db),
-                                   fixed_species=_convert_to_RVector(FIXED_SPECIES),
-                                   verbose=self.verbose)
-            
-            self.AqEquil_instance._print_captured_r_output()
+            self.out_list = process_dissrxns(
+                thermo_df=thermo_df,
+                water_model=self.water_model,
+                exceed_Ttr=exceed_Ttr,
+                suppress_redox=suppress_redox,
+                exclude_category=self.exclude_category,
+                element_df=self.element_db,
+                fixed_species=FIXED_SPECIES,
+                verbose=self.verbose,
+                already_rejected_species=already_rejected
+            )
 
-            thermo_df = self.out_list.rx2("thermo_df")
-            thermo_df=ro.conversion.rpy2py(thermo_df)
+            thermo_df = self.out_list['thermo_df']
 
-            # Currently, species rejected by r.suppress_redox_and_generate_dissrxns()
-            # are rejected because they cannot be written with valid basis species.
-            # e.g., the mineral "iron" would be rejected when Fe is redox-isolated because
-            # there is no aqueous basis species representing Fe with an oxidation state of 0.
-            rejected_species = self.out_list.rx2("dissrxns").rx2("rejected_species")
-            
-            if type(rejected_species) != rpy2.rinterface_lib.sexp.NULLType:
-                for i,sp in enumerate(rejected_species):
+            # Handle rejected species
+            rejected_species = self.out_list['dissrxns'].get('rejected_species', [])
+
+            if rejected_species and len(rejected_species) > 0:
+                for sp in rejected_species:
                     self._reject_species(sp, "A dissociation reaction could not be written with valid basis species.")
 
-            thermo_df = _clean_rpy2_pandas_conversion(thermo_df)
+            thermo_df = assign_worm_db_col_dtypes(thermo_df)
 
             # convert E units and calculate missing GHS values
             self.thermo_db = OBIGT2eos(thermo_df, fixGHS=True, tocal=True)
@@ -4166,8 +4127,8 @@ class Speciation(object):
         Pandas dataframe reporting major results of speciation calculation in
         across all samples.
     
-    report_divs : rpy2 ListVector
-        An rpy2 ListVector of column names within the different sections of the
+    report_divs : dict
+        An dictionary of column names within the different sections of the
         speciation report.
     
     sample_data : dict
@@ -4195,12 +4156,6 @@ class Speciation(object):
         for k in args:
             setattr(self, k, args[k])
 
-        if 'report_divs' in list(self.__dict__.keys()):
-            # create a dict of report categories and their child columns
-            self.report_category_dict = {}
-            for cat in [str(s) for s in list(self.report_divs.names)]:
-                self.report_category_dict[cat] = list(self.report_divs.rx2(cat))
-
         if 'verbose' not in list(self.__dict__.keys()):
             self.verbose = 1
         
@@ -4215,9 +4170,7 @@ class Speciation(object):
             with open(self.custom_grouping_filepath) as file:
                 lines = [line.rstrip() for line in file]
         else:
-            stream = pkg_resources.resource_stream(__name__, "speciation_groups_WORM.txt")
-            with stream as s:
-                content = s.read().decode()
+            content = import_package_file(__name__, 'speciation_groups_WORM.txt')
             content = content.split("\n")
             lines = [line.rstrip() for line in content]
 
@@ -4446,7 +4399,7 @@ class Speciation(object):
         Reset the half_cell_reactions table back to its original default. Takes
         no parameters.
         """
-        self.half_cell_reactions = copy.deepcopy(self._half_cell_reactions_originalcopy)
+        self.half_cell_reactions = copy.deepcopy(self._half_cell_reactions_original_copy)
         if self.verbose > 0:
                 print("The table of half reactions half_cell_reactions has been reset.")
 
@@ -4964,13 +4917,13 @@ class Speciation(object):
             # print("BASIS CANDIDATES")
             # print(basis_candidates+["H2O", "e-", "H+"])
             
-            pyCHNOSZ.basis(basis_candidates+["H2O", "e-", "H+"],
-                           messages=False)
+            b = pychnosz.basis(basis_candidates+["H2O", "e-", "H+"],
+                           messages=False, global_state=False)
             
-            sout = pyCHNOSZ.subcrt(species=[oxidant, reductant, "e-"],
+            sout = pychnosz.subcrt(species=[oxidant, reductant, "e-"],
                                    coeff=[ox_coeff, red_coeff, e_coeff],
-                                   property="logK", T=25,
-                                   messages=False, show=False).reaction
+                                   property="logK", T=25, show=False,
+                                   messages=False, basis=b).reaction
             
             half_reaction_dict[idx] = self._create_sp_dict(sout)
 
@@ -5512,6 +5465,7 @@ class Speciation(object):
                 "Press(bars)" : [self.sample_data[sample]['pressure']],
                 "pH" : [-self.sample_data[sample]['aq_distribution']["log_activity"]['H+']],
                 "logfO2" : [self.sample_data[sample]["fugacity"]["log_fugacity"]["O2(g)"]],
+                "ionic strength (molal)" : [self.sample_data[sample]["ionic_strength"]],
             }))
         df_misc_params = pd.concat(df_misc_param_row_list)
         df_misc_params.insert(0, "Xi", 0)
@@ -5627,7 +5581,7 @@ class Speciation(object):
                 s_logact_dict[s] = [0]*len(self.misc_params["Temp(C)"])
                 
                 sp_formula = list(self.thermo.csv_db[self.thermo.csv_db["name"]==s]["formula"])[0]
-                sp_mass = pyCHNOSZ.mass(sp_formula)
+                sp_mass = pychnosz.mass(sp_formula)
                 
                 if isinstance(grams_minerals, (pd.DataFrame, float, int)):
                     if isinstance(grams_minerals, pd.DataFrame):
@@ -5668,8 +5622,6 @@ class Speciation(object):
                         "is not recognized. Try 'cal', 'kcal', 'J', or 'kJ'.")
             R = 8.314/r_div  # gas constant, unit = [cal/mol/K]
 
-
-
         if "k" in y_units:
             k_div = 1000
         else:
@@ -5685,13 +5637,13 @@ class Speciation(object):
                 divisor_i = divisor
             
             if y_type != "logQ":
-                logK = pyCHNOSZ.subcrt(
+                logK = pychnosz.subcrt(
                               species,
                               stoich,
                               T=T,
                               P=list(self.misc_params["Press(bars)"])[i],
-                              show=False,
-                              messages=print_logK_messages).out["logK"]
+                              IS=0, # ionic strength of 0 ensures that the logK calculated is standard, as required
+                              messages=print_logK_messages, show=False).out["logK"]
 
                 logK = float(logK.iloc[0])
 
@@ -5839,15 +5791,18 @@ class Speciation(object):
         if append_report:
             col_order = [c[0] for c in self.report.columns] + headers # get order of columns in report and affinity/energy df
             col_order = list(collections.OrderedDict.fromkeys(col_order)) # remove duplicates
-            self.report = df_out.combine_first(self.report) # update the report with affinity/energy results
+            # Suppress unorderable values warning when combining DataFrames with MultiIndex columns
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', 'The values in the array are unorderable')
+                self.report = df_out.combine_first(self.report) # update the report with affinity/energy results
             self.report = self.report.reindex(level=0, columns=col_order) # restore column order
 
             # update the report category dictionary so y_type_plain appears as a category with relevant columns
-            if y_type_plain not in list(self.report_category_dict.keys()):
-                self.report_category_dict[y_type_plain] = headers
+            if y_type_plain not in list(self.report_divs.keys()):
+                self.report_divs[y_type_plain] = headers
             else:
-                self.report_category_dict[y_type_plain] = self.report_category_dict[y_type_plain]+headers
-                self.report_category_dict[y_type_plain]= list(collections.OrderedDict.fromkeys(self.report_category_dict[y_type_plain]))
+                self.report_divs[y_type_plain] = self.report_divs[y_type_plain]+headers
+                self.report_divs[y_type_plain]= list(collections.OrderedDict.fromkeys(self.report_divs[y_type_plain]))
 
         # create a formatted reaction to add to self.reactions_for_plotting
         # so that it can be invoked in a plot
@@ -5900,7 +5855,7 @@ class Speciation(object):
         
         if filename[-11:] != '.speciation':
             filename = filename + '.speciation'
-        
+
         with open(filename, 'wb') as handle:
             dill.dump(self, handle, protocol=dill.HIGHEST_PROTOCOL)
             if messages:
@@ -5984,6 +5939,7 @@ class Speciation(object):
             "log_fugacity" : ("log fugacity", "log(bar)"),
             "fugacity" : ("fugacity", "bar"),
             "bar" : ("", "bar"),
+            "affinity_kcal" : ("saturation index", "kcal/mol"),
         }
         
         out = unit_name_dict.get(subheader)
@@ -6017,14 +5973,14 @@ class Speciation(object):
             columns in a section (if a section name is provided).
         """
         
-        names_length = len(self.report_category_dict.keys())
+        names_length = len(self.report_divs.keys())
         
         if col==None and names_length>0:
-            return list(self.report_category_dict.keys())
+            return list(self.report_divs.keys())
         
         if names_length>0:
-            if col in list(self.report_category_dict.keys()):
-                return list(self.report_category_dict[col])
+            if col in list(self.report_divs.keys()):
+                return list(self.report_divs[col])
         
         if isinstance(col, str):
             col = [col]
@@ -6556,6 +6512,11 @@ class Speciation(object):
             figure is simply displayed.
         """
 
+        if not isinstance(y, list) and not isinstance(y, str):
+            self.err_handler.raise_exception("y must be a string or a list. "
+                    "If you are applying the result of a lookup() to y, then "
+                    "make sure the string inside of lookup() is valid.")
+        
         if not isinstance(y, list):
             y = [y]
         

@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>aqequil.redox_suppression API documentation</title>
+<meta name="description" content="Module for handling redox suppression in thermodynamic databases …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aqequil.redox_suppression</code></h1>
+</header>
+<section id="section-intro">
+<p>Module for handling redox suppression in thermodynamic databases.</p>
+<p>This module implements the logic to prevent equilibration between different
+oxidation states of specified elements by creating "pseudoelements" that
+trick EQ3/6 into treating different oxidation states as different elements.</p>
+<p>For example, if Fe redox is suppressed:
+- Fe+2 becomes the element "Fejiip"
+- Fe+3 becomes the element "Fejiiip"
+- Fe0 becomes the element "Fejz"</p>
+<p>Pseudoelement naming convention:
+- Element name (e.g., "Fe") is separated from charge by 'j'
+- The charge magnitude is in lowercase roman numerals
+- The letter at the end is either 'p' (positive), 'n' (negative), or 'z' (zero)
+- Examples: Fe+3 -&gt; Fejiiip, C-4 -&gt; Cjivn, S0 -&gt; Sjz</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aqequil.redox_suppression.add_pseudoelements_to_chnosz"><code class="name flex">
+<span>def <span class="ident">add_pseudoelements_to_chnosz</span></span>(<span>redox_elem_states, element_df=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_pseudoelements_to_chnosz(redox_elem_states, element_df=None):
+    &#34;&#34;&#34;
+    Add pseudoelements to CHNOSZ&#39;s element database.
+
+    Parameters
+    ----------
+    redox_elem_states : dict
+        Dictionary mapping elements to pseudoelement names
+        Format: {element: {ox_state_string: pseudoelement_name}}
+    element_df : pd.DataFrame, optional
+        Element database to use as template (if None, uses CHNOSZ default)
+
+    Returns
+    -------
+    None
+        Modifies CHNOSZ&#39;s global element database
+    &#34;&#34;&#34;
+    # Get current element database from CHNOSZ
+    current_elements = chnosz.thermo().element
+
+    # Add each pseudoelement
+    for element in redox_elem_states:
+        # Get properties of the original element
+        elem_row = current_elements[current_elements[&#39;element&#39;] == element]
+
+        if elem_row.empty:
+            print(f&#34;Warning: Element {element} not found in CHNOSZ element database&#34;)
+            continue
+
+        # Use the first matching row
+        elem_row = elem_row.iloc[0]
+
+        # Create pseudoelement entries
+        for ox_state_str, pseudoelement in redox_elem_states[element].items():
+            # Create new element entry with pseudoelement name
+            new_elem = pd.DataFrame({
+                &#39;element&#39;: [pseudoelement],
+                &#39;state&#39;: [elem_row[&#39;state&#39;]],
+                &#39;source&#39;: [f&#34;redox suppression for {ox_state_str}&#34;],
+                &#39;mass&#39;: [elem_row[&#39;mass&#39;]],
+                &#39;s&#39;: [elem_row[&#39;s&#39;]],
+                &#39;n&#39;: [elem_row[&#39;n&#39;]]
+            })
+
+            # Add to CHNOSZ element database
+            updated_elements = pd.concat([current_elements, new_elem], ignore_index=True)
+            current_elements = updated_elements
+
+    # Update CHNOSZ with the new element database
+    pychnosz.thermo(element=current_elements)</code></pre>
+</details>
+<div class="desc"><p>Add pseudoelements to CHNOSZ's element database.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>redox_elem_states</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary mapping elements to pseudoelement names
+Format: {element: {ox_state_string: pseudoelement_name}}</dd>
+<dt><strong><code>element_df</code></strong> :&ensp;<code>pd.DataFrame</code>, optional</dt>
+<dd>Element database to use as template (if None, uses CHNOSZ default)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>None</code></dt>
+<dd>Modifies CHNOSZ's global element database</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.redox_suppression.create_pseudoelement_name"><code class="name flex">
+<span>def <span class="ident">create_pseudoelement_name</span></span>(<span>element, oxidation_state)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_pseudoelement_name(element, oxidation_state):
+    &#34;&#34;&#34;
+    Create a pseudoelement name from an element and its oxidation state.
+
+    Parameters
+    ----------
+    element : str
+        Element symbol (e.g., &#34;Fe&#34;, &#34;S&#34;, &#34;C&#34;)
+    oxidation_state : int or str
+        Oxidation state as integer or string with sign (e.g., +3, &#34;-2&#34;, 0)
+
+    Returns
+    -------
+    str
+        Pseudoelement name following the convention (e.g., &#34;Fejiiip&#34; for Fe+3)
+
+    Examples
+    --------
+    &gt;&gt;&gt; create_pseudoelement_name(&#34;Fe&#34;, 3)
+    &#39;Fejiiip&#39;
+    &gt;&gt;&gt; create_pseudoelement_name(&#34;Fe&#34;, &#34;+3&#34;)
+    &#39;Fejiiip&#39;
+    &gt;&gt;&gt; create_pseudoelement_name(&#34;S&#34;, -2)
+    &#39;Sjiin&#39;
+    &gt;&gt;&gt; create_pseudoelement_name(&#34;S&#34;, 0)
+    &#39;Sjz&#39;
+    &#34;&#34;&#34;
+    # Convert oxidation state to integer if it&#39;s a string
+    if isinstance(oxidation_state, str):
+        oxidation_state = int(oxidation_state.replace(&#39;+&#39;, &#39;&#39;).replace(&#39;-&#39;, &#39;&#39;))
+        if &#39;-&#39; in str(oxidation_state):
+            oxidation_state = -abs(oxidation_state)
+
+    # Determine charge sign suffix
+    if oxidation_state &gt; 0:
+        suffix = &#39;p&#39;  # positive
+        magnitude = abs(oxidation_state)
+    elif oxidation_state &lt; 0:
+        suffix = &#39;n&#39;  # negative
+        magnitude = abs(oxidation_state)
+    else:
+        suffix = &#39;z&#39;  # zero
+        magnitude = 0
+
+    # Convert magnitude to lowercase roman numerals
+    if magnitude == 0:
+        roman_mag = &#39;&#39;
+    else:
+        roman_mag = roman.toRoman(magnitude).lower()
+
+    # Construct pseudoelement name
+    pseudoelement = f&#34;{element}j{roman_mag}{suffix}&#34;
+
+    return pseudoelement</code></pre>
+</details>
+<div class="desc"><p>Create a pseudoelement name from an element and its oxidation state.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>element</code></strong> :&ensp;<code>str</code></dt>
+<dd>Element symbol (e.g., "Fe", "S", "C")</dd>
+<dt><strong><code>oxidation_state</code></strong> :&ensp;<code>int</code> or <code>str</code></dt>
+<dd>Oxidation state as integer or string with sign (e.g., +3, "-2", 0)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>Pseudoelement name following the convention (e.g., "Fejiiip" for Fe+3)</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; create_pseudoelement_name(&quot;Fe&quot;, 3)
+'Fejiiip'
+&gt;&gt;&gt; create_pseudoelement_name(&quot;Fe&quot;, &quot;+3&quot;)
+'Fejiiip'
+&gt;&gt;&gt; create_pseudoelement_name(&quot;S&quot;, -2)
+'Sjiin'
+&gt;&gt;&gt; create_pseudoelement_name(&quot;S&quot;, 0)
+'Sjz'
+</code></pre></div>
+</dd>
+<dt id="aqequil.redox_suppression.create_redox_element_states_dict"><code class="name flex">
+<span>def <span class="ident">create_redox_element_states_dict</span></span>(<span>thermo_df, suppress_redox)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_redox_element_states_dict(thermo_df, suppress_redox):
+    &#34;&#34;&#34;
+    Create a dictionary mapping elements to their pseudoelement names for each oxidation state.
+
+    Only includes oxidation states that have aqueous basis species available.
+    Species with oxidation states that lack aqueous basis species will be rejected.
+
+    Parameters
+    ----------
+    thermo_df : pd.DataFrame
+        Thermodynamic database with &#39;formula_ox&#39; column
+    suppress_redox : list
+        List of element symbols to suppress redox for (e.g., [&#34;Fe&#34;, &#34;S&#34;])
+
+    Returns
+    -------
+    tuple
+        (redox_elem_states, rejected_species) where:
+        - redox_elem_states: dict {element: {oxidation_state_string: pseudoelement_name}}
+        - rejected_species: list of species names that were rejected
+    &#34;&#34;&#34;
+    redox_elem_states = {}
+    rejected_species = []
+
+    for element in suppress_redox:
+        # Extract all oxidation states for this element
+        ox_states = extract_oxidation_states_from_thermo_df(thermo_df, element)
+
+        if len(ox_states) == 0:
+            continue
+
+        # Create pseudoelement names for each oxidation state that has an aqueous basis species
+        redox_entry = {}
+        ox_states_without_basis = []
+
+        for ox_state_str in ox_states:
+            # Parse oxidation state from string like &#34;Fe+3&#34; or just &#34;Fe&#34; (for zero)
+            match = re.match(r&#39;([A-Z][a-z]?)([\+\-])?([0-9]+)?&#39;, ox_state_str.strip())
+            if match:
+                elem, sign, magnitude = match.groups()
+                if sign and magnitude:
+                    ox_state = int(sign + magnitude)
+                else:
+                    # No sign/magnitude means oxidation state 0
+                    ox_state = 0
+            else:
+                continue
+
+            # Check if there&#39;s an aqueous or gaseous basis species for this oxidation state
+            # EQ3/6 basis species must be aqueous or gaseous (e.g., O2(g), S2(g))
+            # Look for species containing this oxidation state with tag=&#39;basis&#39; or &#39;aux&#39; and state in [&#39;aq&#39;, &#39;gas&#39;]
+            has_valid_basis = False
+            for idx, row in thermo_df.iterrows():
+                formula_ox_val = row.get(&#39;formula_ox&#39;, &#39;&#39;)
+                # Handle NaN and non-string values
+                if pd.notna(formula_ox_val) and isinstance(formula_ox_val, str):
+                    # Check if this species contains the element in this oxidation state
+                    # Parse formula_ox to find all element-oxidation state pairs
+                    contains_ox_state = False
+                    parts = formula_ox_val.strip().split()
+                    for part in parts:
+                        # Use shared parsing function
+                        parsed = parse_formula_ox_part(part, include_pseudoelements=False)
+                        if parsed:
+                            _, elem, charge = parsed
+                            # Reconstruct the element+charge string
+                            part_normalized = elem + (charge if charge else &#39;&#39;)
+
+                            if part_normalized == ox_state_str:
+                                contains_ox_state = True
+                                break
+
+                    if (contains_ox_state and
+                        (row.get(&#39;tag&#39;) == &#39;basis&#39; or row.get(&#39;tag&#39;) == &#39;aux&#39;) and
+                        row.get(&#39;state&#39;) in [&#39;aq&#39;, &#39;gas&#39;]):
+                        has_valid_basis = True
+                        break
+
+            if has_valid_basis:
+                # Create pseudoelement name
+                pseudoelement = create_pseudoelement_name(element, ox_state)
+                redox_entry[ox_state_str] = pseudoelement
+            else:
+                ox_states_without_basis.append(ox_state_str)
+
+        # Reject species containing oxidation states without aqueous basis species
+        if ox_states_without_basis:
+            for ox_state_str in ox_states_without_basis:
+                # Find all species with this oxidation state
+                for idx, row in thermo_df.iterrows():
+                    formula_ox = row.get(&#39;formula_ox&#39;, &#39;&#39;)
+                    if pd.notna(formula_ox) and formula_ox != &#39;nan&#39; and formula_ox != &#39;&#39;:
+                        # Check if this oxidation state appears in formula_ox
+                        parts = formula_ox.strip().split()
+                        for part in parts:
+                            # Extract element from part
+                            elem_match = re.match(r&#39;[0-9]*\.?[0-9]*([A-Z][a-z]?)&#39;, part)
+                            if elem_match and elem_match.group(1) == element:
+                                # This part contains our element - check oxidation state
+                                # For exact matching: &#34;Fe+2&#34; matches &#34;Fe+2&#34;, &#34;Fe&#34; matches &#34;Fe&#34;, but &#34;Fe&#34; does NOT match &#34;Fe+2&#34;
+                                if ox_state_str.strip() == part.strip():
+                                    if row[&#39;name&#39;] not in rejected_species:
+                                        rejected_species.append(row[&#39;name&#39;])
+
+        if redox_entry:
+            redox_elem_states[element] = redox_entry
+
+    return redox_elem_states, rejected_species</code></pre>
+</details>
+<div class="desc"><p>Create a dictionary mapping elements to their pseudoelement names for each oxidation state.</p>
+<p>Only includes oxidation states that have aqueous basis species available.
+Species with oxidation states that lack aqueous basis species will be rejected.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>thermo_df</code></strong> :&ensp;<code>pd.DataFrame</code></dt>
+<dd>Thermodynamic database with 'formula_ox' column</dd>
+<dt><strong><code>suppress_redox</code></strong> :&ensp;<code>list</code></dt>
+<dd>List of element symbols to suppress redox for (e.g., ["Fe", "S"])</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>(redox_elem_states, rejected_species) where:
+- redox_elem_states: dict {element: {oxidation_state_string: pseudoelement_name}}
+- rejected_species: list of species names that were rejected</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.redox_suppression.extract_oxidation_states_from_thermo_df"><code class="name flex">
+<span>def <span class="ident">extract_oxidation_states_from_thermo_df</span></span>(<span>thermo_df, element)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_oxidation_states_from_thermo_df(thermo_df, element):
+    &#34;&#34;&#34;
+    Extract all oxidation states for a given element from the thermodynamic database.
+
+    Parameters
+    ----------
+    thermo_df : pd.DataFrame
+        Thermodynamic database with &#39;formula_ox&#39; column
+    element : str
+        Element symbol to search for
+
+    Returns
+    -------
+    list
+        List of unique oxidation states found for this element (as strings like &#34;Fe+3&#34;, &#34;Fe+2&#34;)
+    &#34;&#34;&#34;
+    oxidation_states = set()
+
+    # Iterate through all formula_ox entries
+    for idx, row in thermo_df.iterrows():
+        formula_ox = row.get(&#39;formula_ox&#39;, &#39;nan&#39;)
+
+        if pd.isna(formula_ox) or formula_ox == &#39;nan&#39; or formula_ox == &#39;&#39;:
+            continue
+
+        # Parse the formula_ox string using shared function
+        parts = formula_ox.strip().split()
+
+        for part in parts:
+            parsed = parse_formula_ox_part(part, include_pseudoelements=False)
+            if parsed:
+                _, elem, charge = parsed
+                if elem == element:
+                    if charge:
+                        oxidation_states.add(f&#34;{elem}{charge}&#34;)
+                    else:
+                        # No charge means oxidation state 0
+                        oxidation_states.add(f&#34;{elem}&#34;)
+
+    return sorted(list(oxidation_states))</code></pre>
+</details>
+<div class="desc"><p>Extract all oxidation states for a given element from the thermodynamic database.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>thermo_df</code></strong> :&ensp;<code>pd.DataFrame</code></dt>
+<dd>Thermodynamic database with 'formula_ox' column</dd>
+<dt><strong><code>element</code></strong> :&ensp;<code>str</code></dt>
+<dd>Element symbol to search for</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>List of unique oxidation states found for this element (as strings like "Fe+3", "Fe+2")</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.redox_suppression.modify_formulas_for_redox_suppression"><code class="name flex">
+<span>def <span class="ident">modify_formulas_for_redox_suppression</span></span>(<span>thermo_df, redox_elem_states, verbose=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def modify_formulas_for_redox_suppression(thermo_df, redox_elem_states, verbose=1):
+    &#34;&#34;&#34;
+    Modify chemical formulas in thermo_df to use pseudoelements for redox-suppressed elements.
+
+    This creates &#39;formula_modded&#39; and &#39;formula_ox_modded&#39; columns where redox-suppressed
+    elements are replaced with their corresponding pseudoelements.
+
+    Parameters
+    ----------
+    thermo_df : pd.DataFrame
+        Thermodynamic database with &#39;formula&#39; and &#39;formula_ox&#39; columns
+    redox_elem_states : dict
+        Dictionary mapping elements to pseudoelement names
+    verbose : int
+        Verbosity level
+
+    Returns
+    -------
+    pd.DataFrame
+        Modified thermodynamic database with &#39;formula_modded&#39; and &#39;formula_ox_modded&#39; columns
+    &#34;&#34;&#34;
+    thermo_df = thermo_df.copy()
+
+    # Initialize modded columns if they don&#39;t exist
+    if &#39;formula_modded&#39; not in thermo_df.columns:
+        thermo_df[&#39;formula_modded&#39;] = thermo_df[&#39;formula&#39;]
+
+    if &#39;formula_ox_modded&#39; not in thermo_df.columns:
+        thermo_df[&#39;formula_ox_modded&#39;] = thermo_df.get(&#39;formula_ox&#39;, &#39;nan&#39;)
+
+    # Process each species
+    for idx, row in thermo_df.iterrows():
+        species_name = row[&#39;name&#39;]
+        formula = row[&#39;formula&#39;]
+        formula_ox = row.get(&#39;formula_ox&#39;, &#39;nan&#39;)
+
+        # Handle simple ion formulas like &#34;Fe+2&#34; which should become &#34;Fejiip+2&#34;
+        # Check if the formula matches the pattern: Element+charge or Element-charge
+        import re
+        simple_ion_match = re.match(r&#39;^([A-Z][a-z]?)([+\-]\d+)$&#39;, formula)
+        if simple_ion_match:
+            element = simple_ion_match.group(1)
+            charge_str = simple_ion_match.group(2)
+
+            # Check if this element is redox-suppressed
+            if element in redox_elem_states:
+                # Parse formula_ox to get the oxidation state
+                if pd.notna(formula_ox) and formula_ox != &#39;nan&#39; and formula_ox != &#39;&#39;:
+                    # formula_ox for simple ions is typically same as formula, e.g., &#34;Fe+2&#34;
+                    ox_state_str = formula_ox.strip()
+                    if ox_state_str in redox_elem_states[element]:
+                        pseudoelement = redox_elem_states[element][ox_state_str]
+                        # Replace formula with pseudoelement version
+                        thermo_df.at[idx, &#39;formula_modded&#39;] = f&#34;{pseudoelement}{charge_str}&#34;
+                        thermo_df.at[idx, &#39;formula_ox_modded&#39;] = f&#34;{pseudoelement}{charge_str}&#34;
+                        if verbose &gt;= 2:
+                            print(f&#34;  Modified simple ion {species_name}: {formula} -&gt; {pseudoelement}{charge_str}&#34;)
+                        continue
+
+        # Skip if no formula_ox
+        if pd.isna(formula_ox) or formula_ox == &#39;nan&#39; or formula_ox == &#39;&#39;:
+            thermo_df.at[idx, &#39;formula_modded&#39;] = formula
+            thermo_df.at[idx, &#39;formula_ox_modded&#39;] = formula_ox
+            continue
+
+        # Parse the formula to get charge
+        try:
+            formula_makeup = pychnosz.makeup(formula)
+            charge = formula_makeup.get(&#39;Z&#39;, 0)
+        except:
+            charge = 0
+
+        # Build modified formula and formula_ox
+        modified_formula_parts = {}
+        modified_formula_ox_parts = []
+
+        # Parse formula_ox using shared function
+        parts = formula_ox.strip().split()
+
+        for part in parts:
+            # Use shared parsing function
+            parsed = parse_formula_ox_part(part, include_pseudoelements=False)
+            if not parsed:
+                continue
+
+            coeff, element, ox_charge = parsed
+
+            # Check if this element is redox-suppressed
+            if element in redox_elem_states:
+                # Build oxidation state string
+                if ox_charge:
+                    ox_state_str = f&#34;{element}{ox_charge}&#34;
+                else:
+                    # No charge means oxidation state 0
+                    ox_state_str = element
+
+                if ox_state_str in redox_elem_states[element]:
+                    pseudoelement = redox_elem_states[element][ox_state_str]
+
+                    # Add to modified formula
+                    if pseudoelement in modified_formula_parts:
+                        modified_formula_parts[pseudoelement] += coeff
+                    else:
+                        modified_formula_parts[pseudoelement] = coeff
+
+                    # Add to modified formula_ox
+                    if ox_charge:
+                        # Has oxidation state charge
+                        if coeff == 1.0:
+                            modified_formula_ox_parts.append(f&#34;{pseudoelement}{ox_charge}&#34;)
+                        else:
+                            modified_formula_ox_parts.append(f&#34;{coeff:.4g}{pseudoelement}{ox_charge}&#34;)
+                    else:
+                        # No oxidation state charge (oxidation state 0)
+                        if coeff == 1.0:
+                            modified_formula_ox_parts.append(pseudoelement)
+                        else:
+                            modified_formula_ox_parts.append(f&#34;{coeff:.4g}{pseudoelement}&#34;)
+                else:
+                    # Oxidation state not in our mapping, keep original
+                    if element in modified_formula_parts:
+                        modified_formula_parts[element] += coeff
+                    else:
+                        modified_formula_parts[element] = coeff
+
+                    if coeff == 1.0:
+                        modified_formula_ox_parts.append(part)
+                    else:
+                        modified_formula_ox_parts.append(f&#34;{coeff:.4g}{element}{ox_charge}&#34;)
+            else:
+                # Not redox-suppressed, keep original element
+                if element in modified_formula_parts:
+                    modified_formula_parts[element] += coeff
+                else:
+                    modified_formula_parts[element] = coeff
+
+                modified_formula_ox_parts.append(part)
+
+        # Build final formula string
+        formula_parts = []
+        for elem, count in modified_formula_parts.items():
+            if count == 1.0:
+                formula_parts.append(elem)
+            else:
+                formula_parts.append(f&#34;{elem}{count:.4g}&#34;)
+
+        # Add charge
+        if charge &gt; 0:
+            if charge == 1:
+                formula_parts.append(&#39;+&#39;)
+            else:
+                formula_parts.append(f&#39;+{int(charge)}&#39;)
+        elif charge &lt; 0:
+            if charge == -1:
+                formula_parts.append(&#39;-&#39;)
+            else:
+                formula_parts.append(f&#39;{int(charge)}&#39;)
+
+        modified_formula = &#39;&#39;.join(formula_parts)
+        modified_formula_ox = &#39; &#39;.join(modified_formula_ox_parts)
+
+        # Update dataframe
+        if modified_formula:
+            thermo_df.at[idx, &#39;formula_modded&#39;] = modified_formula
+        else:
+            thermo_df.at[idx, &#39;formula_modded&#39;] = formula
+
+        if modified_formula_ox_parts:
+            thermo_df.at[idx, &#39;formula_ox_modded&#39;] = modified_formula_ox
+        else:
+            thermo_df.at[idx, &#39;formula_ox_modded&#39;] = formula_ox
+
+    return thermo_df</code></pre>
+</details>
+<div class="desc"><p>Modify chemical formulas in thermo_df to use pseudoelements for redox-suppressed elements.</p>
+<p>This creates 'formula_modded' and 'formula_ox_modded' columns where redox-suppressed
+elements are replaced with their corresponding pseudoelements.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>thermo_df</code></strong> :&ensp;<code>pd.DataFrame</code></dt>
+<dd>Thermodynamic database with 'formula' and 'formula_ox' columns</dd>
+<dt><strong><code>redox_elem_states</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Dictionary mapping elements to pseudoelement names</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Verbosity level</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>Modified thermodynamic database with 'formula_modded' and 'formula_ox_modded' columns</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.redox_suppression.parse_pseudoelement_name"><code class="name flex">
+<span>def <span class="ident">parse_pseudoelement_name</span></span>(<span>pseudoelement)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_pseudoelement_name(pseudoelement):
+    &#34;&#34;&#34;
+    Parse a pseudoelement name to extract the element and oxidation state.
+
+    Parameters
+    ----------
+    pseudoelement : str
+        Pseudoelement name (e.g., &#34;Fejiiip&#34;, &#34;Sjiin&#34;, &#34;Sjz&#34;)
+
+    Returns
+    -------
+    tuple
+        (element, oxidation_state) where element is str and oxidation_state is int
+
+    Examples
+    --------
+    &gt;&gt;&gt; parse_pseudoelement_name(&#34;Fejiiip&#34;)
+    (&#39;Fe&#39;, 3)
+    &gt;&gt;&gt; parse_pseudoelement_name(&#34;Sjiin&#34;)
+    (&#39;S&#39;, -2)
+    &gt;&gt;&gt; parse_pseudoelement_name(&#34;Sjz&#34;)
+    (&#39;S&#39;, 0)
+    &#34;&#34;&#34;
+    if &#39;j&#39; not in pseudoelement or len(pseudoelement) &lt;= 2:
+        # Not a pseudoelement, return as-is
+        return (pseudoelement, None)
+
+    # Split on &#39;j&#39;
+    parts = pseudoelement.split(&#39;j&#39;)
+    element = parts[0]
+    charge_part = parts[1]
+
+    # Determine sign from last character
+    if charge_part[-1] == &#39;p&#39;:
+        sign = 1
+        roman_part = charge_part[:-1]
+    elif charge_part[-1] == &#39;n&#39;:
+        sign = -1
+        roman_part = charge_part[:-1]
+    elif charge_part[-1] == &#39;z&#39;:
+        return (element, 0)
+    else:
+        raise ValueError(f&#34;Invalid pseudoelement name: {pseudoelement}&#34;)
+
+    # Convert roman numerals to integer
+    if roman_part:
+        magnitude = roman.fromRoman(roman_part.upper())
+        oxidation_state = sign * magnitude
+    else:
+        oxidation_state = 0
+
+    return (element, oxidation_state)</code></pre>
+</details>
+<div class="desc"><p>Parse a pseudoelement name to extract the element and oxidation state.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>pseudoelement</code></strong> :&ensp;<code>str</code></dt>
+<dd>Pseudoelement name (e.g., "Fejiiip", "Sjiin", "Sjz")</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code></dt>
+<dd>(element, oxidation_state) where element is str and oxidation_state is int</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; parse_pseudoelement_name(&quot;Fejiiip&quot;)
+('Fe', 3)
+&gt;&gt;&gt; parse_pseudoelement_name(&quot;Sjiin&quot;)
+('S', -2)
+&gt;&gt;&gt; parse_pseudoelement_name(&quot;Sjz&quot;)
+('S', 0)
+</code></pre></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aqequil" href="index.html">aqequil</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aqequil.redox_suppression.add_pseudoelements_to_chnosz" href="#aqequil.redox_suppression.add_pseudoelements_to_chnosz">add_pseudoelements_to_chnosz</a></code></li>
+<li><code><a title="aqequil.redox_suppression.create_pseudoelement_name" href="#aqequil.redox_suppression.create_pseudoelement_name">create_pseudoelement_name</a></code></li>
+<li><code><a title="aqequil.redox_suppression.create_redox_element_states_dict" href="#aqequil.redox_suppression.create_redox_element_states_dict">create_redox_element_states_dict</a></code></li>
+<li><code><a title="aqequil.redox_suppression.extract_oxidation_states_from_thermo_df" href="#aqequil.redox_suppression.extract_oxidation_states_from_thermo_df">extract_oxidation_states_from_thermo_df</a></code></li>
+<li><code><a title="aqequil.redox_suppression.modify_formulas_for_redox_suppression" href="#aqequil.redox_suppression.modify_formulas_for_redox_suppression">modify_formulas_for_redox_suppression</a></code></li>
+<li><code><a title="aqequil.redox_suppression.parse_pseudoelement_name" href="#aqequil.redox_suppression.parse_pseudoelement_name">parse_pseudoelement_name</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
