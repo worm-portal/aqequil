@@ -1,0 +1,19 @@
+# Include important documentation files
+include README.md
+include LICENSE.txt
+include CITATION.cff
+
+# Include data files
+recursive-include aqequil *.r *.min *.csv *.txt
+
+# Exclude test files and development artifacts
+prune test
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude .pytest_cache
+global-exclude .ipynb_checkpoints
+global-exclude *~
+global-exclude *.swp
+global-exclude .DS_Store

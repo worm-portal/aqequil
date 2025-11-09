@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aqequil"
+version = "0.40.0"
+description = "Python tools for aqueous chemical speciation."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Grayson Boyer", email = "gmboyer@asu.edu"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "plotly",
+    "ipython",
+    "chemparse",
+    "dill",
+    "periodictable",
+    "natsort",
+    "roman",
+    "ipywidgets",
+    "wormutils",
+    "pychnosz",
+]
+
+[project.urls]
+Homepage = "https://github.com/worm-portal/aqequil"
+
+[tool.setuptools]
+packages = ["aqequil"]
+zip-safe = false
+
+[tool.setuptools.package-data]
+"*" = ["*.r", "*.min", "*.csv", "*.txt"]

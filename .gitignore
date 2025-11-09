@@ -1,24 +1,98 @@
-# Ignore everything:
-*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Include only these folders:
-!AqEquil/
-!AqEquil/*
-!AqEquil/*/
-!html/
-!html/AqEquil/
-!html/AqEquil/*
-!html/AqEquil/*/
-!README.md
-!CITATION.cff
-!LICENSE.txt
-!setup.py
+# C extensions
+*.so
+*.dll
+*.dylib
 
-# Ignore pycache
-AqEquil/__pycache__/*
-AqEquil/__pycache__/
-AqEquil/__pycache__
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
 .ipynb_checkpoints
 .ipynb_checkpoints/
-.ipynb_checkpoints/*
-__pycache__/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code
+.claude/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Twine
+.tox/
+*.whl
+
+# Test and development files
+test/
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
