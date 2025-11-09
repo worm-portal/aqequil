@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>aqequil.process_dissrxns API documentation</title>
+<meta name="description" content="Main module for processing dissociation reactions in thermodynamic databases …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aqequil.process_dissrxns</code></h1>
+</header>
+<section id="section-intro">
+<p>Main module for processing dissociation reactions in thermodynamic databases.</p>
+<p>This module handles:
+1. Checking that dissociation reactions are balanced
+2. Generating balanced dissociation reactions for species that lack them or have unbalanced ones
+3. Organizing basis species to prevent EQPT errors</p>
+<p>This replaces the R script redox_and_dissrxns.r for the dissociation reaction
+checking and generation tasks (redox suppression will be handled separately).</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aqequil.process_dissrxns.order_thermo_df"><code class="name flex">
+<span>def <span class="ident">order_thermo_df</span></span>(<span>thermo_df, fixed_species=None, verbose=1)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def order_thermo_df(thermo_df, fixed_species=None, verbose=1):
+    &#34;&#34;&#34;
+    Order thermo_df to prevent EQPT errors.
+
+    Strict basis species come first, then aux basis species that depend only
+    on strict basis, then aux that depend on other aux, then everything else.
+
+    Parameters
+    ----------
+    thermo_df : pd.DataFrame
+        Thermodynamic database dataframe
+    fixed_species : list, optional
+        List of fixed species like H2O, H+, O2(g)
+    verbose : int
+        Verbosity level
+
+    Returns
+    -------
+    pd.DataFrame
+        Reordered thermodynamic database
+    &#34;&#34;&#34;
+    if fixed_species is None:
+        fixed_species = [&#34;H2O&#34;, &#34;H+&#34;, &#34;O2(g)&#34;, &#34;water&#34;, &#34;e-&#34;]
+
+    # Separate by tag
+    basis_entries = thermo_df[thermo_df[&#39;tag&#39;] == &#39;basis&#39;].copy()
+    aux_entries = thermo_df[thermo_df[&#39;tag&#39;] == &#39;aux&#39;].copy()
+    other_entries = thermo_df[(thermo_df[&#39;tag&#39;] != &#39;basis&#39;) &amp;
+                               (thermo_df[&#39;tag&#39;] != &#39;aux&#39;)].copy()
+
+    # Helper function to check if all species in dissrxn are in a given list
+    def all_in_basis(dissrxn, basis_names):
+        if not dissrxn or dissrxn.strip() == &#39;&#39; or dissrxn == &#39;nan&#39;:
+            return False
+        try:
+            parts = dissrxn.strip().split()
+            species_in_rxn = [parts[i] for i in range(1, len(parts), 2)]
+            # Remove the dissociating species itself (first one)
+            species_in_rxn = species_in_rxn[1:]
+            # Remove fixed species
+            species_in_rxn = [s for s in species_in_rxn if s not in fixed_species]
+            return all(s in basis_names for s in species_in_rxn)
+        except:
+            return False
+
+    # Get basis names
+    basis_names = list(basis_entries[&#39;name&#39;])
+
+    # Categorize aux entries
+    aux_with_only_strict = aux_entries[
+        aux_entries[&#39;dissrxn&#39;].apply(lambda x: all_in_basis(x, basis_names))
+    ].copy()
+
+    aux_with_other = aux_entries[
+        ~aux_entries[&#39;dissrxn&#39;].apply(lambda x: all_in_basis(x, basis_names))
+    ].copy()
+
+    # Further categorize aux_with_other
+    combined_basis = basis_names + list(aux_with_only_strict[&#39;name&#39;])
+    aux_with_strict_aux = aux_with_other[
+        aux_with_other[&#39;dissrxn&#39;].apply(lambda x: all_in_basis(x, combined_basis))
+    ].copy()
+
+    aux_with_nonstrict_aux = aux_with_other[
+        ~aux_with_other[&#39;dissrxn&#39;].apply(lambda x: all_in_basis(x, combined_basis))
+    ].copy()
+
+    # Sort aux_with_nonstrict_aux to prevent circular dependencies
+    if len(aux_with_nonstrict_aux) &gt; 0:
+        # Simple topological sort attempt
+        max_iterations = 10
+        for iteration in range(max_iterations):
+            changed = False
+            ordered_list = list(aux_with_nonstrict_aux[&#39;name&#39;])
+
+            for i, row in aux_with_nonstrict_aux.iterrows():
+                dissrxn = row[&#39;dissrxn&#39;]
+                if not dissrxn or dissrxn.strip() == &#39;&#39;:
+                    continue
+
+                # Get species in this dissrxn
+                try:
+                    parts = dissrxn.strip().split()
+                    species_in_rxn = [parts[j] for j in range(1, len(parts), 2)][1:]
+                    species_in_rxn = [s for s in species_in_rxn
+                                       if s not in fixed_species and s != row[&#39;name&#39;]]
+
+                    # Check if any species in dissrxn come after this species
+                    current_pos = ordered_list.index(row[&#39;name&#39;])
+                    for sp in species_in_rxn:
+                        if sp in ordered_list:
+                            sp_pos = ordered_list.index(sp)
+                            if sp_pos &gt; current_pos:
+                                # Move current species after sp
+                                ordered_list.remove(row[&#39;name&#39;])
+                                ordered_list.insert(sp_pos, row[&#39;name&#39;])
+                                changed = True
+                                break
+                except:
+                    continue
+
+            if not changed:
+                break
+
+            # Reorder dataframe according to ordered_list
+            aux_with_nonstrict_aux = aux_with_nonstrict_aux.set_index(&#39;name&#39;).loc[ordered_list].reset_index()
+
+    # Concatenate all parts in correct order
+    result = pd.concat([
+        basis_entries,
+        aux_with_only_strict,
+        aux_with_strict_aux,
+        aux_with_nonstrict_aux,
+        other_entries
+    ], ignore_index=True)
+
+    return result</code></pre>
+</details>
+<div class="desc"><p>Order thermo_df to prevent EQPT errors.</p>
+<p>Strict basis species come first, then aux basis species that depend only
+on strict basis, then aux that depend on other aux, then everything else.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>thermo_df</code></strong> :&ensp;<code>pd.DataFrame</code></dt>
+<dd>Thermodynamic database dataframe</dd>
+<dt><strong><code>fixed_species</code></strong> :&ensp;<code>list</code>, optional</dt>
+<dd>List of fixed species like H2O, H+, O2(g)</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Verbosity level</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>Reordered thermodynamic database</dd>
+</dl></div>
+</dd>
+<dt id="aqequil.process_dissrxns.process_dissrxns"><code class="name flex">
+<span>def <span class="ident">process_dissrxns</span></span>(<span>thermo_df,<br>water_model='SUPCRT92',<br>exceed_Ttr=True,<br>suppress_redox=None,<br>exclude_category=None,<br>element_df=None,<br>fixed_species=None,<br>verbose=1,<br>already_rejected_species=None)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def process_dissrxns(thermo_df, water_model=&#39;SUPCRT92&#39;, exceed_Ttr=True,
+                      suppress_redox=None, exclude_category=None,
+                      element_df=None, fixed_species=None, verbose=1,
+                      already_rejected_species=None):
+    &#34;&#34;&#34;
+    Process dissociation reactions for a thermodynamic database.
+
+    This function:
+    1. Handles redox suppression by creating pseudoelements
+    2. Checks which species have missing or unbalanced dissociation reactions
+    3. Generates balanced dissociation reactions for those species
+    4. Orders the database to prevent EQPT errors
+    5. Performs cascading rejection of species dependent on rejected species
+
+    Parameters
+    ----------
+    thermo_df : pd.DataFrame
+        Thermodynamic database dataframe
+    water_model : str
+        Water model to use (currently not used in Python version)
+    exceed_Ttr : bool
+        Whether to exceed transition temperatures (currently not used)
+    suppress_redox : list or None
+        List of elements to suppress redox for (e.g., [&#34;Fe&#34;, &#34;S&#34;])
+    exclude_category : dict or None
+        Categories to exclude (currently not used)
+    element_df : pd.DataFrame or None
+        Element database (for future use)
+    fixed_species : list or None
+        List of fixed species (H2O, H+, O2(g), etc.)
+    verbose : int
+        Verbosity level (0=silent, 1=normal, 2=detailed)
+
+    Returns
+    -------
+    dict
+        Dictionary with keys:
+        - &#39;thermo_df&#39;: Updated thermodynamic database
+        - &#39;dissrxns&#39;: Dictionary of generated dissociation reactions
+        - &#39;basis_pref&#39;: Dictionary of preferred basis species
+        - &#39;redox_elem_states&#39;: Dictionary of pseudoelement mappings (if redox suppressed)
+    &#34;&#34;&#34;
+    if fixed_species is None:
+        fixed_species = [&#34;H2O&#34;, &#34;H+&#34;, &#34;O2(g)&#34;, &#34;water&#34;, &#34;e-&#34;]
+
+    if suppress_redox is None:
+        suppress_redox = []
+
+    if already_rejected_species is None:
+        already_rejected_species = []
+
+    # Make a copy to avoid modifying original
+    thermo_df = thermo_df.copy()
+
+    # Initialize formula_modded and formula_ox_modded columns
+    if &#39;formula_modded&#39; not in thermo_df.columns:
+        thermo_df[&#39;formula_modded&#39;] = thermo_df[&#39;formula&#39;]
+
+    if &#39;formula_ox_modded&#39; not in thermo_df.columns:
+        thermo_df[&#39;formula_ox_modded&#39;] = thermo_df.get(&#39;formula_ox&#39;, &#39;nan&#39;)
+
+    # Handle redox suppression if requested
+    redox_elem_states = {}
+    redox_rejected_species = []
+    if len(suppress_redox) &gt; 0:
+        if verbose &gt;= 1:
+            print(f&#34;Suppressing redox for elements: {&#39;, &#39;.join(suppress_redox)}&#34;)
+
+        # Create pseudoelement mappings and get rejected species
+        redox_elem_states, redox_rejected_species = create_redox_element_states_dict(thermo_df, suppress_redox)
+
+        if verbose &gt;= 2:
+            print(&#34;Pseudoelement mappings:&#34;)
+            for elem, states in redox_elem_states.items():
+                print(f&#34;  {elem}:&#34;)
+                for ox_state, pseudoelem in states.items():
+                    print(f&#34;    {ox_state} -&gt; {pseudoelem}&#34;)
+
+        if redox_rejected_species and verbose &gt;= 1:
+            print(f&#34;Rejecting {len(redox_rejected_species)} species without aqueous basis for their oxidation states&#34;)
+            if verbose &gt;= 2:
+                print(f&#34;  Rejected: {&#39;, &#39;.join(redox_rejected_species[:10])}&#34;)
+                if len(redox_rejected_species) &gt; 10:
+                    print(f&#34;  ... and {len(redox_rejected_species) - 10} more&#34;)
+
+        # Remove rejected species from thermo_df
+        thermo_df = thermo_df[~thermo_df[&#39;name&#39;].isin(redox_rejected_species)].copy()
+
+        # Add pseudoelements to CHNOSZ element database
+        add_pseudoelements_to_chnosz(redox_elem_states, element_df)
+
+        # Modify formulas to use pseudoelements
+        thermo_df = modify_formulas_for_redox_suppression(thermo_df, redox_elem_states, verbose)
+
+    # Add regenerate_dissrxn column if it doesn&#39;t exist
+    # This column is used by _HKF_cgl.py
+    if &#39;regenerate_dissrxn&#39; not in thermo_df.columns:
+        thermo_df[&#39;regenerate_dissrxn&#39;] = False
+
+    # Clean up whitespace in dissrxn column
+    if &#39;dissrxn&#39; in thermo_df.columns:
+        thermo_df[&#39;dissrxn&#39;] = thermo_df[&#39;dissrxn&#39;].apply(
+            lambda x: x.strip() if isinstance(x, str) else x
+        )
+
+    # Promote auxiliary basis species to strict basis when they represent pseudoelements
+    # This must happen BEFORE building basis_pref so the pseudoelements are included
+    # This replicates lines 1151-1165 of the R script redox_and_dissrxns.r
+    if len(suppress_redox) &gt; 0 and redox_elem_states:
+        # First, get all elements represented in formulas (pseudoelements)
+        all_elements = set()
+        for idx, row in thermo_df.iterrows():
+            try:
+                formula_to_check = row.get(&#39;formula_modded&#39;, row[&#39;formula&#39;])
+                if pd.notna(formula_to_check) and formula_to_check != &#39;&#39; and formula_to_check != &#39;nan&#39;:
+                    mkp = pychnosz.makeup(str(formula_to_check))
+                    for elem in mkp.keys():
+                        if elem not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]:
+                            all_elements.add(elem)
+            except:
+                continue
+
+        # Check which pseudoelements lack basis species
+        basis_df = thermo_df[thermo_df[&#39;tag&#39;] == &#39;basis&#39;].copy()
+        basis_elements = set()
+        for idx, row in basis_df.iterrows():
+            try:
+                formula_to_check = row.get(&#39;formula_modded&#39;, row[&#39;formula&#39;])
+                if pd.notna(formula_to_check) and formula_to_check != &#39;&#39; and formula_to_check != &#39;nan&#39;:
+                    mkp = pychnosz.makeup(str(formula_to_check))
+                    for elem in mkp.keys():
+                        if elem not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]:
+                            basis_elements.add(elem)
+            except:
+                continue
+
+        # Find elements that need basis representation
+        elem_need_basis = all_elements - basis_elements
+
+        # Create reverse mapping from pseudoelement names to oxidation state strings
+        # This is needed because formula_modded uses pseudoelement names (e.g., &#34;Sjz&#34;)
+        # but redox_elem_states uses oxidation state strings as keys (e.g., &#34;S&#34;)
+        pseudoelem_to_oxstate = {}
+        for element, ox_states_dict in redox_elem_states.items():
+            for ox_state_str, pseudoelem_name in ox_states_dict.items():
+                pseudoelem_to_oxstate[pseudoelem_name] = (element, ox_state_str)
+
+        # Try to promote auxiliary basis species or other suitable species to represent these elements
+        # This replicates the R code behavior where get_dissrxn searches all aqueous/gas species
+        # (lines 400, 421-425 of redox_and_dissrxns.r)
+        # Track elements that couldn&#39;t be promoted for later rejection
+        elem_without_basis = []
+        if elem_need_basis:
+            for elem in elem_need_basis:
+                # First, look for aux species
+                aux_df = thermo_df[thermo_df[&#39;tag&#39;] == &#39;aux&#39;].copy()
+                promoted = False
+
+                for idx, row in aux_df.iterrows():
+                    try:
+                        formula_to_check = row.get(&#39;formula_modded&#39;, row[&#39;formula&#39;])
+                        if pd.notna(formula_to_check) and formula_to_check != &#39;&#39; and formula_to_check != &#39;nan&#39;:
+                            mkp = pychnosz.makeup(str(formula_to_check))
+                            aux_elements = [e for e in mkp.keys() if e not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]]
+
+                            # Check if this aux species can represent the element (pseudoelement)
+                            if len(aux_elements) == 1 and aux_elements[0] == elem:
+                                # Promote this aux species to basis
+                                thermo_df.at[idx, &#39;tag&#39;] = &#39;basis&#39;
+                                if verbose &gt;= 1:
+                                    # Get oxidation state string for clearer output
+                                    if elem in pseudoelem_to_oxstate:
+                                        orig_elem, ox_state_str = pseudoelem_to_oxstate[elem]
+                                        print(f&#34;Promoted &#39;{row[&#39;name&#39;]}&#39; from aux to basis to represent {ox_state_str}&#34;)
+                                    else:
+                                        print(f&#34;Promoted &#39;{row[&#39;name&#39;]}&#39; from aux to basis to represent element {elem}&#34;)
+                                promoted = True
+                                break
+                    except:
+                        continue
+
+                # If no aux species found, look for any aqueous or gaseous species
+                # EQ3/6 basis species must be aqueous or gaseous (e.g., O2(g), S2(g))
+                if not promoted:
+                    # Filter for aqueous and gaseous species (excluding solids and liquids)
+                    candidate_df = thermo_df[thermo_df[&#39;state&#39;].isin([&#39;aq&#39;, &#39;gas&#39;])].copy()
+
+                    for idx, row in candidate_df.iterrows():
+                        try:
+                            formula_to_check = row.get(&#39;formula_modded&#39;, row[&#39;formula&#39;])
+                            if pd.notna(formula_to_check) and formula_to_check != &#39;&#39; and formula_to_check != &#39;nan&#39;:
+                                mkp = pychnosz.makeup(str(formula_to_check))
+                                elements = [e for e in mkp.keys() if e not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]]
+
+                                # Check if this species can represent the element (pseudoelement)
+                                # Prefer species with only H, O, Z, and the target element
+                                if len(elements) == 1 and elements[0] == elem:
+                                    # Promote this species to basis
+                                    thermo_df.at[idx, &#39;tag&#39;] = &#39;basis&#39;
+                                    if verbose &gt;= 1:
+                                        old_tag = row.get(&#39;tag&#39;, &#39;non-basis&#39;)
+                                        # Handle NaN values
+                                        if pd.isna(old_tag) or old_tag == &#39;nan&#39;:
+                                            old_tag = &#39;non-basis&#39;
+                                        # Get oxidation state string for clearer output
+                                        if elem in pseudoelem_to_oxstate:
+                                            orig_elem, ox_state_str = pseudoelem_to_oxstate[elem]
+                                            print(f&#34;Promoted &#39;{row[&#39;name&#39;]}&#39; from {old_tag} to basis to represent {ox_state_str}&#34;)
+                                        else:
+                                            print(f&#34;Promoted &#39;{row[&#39;name&#39;]}&#39; from {old_tag} to basis to represent element {elem}&#34;)
+                                    promoted = True
+                                    break
+                        except:
+                            continue
+
+                    if not promoted:
+                        # Track this element for species rejection
+                        elem_without_basis.append(elem)
+                        if verbose &gt;= 1:
+                            # Convert pseudoelement name to scientific notation for clearer output
+                            if elem in pseudoelem_to_oxstate:
+                                orig_elem, ox_state_str = pseudoelem_to_oxstate[elem]
+                                print(f&#34;Warning: Could not find a suitable basis species for {ox_state_str}&#34;)
+                            else:
+                                print(f&#34;Warning: Could not find a suitable basis species for element {elem}&#34;)
+
+        # Reject species containing pseudoelements without basis representation
+        # Also reject species with blank formula_ox when they contain suppressed redox elements
+        if elem_without_basis or suppress_redox:
+            additional_rejected = []
+            blank_formula_ox_species = []
+            missing_basis_species = {}  # Map oxidation state to list of species
+
+            for idx, row in thermo_df.iterrows():
+                species_name = row[&#39;name&#39;]
+                formula = row[&#39;formula&#39;]
+                formula_ox = row.get(&#39;formula_ox&#39;, &#39;nan&#39;)
+                formula_modded = row.get(&#39;formula_modded&#39;, formula)
+
+                # Check if species contains any of the suppressed redox elements in its formula
+                contains_suppressed_elem = False
+                if suppress_redox:
+                    try:
+                        mkp = pychnosz.makeup(str(formula))
+                        for elem in mkp.keys():
+                            # Check if this is a base element (not pseudoelement) that&#39;s being suppressed
+                            for supp_elem in suppress_redox:
+                                if elem == supp_elem or elem.startswith(supp_elem + &#39;j&#39;):
+                                    contains_suppressed_elem = True
+                                    break
+                            if contains_suppressed_elem:
+                                break
+                    except:
+                        pass
+
+                # If species contains suppressed element and has blank formula_ox, reject it
+                if contains_suppressed_elem and (pd.isna(formula_ox) or formula_ox == &#39;nan&#39; or formula_ox == &#39;&#39;):
+                    if species_name not in redox_rejected_species and species_name not in additional_rejected:
+                        additional_rejected.append(species_name)
+                        blank_formula_ox_species.append(species_name)
+                    continue
+
+                # Check if species contains pseudoelements without basis
+                if elem_without_basis:
+                    try:
+                        mkp = pychnosz.makeup(str(formula_modded))
+                        for elem in mkp.keys():
+                            if elem in elem_without_basis:
+                                if species_name not in redox_rejected_species and species_name not in additional_rejected:
+                                    additional_rejected.append(species_name)
+                                    # Get oxidation state string for grouping
+                                    if elem in pseudoelem_to_oxstate:
+                                        orig_elem, ox_state_str = pseudoelem_to_oxstate[elem]
+                                        if ox_state_str not in missing_basis_species:
+                                            missing_basis_species[ox_state_str] = []
+                                        missing_basis_species[ox_state_str].append(species_name)
+                                    else:
+                                        if elem not in missing_basis_species:
+                                            missing_basis_species[elem] = []
+                                        missing_basis_species[elem].append(species_name)
+                                break
+                    except:
+                        pass
+
+            # Print consolidated rejection messages
+            if verbose &gt;= 1:
+                if blank_formula_ox_species:
+                    print(f&#34;\nThe following {len(blank_formula_ox_species)} species will be excluded because they contain a redox-suppressed element in their formulae and do not have element oxidation states defined in the \&#34;formula_ox\&#34; column of the thermodynamic database CSV:&#34;)
+                    # Print species list in a formatted way
+                    species_str = &#34;, &#34;.join([f&#34;&#39;{sp}&#39;&#34; for sp in blank_formula_ox_species[:10]])
+                    if len(blank_formula_ox_species) &gt; 10:
+                        species_str += f&#34;, ... and {len(blank_formula_ox_species) - 10} more&#34;
+                    print(f&#34;  {species_str}&#34;)
+
+                if missing_basis_species:
+                    for ox_state_str, species_list in missing_basis_species.items():
+                        print(f&#34;\nRejecting {len(species_list)} species containing {ox_state_str} which lacks a basis species:&#34;)
+                        species_str = &#34;, &#34;.join([f&#34;&#39;{sp}&#39;&#34; for sp in species_list[:10]])
+                        if len(species_list) &gt; 10:
+                            species_str += f&#34;, ... and {len(species_list) - 10} more&#34;
+                        print(f&#34;  {species_str}&#34;)
+
+            # Remove rejected species from thermo_df
+            if additional_rejected:
+                redox_rejected_species.extend(additional_rejected)
+                thermo_df = thermo_df[~thermo_df[&#39;name&#39;].isin(additional_rejected)].copy()
+                if verbose &gt;= 1:
+                    print(f&#34;\nTotal: Rejected {len(additional_rejected)} additional species&#34;)
+
+    # Cascading rejection: reject species that depend on rejected species
+    # This handles cases where basis/auxiliary species are rejected and species
+    # depending on them in their dissociation reactions must also be rejected
+    all_rejected = list(set(redox_rejected_species + already_rejected_species))
+    if all_rejected:
+        cascaded_rejected = []
+        max_iterations = 10  # Prevent infinite loops
+
+        for iteration in range(max_iterations):
+            iteration_rejected = []
+            rejected_set = set(all_rejected + cascaded_rejected)
+
+            for idx, row in thermo_df.iterrows():
+                species_name = row[&#39;name&#39;]
+                dissrxn = row.get(&#39;dissrxn&#39;, &#39;nan&#39;)
+
+                # Skip if already rejected or no dissociation reaction
+                if species_name in rejected_set:
+                    continue
+                if pd.isna(dissrxn) or dissrxn == &#39;nan&#39; or dissrxn == &#39;&#39;:
+                    continue
+
+                # Parse dissociation reaction to find dependencies
+                try:
+                    parts = dissrxn.strip().split()
+                    # Species in dissrxn are at odd indices (1, 3, 5, ...)
+                    species_in_rxn = [parts[i] for i in range(1, len(parts), 2)]
+                    # Remove the dissociating species itself (first one)
+                    species_in_rxn = species_in_rxn[1:]
+
+                    # Check if any required species have been rejected
+                    for req_species in species_in_rxn:
+                        if req_species in rejected_set:
+                            if species_name not in iteration_rejected and species_name not in cascaded_rejected:
+                                iteration_rejected.append(species_name)
+                                if verbose &gt;= 2:
+                                    print(f&#34;  Rejecting &#39;{species_name}&#39;: depends on rejected species &#39;{req_species}&#39;&#34;)
+                            break
+                except:
+                    continue
+
+            # If no new rejections this iteration, we&#39;re done
+            if not iteration_rejected:
+                break
+
+            cascaded_rejected.extend(iteration_rejected)
+
+        # Apply cascading rejections
+        if cascaded_rejected:
+            redox_rejected_species.extend(cascaded_rejected)
+            thermo_df = thermo_df[~thermo_df[&#39;name&#39;].isin(cascaded_rejected)].copy()
+            if verbose &gt;= 1:
+                print(f&#34;\nCascading rejection: {len(cascaded_rejected)} additional species rejected due to dependencies on rejected species&#34;)
+                if verbose &gt;= 2:
+                    # Show first few examples
+                    examples = &#34;, &#34;.join([f&#34;&#39;{sp}&#39;&#34; for sp in cascaded_rejected[:10]])
+                    if len(cascaded_rejected) &gt; 10:
+                        examples += f&#34;, ... and {len(cascaded_rejected) - 10} more&#34;
+                    print(f&#34;  Examples: {examples}&#34;)
+
+    # Build basis_pref dictionary from basis species in thermo_df
+    # Use formula_modded for redox-suppressed elements
+    basis_df = thermo_df[thermo_df[&#39;tag&#39;] == &#39;basis&#39;].copy()
+    basis_pref = {}
+
+    if verbose &gt;= 2 and len(suppress_redox) &gt; 0:
+        print(f&#34;\nBuilding basis_pref from {len(basis_df)} basis species...&#34;)
+
+    for idx, row in basis_df.iterrows():
+        try:
+            # Use formula_modded if redox suppression is active
+            formula_to_use = row[&#39;formula_modded&#39;] if len(suppress_redox) &gt; 0 else row[&#39;formula&#39;]
+
+            if verbose &gt;= 3 and len(suppress_redox) &gt; 0 and &#39;C&#39; in row[&#39;name&#39;]:
+                print(f&#34;  Processing basis species {row[&#39;name&#39;]}: formula_to_use={formula_to_use}&#34;)
+
+            mkp = pychnosz.makeup(formula_to_use)
+            # Find the non-H, non-O, non-Z element (including pseudoelements)
+            basis_elem = [e for e in mkp.keys() if e not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]]
+
+            if len(basis_elem) == 1:
+                basis_pref[basis_elem[0]] = row[&#39;name&#39;]
+                if verbose &gt;= 2 and len(suppress_redox) &gt; 0:
+                    print(f&#34;    {basis_elem[0]} -&gt; {row[&#39;name&#39;]}&#34;)
+            elif len(basis_elem) &gt; 1:
+                # Basis species has multiple non-H-O elements
+                if verbose &gt;= 1:
+                    print(f&#34;Warning: Basis species &#39;{row[&#39;name&#39;]}&#39; has multiple &#34;
+                          f&#34;non-H-O elements: {basis_elem}. This should be an &#34;
+                          f&#34;auxiliary basis species instead.&#34;)
+        except Exception as e:
+            if verbose &gt;= 2:
+                print(f&#34;Error processing basis species {row[&#39;name&#39;]}: {e}&#34;)
+
+    # EQ3 has H2O and O2(g) hard-coded
+    basis_pref[&#39;H&#39;] = &#39;H2O&#39;
+    basis_pref[&#39;O&#39;] = &#39;O2(g)&#39;
+
+    # Build aux_pref dictionary from auxiliary basis species
+    # Use formula_modded for redox-suppressed elements
+    aux_df = thermo_df[thermo_df[&#39;tag&#39;] == &#39;aux&#39;].copy()
+    aux_pref = {}
+
+    for idx, row in aux_df.iterrows():
+        try:
+            # Use formula_modded if redox suppression is active
+            formula_to_use = row[&#39;formula_modded&#39;] if len(suppress_redox) &gt; 0 else row[&#39;formula&#39;]
+            mkp = pychnosz.makeup(formula_to_use)
+            aux_elem = [e for e in mkp.keys() if e not in [&#39;H&#39;, &#39;O&#39;, &#39;Z&#39;]]
+
+            # Only include aux species with one non-H-O element and one atom of it
+            if len(aux_elem) == 1 and mkp[aux_elem[0]] == 1:
+                elem = aux_elem[0]
+                if elem not in aux_pref:
+                    aux_pref[elem] = []
+                aux_pref[elem].append(row[&#39;name&#39;])
+        except Exception as e:
+            if verbose &gt;= 2:
+                print(f&#34;Error processing aux species {row[&#39;name&#39;]}: {e}&#34;)
+
+    # Generate dissociation reactions
+    generated_dissrxns = {}
+
+    # NOTE: Do NOT reset or reload CHNOSZ database here!
+    # The custom thermodynamic database has already been loaded during AqEquil() initialization
+    # Resetting would clear that custom data and break dissociation reaction generation
+
+    # However, if redox suppression is active, we need to update the OBIGT database
+    # to use the modified formulas with pseudoelements
+    if len(suppress_redox) &gt; 0:
+        # Update CHNOSZ OBIGT database with modified formulas
+        # This is necessary for proper dissociation reaction generation
+        # Get current OBIGT database
+        obigt = pychnosz.thermo().OBIGT
+
+        # Update formulas for species in our database
+        for idx, row in thermo_df.iterrows():
+            sp_name = row[&#39;name&#39;]
+            formula_modded = row[&#39;formula_modded&#39;]
+
+            # Skip if formula_modded is not a valid string
+            if pd.isna(formula_modded) or formula_modded == &#39;&#39; or formula_modded == &#39;nan&#39;:
+                continue
+
+            # Ensure it&#39;s a string
+            formula_modded = str(formula_modded)
+
+            # Find this species in OBIGT
+            obigt_idx = obigt[obigt[&#39;name&#39;] == sp_name].index
+            if len(obigt_idx) &gt; 0:
+                # Update the formula (ensure we&#39;re setting a string value)
+                obigt.loc[obigt_idx, &#39;formula&#39;] = formula_modded
+
+        # Ensure all object columns are converted to string dtype
+        # This prevents &#34;.str accessor&#34; errors when chnosz processes the data
+        for col in obigt.columns:
+            if obigt[col].dtype == &#39;object&#39;:
+                obigt[col] = obigt[col].astype(str)
+
+        # Reload the OBIGT database
+        pychnosz.thermo(OBIGT=obigt)
+
+        if verbose &gt;= 2:
+            print(&#34;Updated CHNOSZ OBIGT database with modified formulas for redox suppression&#34;)
+
+    # Find species needing dissociation reactions
+    # IMPORTANT: This must be called AFTER CHNOSZ OBIGT update for redox suppression
+    # so that balance checks use the pseudoelement formulas
+    needs_dissrxn = find_species_needing_dissrxns(thermo_df, verbose=verbose)
+
+    # Remove duplicates while preserving order (polymorphs have same name)
+    # Use dict.fromkeys() to preserve order while removing duplicates
+    needs_dissrxn_unique = list(dict.fromkeys(needs_dissrxn))
+
+    if len(needs_dissrxn_unique) &gt; 0:
+        if verbose &gt;= 1:
+            print(f&#34;\nBalanced dissociation reactions are missing for {len(needs_dissrxn_unique)} species:&#34;)
+            # Format the list of species nicely
+            species_str = &#34;, &#34;.join(needs_dissrxn_unique[:20])
+            if len(needs_dissrxn_unique) &gt; 20:
+                species_str += f&#34;, ... and {len(needs_dissrxn_unique) - 20} more&#34;
+            print(f&#34;  {species_str}&#34;)
+            print(&#34;\nGenerating dissociation reactions for these species using &#34;
+                  &#34;strict and auxiliary basis species containing a maximum of &#34;
+                  &#34;one atom of one element besides O and H...\n&#34;)
+
+    # Generate dissociation reactions for species that need them
+    failed_dissrxn_species = []
+    for sp_name in needs_dissrxn_unique:
+        dissrxn = generate_dissrxn(
+            sp_name,
+            thermo_df,
+            basis_pref,
+            aux_pref=aux_pref,
+            verbose=verbose,
+            redox_elem_states=redox_elem_states
+        )
+
+        if dissrxn:
+            generated_dissrxns[sp_name] = dissrxn
+            # Update thermo_df - this updates ALL polymorphs with the same name
+            thermo_df.loc[thermo_df[&#39;name&#39;] == sp_name, &#39;dissrxn&#39;] = dissrxn
+
+            if verbose &gt;= 1:
+                print(f&#34;{sp_name} : {dissrxn}&#34;)
+        else:
+            # Failed to generate dissociation reaction - mark for rejection
+            failed_dissrxn_species.append(sp_name)
+            if verbose &gt;= 1:
+                print(f&#34;{sp_name} : Failed to generate dissociation reaction&#34;)
+
+    # Reject species that failed dissociation reaction generation
+    if failed_dissrxn_species:
+        if verbose &gt;= 1:
+            print(f&#34;\nRejecting {len(failed_dissrxn_species)} species that failed dissociation reaction generation:&#34;)
+            species_str = &#34;, &#34;.join([f&#34;&#39;{sp}&#39;&#34; for sp in failed_dissrxn_species[:10]])
+            if len(failed_dissrxn_species) &gt; 10:
+                species_str += f&#34;, ... and {len(failed_dissrxn_species) - 10} more&#34;
+            print(f&#34;  {species_str}&#34;)
+
+        # Remove from thermo_df
+        thermo_df = thermo_df[~thermo_df[&#39;name&#39;].isin(failed_dissrxn_species)].copy()
+
+        # Add to rejected species list
+        redox_rejected_species.extend(failed_dissrxn_species)
+
+    # Order thermo_df to prevent EQPT errors
+    thermo_df = order_thermo_df(thermo_df, fixed_species, verbose)
+
+    # Prepare output
+    out_list = {
+        &#39;thermo_df&#39;: thermo_df,
+        &#39;dissrxns&#39;: {
+            **generated_dissrxns,
+            &#39;basis_list&#39;: basis_pref,
+            &#39;rejected_species&#39;: redox_rejected_species
+        },
+        &#39;basis_pref&#39;: basis_pref,
+        &#39;redox_elem_states&#39;: redox_elem_states  # Include pseudoelement mappings
+    }
+
+    return out_list</code></pre>
+</details>
+<div class="desc"><p>Process dissociation reactions for a thermodynamic database.</p>
+<p>This function:
+1. Handles redox suppression by creating pseudoelements
+2. Checks which species have missing or unbalanced dissociation reactions
+3. Generates balanced dissociation reactions for those species
+4. Orders the database to prevent EQPT errors
+5. Performs cascading rejection of species dependent on rejected species</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>thermo_df</code></strong> :&ensp;<code>pd.DataFrame</code></dt>
+<dd>Thermodynamic database dataframe</dd>
+<dt><strong><code>water_model</code></strong> :&ensp;<code>str</code></dt>
+<dd>Water model to use (currently not used in Python version)</dd>
+<dt><strong><code>exceed_Ttr</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to exceed transition temperatures (currently not used)</dd>
+<dt><strong><code>suppress_redox</code></strong> :&ensp;<code>list</code> or <code>None</code></dt>
+<dd>List of elements to suppress redox for (e.g., ["Fe", "S"])</dd>
+<dt><strong><code>exclude_category</code></strong> :&ensp;<code>dict</code> or <code>None</code></dt>
+<dd>Categories to exclude (currently not used)</dd>
+<dt><strong><code>element_df</code></strong> :&ensp;<code>pd.DataFrame</code> or <code>None</code></dt>
+<dd>Element database (for future use)</dd>
+<dt><strong><code>fixed_species</code></strong> :&ensp;<code>list</code> or <code>None</code></dt>
+<dd>List of fixed species (H2O, H+, O2(g), etc.)</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>int</code></dt>
+<dd>Verbosity level (0=silent, 1=normal, 2=detailed)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Dictionary with keys:
+- 'thermo_df': Updated thermodynamic database
+- 'dissrxns': Dictionary of generated dissociation reactions
+- 'basis_pref': Dictionary of preferred basis species
+- 'redox_elem_states': Dictionary of pseudoelement mappings (if redox suppressed)</dd>
+</dl></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aqequil" href="index.html">aqequil</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aqequil.process_dissrxns.order_thermo_df" href="#aqequil.process_dissrxns.order_thermo_df">order_thermo_df</a></code></li>
+<li><code><a title="aqequil.process_dissrxns.process_dissrxns" href="#aqequil.process_dissrxns.process_dissrxns">process_dissrxns</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

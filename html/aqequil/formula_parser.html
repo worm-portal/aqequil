@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>aqequil.formula_parser API documentation</title>
+<meta name="description" content="Shared utility functions for parsing chemical formulas and oxidation states …">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>aqequil.formula_parser</code></h1>
+</header>
+<section id="section-intro">
+<p>Shared utility functions for parsing chemical formulas and oxidation states.</p>
+<p>This module consolidates formula parsing logic used across multiple modules
+to avoid code duplication and ensure consistency.</p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="aqequil.formula_parser.calculate_average_oxidation_state"><code class="name flex">
+<span>def <span class="ident">calculate_average_oxidation_state</span></span>(<span>formula_ox_str, element)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calculate_average_oxidation_state(formula_ox_str, element):
+    &#34;&#34;&#34;
+    Calculate average oxidation state of an element in a formula_ox string.
+
+    Parameters
+    ----------
+    formula_ox_str : str
+        Formula with oxidation states
+    element : str
+        Element to calculate average for
+
+    Returns
+    -------
+    float
+        Average oxidation state
+
+    Examples
+    --------
+    &gt;&gt;&gt; calculate_average_oxidation_state(&#34;Co+2 2Co+3&#34;, &#34;Co&#34;)
+    2.666...
+    &gt;&gt;&gt; calculate_average_oxidation_state(&#34;Fe+3&#34;, &#34;Fe&#34;)
+    3.0
+    &#34;&#34;&#34;
+    ox_states = get_element_oxidation_states_from_formula_ox(formula_ox_str, element)
+    if not ox_states:
+        return 0.0
+
+    total_charge = sum(ox * count for ox, count in ox_states)
+    total_atoms = sum(count for ox, count in ox_states)
+
+    return total_charge / total_atoms if total_atoms &gt; 0 else 0.0</code></pre>
+</details>
+<div class="desc"><p>Calculate average oxidation state of an element in a formula_ox string.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>formula_ox_str</code></strong> :&ensp;<code>str</code></dt>
+<dd>Formula with oxidation states</dd>
+<dt><strong><code>element</code></strong> :&ensp;<code>str</code></dt>
+<dd>Element to calculate average for</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Average oxidation state</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; calculate_average_oxidation_state(&quot;Co+2 2Co+3&quot;, &quot;Co&quot;)
+2.666...
+&gt;&gt;&gt; calculate_average_oxidation_state(&quot;Fe+3&quot;, &quot;Fe&quot;)
+3.0
+</code></pre></div>
+</dd>
+<dt id="aqequil.formula_parser.get_element_oxidation_states_from_formula_ox"><code class="name flex">
+<span>def <span class="ident">get_element_oxidation_states_from_formula_ox</span></span>(<span>formula_ox_str, element)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_element_oxidation_states_from_formula_ox(formula_ox_str, element):
+    &#34;&#34;&#34;
+    Extract oxidation state(s) of a specific element from formula_ox string.
+
+    Parameters
+    ----------
+    formula_ox_str : str
+        Formula with oxidation states (e.g., &#34;Co+2 2Co+3 4S-2&#34;)
+    element : str
+        Element to extract (e.g., &#34;Co&#34;)
+
+    Returns
+    -------
+    list of tuples
+        List of (oxidation_state, count) tuples
+        e.g., for Co in &#34;Co+2 2Co+3 4S-2&#34;: [(2, 1.0), (3, 2.0)]
+
+    Examples
+    --------
+    &gt;&gt;&gt; get_element_oxidation_states_from_formula_ox(&#34;Co+2 2Co+3 4S-2&#34;, &#34;Co&#34;)
+    [(2, 1.0), (3, 2.0)]
+    &gt;&gt;&gt; get_element_oxidation_states_from_formula_ox(&#34;Fe+3 2S-2&#34;, &#34;Fe&#34;)
+    [(3, 1.0)]
+    &#34;&#34;&#34;
+    if not formula_ox_str or pd.isna(formula_ox_str) or formula_ox_str == &#39;nan&#39; or formula_ox_str == &#39;&#39;:
+        return []
+
+    result = []
+    parts = str(formula_ox_str).strip().split()
+
+    for part in parts:
+        # Check if this part contains the element (but not as part of another element)
+        if not re.search(f&#39;{element}([^a-z]|$)&#39;, part):
+            continue
+
+        parsed = parse_formula_ox_part(part, include_pseudoelements=False)
+        if not parsed:
+            continue
+
+        coeff, elem, charge_str = parsed
+        if elem != element:
+            continue
+
+        # Parse charge to get oxidation state
+        if charge_str:
+            ox_state = int(charge_str)
+        else:
+            ox_state = 0
+
+        result.append((ox_state, coeff))
+
+    return result</code></pre>
+</details>
+<div class="desc"><p>Extract oxidation state(s) of a specific element from formula_ox string.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>formula_ox_str</code></strong> :&ensp;<code>str</code></dt>
+<dd>Formula with oxidation states (e.g., "Co+2 2Co+3 4S-2")</dd>
+<dt><strong><code>element</code></strong> :&ensp;<code>str</code></dt>
+<dd>Element to extract (e.g., "Co")</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code> of <code>tuples</code></dt>
+<dd>List of (oxidation_state, count) tuples
+e.g., for Co in "Co+2 2Co+3 4S-2": [(2, 1.0), (3, 2.0)]</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; get_element_oxidation_states_from_formula_ox(&quot;Co+2 2Co+3 4S-2&quot;, &quot;Co&quot;)
+[(2, 1.0), (3, 2.0)]
+&gt;&gt;&gt; get_element_oxidation_states_from_formula_ox(&quot;Fe+3 2S-2&quot;, &quot;Fe&quot;)
+[(3, 1.0)]
+</code></pre></div>
+</dd>
+<dt id="aqequil.formula_parser.normalize_charge_string"><code class="name flex">
+<span>def <span class="ident">normalize_charge_string</span></span>(<span>charge_str)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def normalize_charge_string(charge_str):
+    &#34;&#34;&#34;
+    Normalize charge string format.
+
+    Converts &#39;+&#39; to &#39;+1&#39; and &#39;-&#39; to &#39;-1&#39; for consistency.
+
+    Parameters
+    ----------
+    charge_str : str or None
+        Charge string (e.g., &#39;+&#39;, &#39;-&#39;, &#39;+2&#39;, &#39;-3&#39;)
+
+    Returns
+    -------
+    str or None
+        Normalized charge string, or None if input was None
+
+    Examples
+    --------
+    &gt;&gt;&gt; normalize_charge_string(&#39;+&#39;)
+    &#39;+1&#39;
+    &gt;&gt;&gt; normalize_charge_string(&#39;-&#39;)
+    &#39;-1&#39;
+    &gt;&gt;&gt; normalize_charge_string(&#39;+3&#39;)
+    &#39;+3&#39;
+    &gt;&gt;&gt; normalize_charge_string(None)
+    None
+    &#34;&#34;&#34;
+    if charge_str is None:
+        return None
+    if charge_str == &#39;+&#39;:
+        return &#39;+1&#39;
+    elif charge_str == &#39;-&#39;:
+        return &#39;-1&#39;
+    else:
+        return charge_str</code></pre>
+</details>
+<div class="desc"><p>Normalize charge string format.</p>
+<p>Converts '+' to '+1' and '-' to '-1' for consistency.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>charge_str</code></strong> :&ensp;<code>str</code> or <code>None</code></dt>
+<dd>Charge string (e.g., '+', '-', '+2', '-3')</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code> or <code>None</code></dt>
+<dd>Normalized charge string, or None if input was None</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; normalize_charge_string('+')
+'+1'
+&gt;&gt;&gt; normalize_charge_string('-')
+'-1'
+&gt;&gt;&gt; normalize_charge_string('+3')
+'+3'
+&gt;&gt;&gt; normalize_charge_string(None)
+None
+</code></pre></div>
+</dd>
+<dt id="aqequil.formula_parser.parse_formula_ox_part"><code class="name flex">
+<span>def <span class="ident">parse_formula_ox_part</span></span>(<span>part, include_pseudoelements=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_formula_ox_part(part, include_pseudoelements=False):
+    &#34;&#34;&#34;
+    Parse a single part of a formula_ox string.
+
+    Parameters
+    ----------
+    part : str
+        Single component from formula_ox (e.g., &#34;2Fe+3&#34;, &#34;S-2&#34;, &#34;Fejiiip+3&#34;)
+    include_pseudoelements : bool
+        Whether to recognize pseudoelement names (e.g., &#34;Fejiiip&#34;)
+
+    Returns
+    -------
+    tuple or None
+        (coefficient, element, charge_str) or None if parsing fails
+
+    Examples
+    --------
+    &gt;&gt;&gt; parse_formula_ox_part(&#34;2Fe+3&#34;)
+    (2.0, &#39;Fe&#39;, &#39;+3&#39;)
+    &gt;&gt;&gt; parse_formula_ox_part(&#34;S-2&#34;)
+    (1.0, &#39;S&#39;, &#39;-2&#39;)
+    &gt;&gt;&gt; parse_formula_ox_part(&#34;Fejiiip+3&#34;, include_pseudoelements=True)
+    (1.0, &#39;Fejiiip&#39;, &#39;+3&#39;)
+    &#34;&#34;&#34;
+    if include_pseudoelements:
+        pattern = FORMULA_OX_WITH_PSEUDOELEM_PATTERN
+    else:
+        pattern = FORMULA_OX_PATTERN
+
+    match = re.match(pattern, part)
+    if not match:
+        return None
+
+    coeff_str, element, charge_str = match.groups()
+    coeff = float(coeff_str) if coeff_str else 1.0
+    charge_str = normalize_charge_string(charge_str)
+
+    return (coeff, element, charge_str)</code></pre>
+</details>
+<div class="desc"><p>Parse a single part of a formula_ox string.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>part</code></strong> :&ensp;<code>str</code></dt>
+<dd>Single component from formula_ox (e.g., "2Fe+3", "S-2", "Fejiiip+3")</dd>
+<dt><strong><code>include_pseudoelements</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to recognize pseudoelement names (e.g., "Fejiiip")</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>tuple</code> or <code>None</code></dt>
+<dd>(coefficient, element, charge_str) or None if parsing fails</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; parse_formula_ox_part(&quot;2Fe+3&quot;)
+(2.0, 'Fe', '+3')
+&gt;&gt;&gt; parse_formula_ox_part(&quot;S-2&quot;)
+(1.0, 'S', '-2')
+&gt;&gt;&gt; parse_formula_ox_part(&quot;Fejiiip+3&quot;, include_pseudoelements=True)
+(1.0, 'Fejiiip', '+3')
+</code></pre></div>
+</dd>
+<dt id="aqequil.formula_parser.parse_formula_ox_string"><code class="name flex">
+<span>def <span class="ident">parse_formula_ox_string</span></span>(<span>formula_ox_str, include_pseudoelements=False)</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_formula_ox_string(formula_ox_str, include_pseudoelements=False):
+    &#34;&#34;&#34;
+    Parse a complete formula_ox string into components.
+
+    Parameters
+    ----------
+    formula_ox_str : str
+        Formula with oxidation states (e.g., &#34;Fe+3 2S-2&#34;, &#34;Co+2 2Co+3 4S-2&#34;)
+    include_pseudoelements : bool
+        Whether to recognize pseudoelement names
+
+    Returns
+    -------
+    dict
+        Dictionary mapping &#34;Element+charge&#34; to coefficient
+        Returns empty dict if parsing fails
+
+    Examples
+    --------
+    &gt;&gt;&gt; parse_formula_ox_string(&#34;Fe+3 2S-2&#34;)
+    {&#39;Fe+3&#39;: 1.0, &#39;S-2&#39;: 2.0}
+    &gt;&gt;&gt; parse_formula_ox_string(&#34;Co+2 2Co+3&#34;)
+    {&#39;Co+2&#39;: 1.0, &#39;Co+3&#39;: 2.0}
+    &#34;&#34;&#34;
+    if not formula_ox_str or pd.isna(formula_ox_str) or formula_ox_str == &#39;nan&#39; or formula_ox_str == &#39;&#39;:
+        return {}
+
+    result = {}
+    parts = str(formula_ox_str).strip().split()
+
+    for part in parts:
+        parsed = parse_formula_ox_part(part, include_pseudoelements)
+        if parsed:
+            coeff, element, charge_str = parsed
+            elem_with_charge = element + (charge_str if charge_str else &#39;&#39;)
+            result[elem_with_charge] = coeff
+
+    return result</code></pre>
+</details>
+<div class="desc"><p>Parse a complete formula_ox string into components.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>formula_ox_str</code></strong> :&ensp;<code>str</code></dt>
+<dd>Formula with oxidation states (e.g., "Fe+3 2S-2", "Co+2 2Co+3 4S-2")</dd>
+<dt><strong><code>include_pseudoelements</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Whether to recognize pseudoelement names</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Dictionary mapping "Element+charge" to coefficient
+Returns empty dict if parsing fails</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; parse_formula_ox_string(&quot;Fe+3 2S-2&quot;)
+{'Fe+3': 1.0, 'S-2': 2.0}
+&gt;&gt;&gt; parse_formula_ox_string(&quot;Co+2 2Co+3&quot;)
+{'Co+2': 1.0, 'Co+3': 2.0}
+</code></pre></div>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="aqequil" href="index.html">aqequil</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="aqequil.formula_parser.calculate_average_oxidation_state" href="#aqequil.formula_parser.calculate_average_oxidation_state">calculate_average_oxidation_state</a></code></li>
+<li><code><a title="aqequil.formula_parser.get_element_oxidation_states_from_formula_ox" href="#aqequil.formula_parser.get_element_oxidation_states_from_formula_ox">get_element_oxidation_states_from_formula_ox</a></code></li>
+<li><code><a title="aqequil.formula_parser.normalize_charge_string" href="#aqequil.formula_parser.normalize_charge_string">normalize_charge_string</a></code></li>
+<li><code><a title="aqequil.formula_parser.parse_formula_ox_part" href="#aqequil.formula_parser.parse_formula_ox_part">parse_formula_ox_part</a></code></li>
+<li><code><a title="aqequil.formula_parser.parse_formula_ox_string" href="#aqequil.formula_parser.parse_formula_ox_string">parse_formula_ox_string</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>

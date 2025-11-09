@@ -3,6 +3,9 @@ include README.md
 include LICENSE.txt
 include CITATION.cff
 
+# Include HTML documentation
+recursive-include html *.html *.css *.js *.md
+
 # Include data files
 recursive-include aqequil *.r *.min *.csv *.txt
 
