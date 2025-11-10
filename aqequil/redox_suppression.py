@@ -305,7 +305,7 @@ def add_pseudoelements_to_chnosz(redox_elem_states, element_df=None):
         Modifies CHNOSZ's global element database
     """
     # Get current element database from CHNOSZ
-    current_elements = chnosz.thermo().element
+    current_elements = pychnosz.thermo().element
 
     # Add each pseudoelement
     for element in redox_elem_states:
