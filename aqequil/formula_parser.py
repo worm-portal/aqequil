@@ -10,8 +10,10 @@ import pandas as pd
 
 
 # Common regex patterns for formula parsing
-FORMULA_OX_PATTERN = r'([0-9]*\.?[0-9]+)?([A-Z][a-z]?)([\+\-][0-9]*)?'
-FORMULA_OX_WITH_PSEUDOELEM_PATTERN = r'([0-9]*\.?[0-9]+)?([A-Z][a-z]?j?[ivxlcdm]*[pnz]?)([\+\-][0-9]*)?'
+# Updated to handle elements of any length (e.g., "Edta", "Na", "Mg")
+# [A-Z][a-z]* matches: capital letter followed by zero or more lowercase letters
+FORMULA_OX_PATTERN = r'([0-9]*\.?[0-9]+)?([A-Z][a-z]*)([\+\-][0-9]*)?'
+FORMULA_OX_WITH_PSEUDOELEM_PATTERN = r'([0-9]*\.?[0-9]+)?([A-Z][a-z]*j?[ivxlcdm]*[pnz]?)([\+\-][0-9]*)?'
 
 
 def normalize_charge_string(charge_str):

@@ -447,33 +447,46 @@ def generate_dissrxn(sp_name, thermo_df, basis_pref, aux_pref=None,
                 ox_state_val = 0
 
             # Try to find basis/aux species with matching oxidation state
-            # Format: Convert "Cu+1" to "Cu+" or "Cu+2" to "Cu+2" (standard ionic notation)
+            # Match by oxidation state in formula_ox, not just by species name
             if ox_state_val != 0:
-                # Generate possible ionic notation forms
-                # For +1, try "Cu+" and "Cu+1"
-                # For +2, try "Cu+2" and "Cu++"
-                # For -2, try "S-2" and "S--"
-                possible_names = []
-                if ox_state_val > 0:
-                    # Positive charge
-                    possible_names.append(f"{el}+{abs(ox_state_val)}" if abs(ox_state_val) > 1 else f"{el}+")
-                    possible_names.append(f"{el}{'+'*abs(ox_state_val)}")
-                else:
-                    # Negative charge
-                    possible_names.append(f"{el}-{abs(ox_state_val)}" if abs(ox_state_val) > 1 else f"{el}-")
-                    possible_names.append(f"{el}{'-'*abs(ox_state_val)}")
-
-                # Check if any of these forms exist as basis/aux species
+                # Look for basis/aux species that contain this element in this oxidation state
+                # Check aux_pref first, then basis_pref
                 found = False
-                for possible_name in possible_names:
-                    if possible_name in list(thermo_df['name']):
-                        el_db_entry = thermo_df[thermo_df['name'] == possible_name].iloc[0]
-                        if el_db_entry['tag'] in ['basis', 'aux', 'refstate']:
-                            basis_to_add.append(possible_name)
-                            if verbose >= 2:
-                                print(f"  Found {possible_name} for {el_with_charge} (tag={el_db_entry['tag']})")
-                            found = True
-                            break
+
+                # Check if we have aux species for this element
+                if el in aux_pref and aux_pref[el]:
+                    # Find aux species with closest matching oxidation state
+                    best_match = None
+                    min_ox_diff = float('inf')
+
+                    for aux_sp_name in aux_pref[el]:
+                        aux_row = thermo_df[thermo_df['name'] == aux_sp_name]
+                        if not aux_row.empty:
+                            aux_formula_ox = aux_row.iloc[0].get('formula_ox_modded',
+                                                                   aux_row.iloc[0].get('formula_ox', ''))
+                            # Get average oxidation state of element in this aux species
+                            avg_ox = get_average_oxidation_state(aux_formula_ox, el)
+                            ox_diff = abs(avg_ox - ox_state_val)
+
+                            if ox_diff < min_ox_diff:
+                                min_ox_diff = ox_diff
+                                best_match = aux_sp_name
+
+                    if best_match and min_ox_diff < 1.0:  # Close match
+                        basis_to_add.append(best_match)
+                        if verbose >= 2:
+                            print(f"  Found {best_match} for {el_with_charge} (oxidation state match)")
+                        found = True
+
+                # If no aux match, try basis species
+                if not found and el in basis_pref:
+                    basis_sp_name = basis_pref[el]
+                    basis_row = thermo_df[thermo_df['name'] == basis_sp_name]
+                    if not basis_row.empty:
+                        basis_to_add.append(basis_sp_name)
+                        if verbose >= 2:
+                            print(f"  Using basis {basis_sp_name} for {el_with_charge}")
+                        found = True
 
                 if found:
                     continue
