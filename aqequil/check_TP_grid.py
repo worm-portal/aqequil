@@ -66,7 +66,7 @@ def check_TP_grid(grid_temps, grid_press, P1, water_model="SUPCRT92", check_for_
         grid_press = []
         for T in grid_temps:
             psat_result = pychnosz.water("Psat", T=T+273.15, Psat_floor=P1, messages=False)
-            grid_press.append(psat_result[0])
+            grid_press.append(psat_result)
         grid_press = np.array(grid_press)
     else:
         grid_press = np.array(grid_press, dtype=float)
