@@ -2195,10 +2195,14 @@ class AqEquil(object):
         speciation._half_cell_reactions_original_copy = self._half_cell_reactions_original_copy
 
         if report_filename != None:
+            # Remove column and index level names to avoid extra row in CSV output
+            report_df = out_dict["report"].copy()
+            report_df.columns.names = [None, None]
+            report_df.index.names = [None]
             if ".csv" in report_filename[-4:]:
-                out_dict["report"].to_csv(report_filename)
+                report_df.to_csv(report_filename)
             else:
-                out_dict["report"].to_csv(report_filename+".csv")
+                report_df.to_csv(report_filename+".csv")
 
         if delete_generated_folders:
             self._delete_rxn_folders()
@@ -5402,7 +5406,7 @@ class Speciation(object):
         
         # check that a thermodynamic CSV is being used
         if not isinstance(self.thermo.csv_db, pd.DataFrame):
-            self.err_handler.raise_exception("The plot_energy() function requires "
+            self.err_handler.raise_exception("The calculate_energy() function requires "
                     "a thermodynamic database in a WORM-style CSV format, e.g., "
                     "'wrm_data.csv'. You may be getting this message because "
                     "a data0 or data1 file was used.")
