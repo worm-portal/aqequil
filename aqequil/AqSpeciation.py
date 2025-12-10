@@ -1687,7 +1687,7 @@ class AqEquil(object):
                 grid_temps = ["0.0100", "50.0000", "100.0000", "150.0000",
                              "200.0000", "250.0000", "300.0000", "350.0000"]
                 grid_press = ["1.0000", "1.0000", "1.0132", "4.7572",
-                              "15.5365", "39.7365", "85.8378", "165.2113"]
+                              "15.5366", "39.7366", "85.8379", "165.2114"]
                 
             grid_press_numeric = [float(n) for n in grid_press]
    
@@ -2245,13 +2245,12 @@ class AqEquil(object):
                    water_model, activity_model, P1, plot_poly_fit, logK_extrapolate,
                    dynamic_db, verbose):
 
-
         list_tp = check_TP_grid(grid_temps=grid_temps,
-                                     grid_press=grid_press,
-                                     P1=P1,
-                                     water_model=water_model,
-                                     check_for_errors=True,
-                                     verbose=self.verbose)
+                                 grid_press=grid_press,
+                                 P1=P1,
+                                 water_model=water_model,
+                                 check_for_errors=True,
+                                 verbose=self.verbose)
 
         grid_temps = list_tp["grid_temps"]
         grid_press = list_tp["grid_press"]
@@ -2399,7 +2398,7 @@ class AqEquil(object):
             # todo: make this more robust to catch any potential logK_grid skips
             if "logK_grid_"+name in data0_file_lines:
                 data0_file_lines[data0_file_lines.index("logK_grid_"+name)] = logK_list
-
+        
         # handle data0 header section using Python version
         data0_file_lines = fill_data0_head(data0_template=data0_file_lines,
                                            db=db,
@@ -2663,7 +2662,6 @@ class AqEquil(object):
                         sp_press_grid.append(p)
                         
                 if dynamic_db:
-                    #sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
                     sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False)+0.0001 if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
                     grid_press_list_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False)+0.0001 if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
 

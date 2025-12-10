@@ -65,7 +65,7 @@ def check_TP_grid(grid_temps, grid_press, P1, water_model="SUPCRT92", check_for_
         vmessage("Calculating pressure grid along liquid-vapor saturation curve...", 2, verbose)
         grid_press = []
         for T in grid_temps:
-            psat_result = pychnosz.water("Psat", T=T+273.15, Psat_floor=P1, messages=False)
+            psat_result = pychnosz.water("Psat", T=T+273.15, Psat_floor=P1, messages=False)+0.0001
             grid_press.append(psat_result)
         grid_press = np.array(grid_press)
     else:
