@@ -2664,8 +2664,8 @@ class AqEquil(object):
                         
                 if dynamic_db:
                     #sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
-                    sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
-                    grid_press_list_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False) if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
+                    sp_press_grid_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False)+0.0001 if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(sp_press_grid, sp_temps_grid) ]
+                    grid_press_list_numeric = [pychnosz.water("Psat", T=273.15+T, messages=False)+0.0001 if P=="Psat" or P=="psat" or P=="PSAT" else P for P,T in zip(grid_press_list, grid_temps) ]
 
                     sp_temps_grid_psatted = []
                     for ii,T in enumerate(sp_temps_grid):
