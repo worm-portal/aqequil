@@ -623,6 +623,10 @@ class AqEquil(object):
             err_charge_balance_invalid_type = ("Cannot balance charge "
                 "on {}.".format(charge_balance_on))
             err_list.append(err_charge_balance_invalid_type)
+        elif charge_balance_on == 'column':
+            # Check if 'charge_balance_on' column exists - if not, we'll handle it later
+            # by defaulting to 'none' (no charge balancing) with a warning message
+            pass
         elif charge_balance_on != "none" and charge_balance_on not in list(set(df_in_headercheck.columns)):
             err_charge_balance_invalid_sp = ("The species chosen for charge balance"
                 " '{}'".format(charge_balance_on)+""
@@ -1250,7 +1254,7 @@ class AqEquil(object):
                  exclude=[],
                  suppress=[],
                  alter_options=[],
-                 charge_balance_on="none",
+                 charge_balance_on="column",
                  suppress_missing=True,
                  blanks_are_0=False,
                  strict_minimum_pressure=True,
@@ -1394,13 +1398,19 @@ class AqEquil(object):
             The third element is a numeric value corresponding to the chosen
             option. A third element is not required for Suppress.
             
-        charge_balance_on : str, default "none"
-            If "none", will not balance electrical charge between cations and
-            anions in the speciation calculation. If a name of a species is
-            supplied instead, the activity of that species will be allowed to
-            change until charge balance is obtained. For example,
-            charge_balance_on = "H+" will calculate what pH a sample must have
-            to have zero net charge.
+        charge_balance_on : str, default "column"
+            Specifies how to handle electrical charge balancing in the speciation
+            calculation. Options include:
+
+            - "column" (default): Read charge balance constraints from a
+              'charge_balance_on' column in the input file, allowing different
+              constraints for each sample. If no such column exists, defaults
+              to "none" (no charge balancing) with a warning message.
+            - "none": Do not balance electrical charge between cations and anions.
+            - Species name (e.g., "H+"): The activity of the specified species
+              will be allowed to change until charge balance is obtained. For
+              example, charge_balance_on = "H+" will calculate what pH a sample
+              must have to have zero net charge.
         
         suppress_missing : bool, default True
             Suppress the formation of an aqueous species if it is missing a
@@ -1542,10 +1552,20 @@ class AqEquil(object):
             if len(db_args["suppress_redox"]) > 0:
                 redox_suppression = True
 
+        # Exclude the 'charge_balance_on' column from being treated as a chemical species
+        # (if it exists in the input file). This allows users to have this column in their CSV
+        # for use with charge_balance_on='column', but still use uniform charge balancing
+        # (e.g., charge_balance_on='H+') without errors.
+        exclude_modified = list(exclude)  # Create a copy to avoid modifying the original
+        # Check if the column exists before trying to exclude it
+        df_check = pd.read_csv(input_filename, header=0, nrows=0)
+        if 'charge_balance_on' in df_check.columns and 'charge_balance_on' not in exclude_modified:
+            exclude_modified.append('charge_balance_on')
+
         # check input sample file for errors
         if activity_model != 'pitzer': # TODO: allow check_sample_input_file() to handle pitzer
             sample_temps, sample_press, redox_flag = self._check_sample_input_file(
-                                          input_filename, exclude, db,
+                                          input_filename, exclude_modified, db,
                                           dynamic_db, charge_balance_on, suppress_missing,
                                           redox_suppression, redox_flag)
 
@@ -1730,9 +1750,26 @@ class AqEquil(object):
         output_dir = "rxn_3o"
         pickup_dir = "rxn_3p"
 
+        # If using column-based charge balancing, read the charge_balance_on values
+        # before preprocessing (since they will be excluded during preprocessing)
+        charge_balance_dict = {}
+        if charge_balance_on == 'column':
+            df_temp = pd.read_csv(input_filename, header=0)
+            if 'charge_balance_on' in df_temp.columns:
+                sample_names = df_temp.iloc[1:, 0].tolist()  # First column contains sample names, skip subheader row
+                cb_values = df_temp['charge_balance_on'].iloc[1:].tolist()  # Skip subheader row
+                for i, sample_name in enumerate(sample_names):
+                    charge_balance_dict[sample_name] = cb_values[i]
+            else:
+                # No charge_balance_on column found, default to no charge balancing
+                if self.verbose > 0:
+                    print("No 'charge_balance_on' column found in input file. "
+                          "Defaulting to no charge balancing for all samples.")
+                charge_balance_on = 'none'
+
         # preprocess for EQ3
         input_processed = preprocess(input_filename=input_filename,
-                                               exclude=exclude,
+                                               exclude=exclude_modified,
                                                grid_temps=grid_temps,
                                                grid_press=grid_press,
                                                strict_minimum_pressure=strict_minimum_pressure,
@@ -1813,6 +1850,18 @@ class AqEquil(object):
             if dynamic_db:
                 allowed_aq_block_species = list(thermo_df["name"]) + FIXED_SPECIES
 
+            # Handle per-sample charge balance constraint
+            if charge_balance_on == 'column':
+                # Get charge balance constraint from the dictionary for this sample
+                samplename_for_cb = self.df_input_processed.iloc[sample_row_index, self.df_input_processed.columns.get_loc("Sample")]
+                sample_charge_balance = charge_balance_dict.get(samplename_for_cb, 'none')
+                if pd.isna(sample_charge_balance) or sample_charge_balance == '':
+                    sample_charge_balance = 'none'
+                else:
+                    sample_charge_balance = str(sample_charge_balance)
+            else:
+                sample_charge_balance = charge_balance_on
+
             warned_about_redox_column = write_3i_file(df=df,
                                temp_degC=temp_degC,
                                pressure_bar=pressure_bar,
@@ -1822,7 +1871,7 @@ class AqEquil(object):
                                suppress_missing=suppress_missing,
                                exclude=input_processed["exclude"],
                                allowed_aq_block_species=allowed_aq_block_species,
-                               charge_balance_on=charge_balance_on,
+                               charge_balance_on=sample_charge_balance,
                                suppress=suppress,
                                alter_options=alter_options,
                                aq_scale=aq_scale,

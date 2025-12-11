@@ -738,7 +738,15 @@ def write_3i_file(df,
 
         if not pd.isna(col_val):
             species_name = header_species(column)
-            if (species_name not in exclude) and (species_name in allowed_aq_block_species):
+            # Check if the column should be excluded - handle both the species name
+            # and columns that start with an excluded name (to handle headers with underscores)
+            should_exclude = False
+            for exc in exclude:
+                if exc and (species_name == exc or column.startswith(exc + "_")):
+                    should_exclude = True
+                    break
+
+            if not should_exclude and (species_name in allowed_aq_block_species):
                 species_value = df.iloc[row][column]
 
                 # EQ3 won't balance on a species if its concentration is 0 so
