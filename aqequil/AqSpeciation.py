@@ -2244,14 +2244,37 @@ class AqEquil(object):
         speciation._half_cell_reactions_original_copy = self._half_cell_reactions_original_copy
 
         if report_filename != None:
-            # Remove column and index level names to avoid extra row in CSV output
+            # Prepare report for CSV export with proper header structure
+            import csv
+
             report_df = out_dict["report"].copy()
-            report_df.columns.names = [None, None]
-            report_df.index.names = [None]
-            if ".csv" in report_filename[-4:]:
-                report_df.to_csv(report_filename)
-            else:
-                report_df.to_csv(report_filename+".csv")
+
+            # Store the multiindex column structure
+            col_level_0 = [col[0] for col in report_df.columns]
+            col_level_1 = [col[1] for col in report_df.columns]
+
+            # Create a temporary dataframe with proper structure for CSV
+            # First, reset the index to make it a column
+            report_df_export = report_df.reset_index()
+
+            # Rename the index column to 'Sample'
+            report_df_export.rename(columns={'index': 'Sample'}, inplace=True)
+
+            # Create header rows
+            header_row_0 = ['Sample'] + col_level_0
+            header_row_1 = [''] + col_level_1
+
+            # Write the CSV with proper formatting
+            filename = report_filename if ".csv" in report_filename[-4:] else report_filename + ".csv"
+
+            # Write headers using csv.writer for proper escaping
+            with open(filename, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(header_row_0)
+                writer.writerow(header_row_1)
+
+            # Append the data without headers
+            report_df_export.to_csv(filename, mode='a', header=False, index=False)
 
         if delete_generated_folders:
             self._delete_rxn_folders()
