@@ -22,6 +22,18 @@ def find_gfortran():
         print(f"Using explicit gfortran path from GFORTRAN_PATH: {explicit_path}")
         return explicit_path
 
+    # On Windows, check common MinGW locations first
+    if sys.platform == "win32":
+        mingw_paths = [
+            r'C:\msys64\mingw64\bin\gfortran.exe',
+            r'C:\msys64\ucrt64\bin\gfortran.exe',
+            r'C:\mingw64\bin\gfortran.exe',
+        ]
+        for path in mingw_paths:
+            if os.path.isfile(path):
+                print(f"Found gfortran at: {path}")
+                return path
+
     # Try common gfortran locations
     candidates = ['gfortran', 'gfortran-11', 'gfortran-12', 'gfortran-13', 'gfortran-14']
 
@@ -66,9 +78,19 @@ def compile_eq3_6():
     # Set environment variables for compilation
     env = os.environ.copy()
 
-    # Ensure gfortran is in PATH
+    # Ensure gfortran and make are in PATH
+    # Use correct path separator for platform (: for Unix, ; for Windows)
+    path_sep = ';' if sys.platform == 'win32' else ':'
+
+    # Add gfortran directory to PATH
     if str(gfortran_dir) not in env.get('PATH', ''):
-        env['PATH'] = f"{gfortran_dir}:{env.get('PATH', '')}"
+        env['PATH'] = f"{gfortran_dir}{path_sep}{env.get('PATH', '')}"
+
+    # On Windows, also add MSYS2 usr/bin for make
+    if sys.platform == 'win32':
+        msys2_usr_bin = r'C:\msys64\usr\bin'
+        if msys2_usr_bin not in env.get('PATH', ''):
+            env['PATH'] = f"{msys2_usr_bin}{path_sep}{env.get('PATH', '')}"
 
     # Set FC to explicitly use gfortran
     env['FC'] = gfortran
