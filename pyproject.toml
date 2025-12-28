@@ -37,7 +37,7 @@ dependencies = [
 Homepage = "https://github.com/worm-portal/aqequil"
 
 [tool.setuptools]
-packages = ["aqequil", "aqequil.bin", "aqequil.eq3_6_src"]
+packages = ["aqequil", "aqequil.bin", "aqequil.eq3_6_src", "aqequil.test_data"]
 zip-safe = false
 
 [tool.setuptools.package-data]
@@ -46,6 +46,8 @@ zip-safe = false
 "aqequil.bin" = ["*"]
 # Include EQ3/6 source code for source distribution
 "aqequil.eq3_6_src" = ["**/*"]
+# Include test data
+"aqequil.test_data" = ["*.csv"]
 
 [tool.cibuildwheel]
 # Build for Python 3.10, 3.11, 3.12, and 3.13
@@ -60,9 +62,9 @@ build-verbosity = 1
 # Before building the wheel, compile the EQ3/6 executables
 before-build = "python compile_eq3_6.py"
 
-# Test the wheel after building
-test-requires = "pytest numpy pandas"
-test-command = "python -c \"import aqequil; print('Import test passed')\""
+# Test the wheel after building with integration test
+# Note: All aqequil dependencies should already be installed since we're testing the wheel
+test-command = "python {project}/test_integration.py"
 
 # Platform-specific settings
 [tool.cibuildwheel.linux]

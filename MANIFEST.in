@@ -8,11 +8,17 @@ include pyproject.toml
 # Include EQ3/6 compilation script (needed for building wheels)
 include compile_eq3_6.py
 
+# Include integration test script (needed for wheel testing)
+include test_integration.py
+
 # Include HTML documentation
 recursive-include html *.html *.css *.js
 
 # Include data files
 recursive-include aqequil *.r *.min *.csv *.txt
+
+# Include test data
+recursive-include aqequil/test_data *.csv
 
 # Include EQ3/6 source files (will be compiled during wheel build)
 recursive-include aqequil/eq3_6_src *.f *.f90 *.for
