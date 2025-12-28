@@ -97,7 +97,8 @@ def test_speciation():
         # Run speciation
         speciation = ae.speciate(
             input_filename=test_csv,
-            exclude=["Year", "Area"]
+            exclude=["Year", "Area"],
+            get_mass_contribution=True  # Required for plot_mass_contribution
         )
         print("[OK] Speciation completed")
 
@@ -122,12 +123,19 @@ def test_speciation():
 
         # Test plotting (just check it doesn't crash, don't display)
         print("Testing plot_mass_contribution...")
-        fig = speciation.plot_mass_contribution("HCO3-")
+        # Use plot_out=True to return the figure object instead of displaying it
+        fig = speciation.plot_mass_contribution("HCO3-", plot_out=True)
         if fig is None:
             print("[FAIL] plot_mass_contribution returned None")
             return False
 
-        print("[OK] plot_mass_contribution executed successfully")
+        # Check that we got a plotly figure
+        import plotly.graph_objects as go
+        if not isinstance(fig, (go.Figure, type(fig))):
+            print(f"[FAIL] Expected plotly Figure, got {type(fig)}")
+            return False
+
+        print("[OK] plot_mass_contribution returned a valid figure")
 
         return True
 
