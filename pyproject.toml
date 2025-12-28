@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aqequil"
-version = "0.40.0"
+version = "0.41.0"
 description = "Python tools for aqueous chemical speciation."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -37,8 +37,47 @@ dependencies = [
 Homepage = "https://github.com/worm-portal/aqequil"
 
 [tool.setuptools]
-packages = ["aqequil"]
+packages = ["aqequil", "aqequil.bin", "aqequil.eq3_6_src"]
 zip-safe = false
 
 [tool.setuptools.package-data]
 "*" = ["*.r", "*.min", "*.csv", "*.txt"]
+# Include compiled EQ3/6 executables in wheels
+"aqequil.bin" = ["*"]
+# Include EQ3/6 source code for source distribution
+"aqequil.eq3_6_src" = ["**/*"]
+
+[tool.cibuildwheel]
+# Build for Python 3.10, 3.11, 3.12, and 3.13
+build = "cp310-* cp311-* cp312-* cp313-*"
+
+# Skip 32-bit builds, PyPy, and musllinux (focus on manylinux)
+skip = "*-win32 *-manylinux_i686 *-musllinux* pp*"
+
+# Build verbosity
+build-verbosity = 1
+
+# Before building the wheel, compile the EQ3/6 executables
+before-build = "python compile_eq3_6.py"
+
+# Test the wheel after building
+test-requires = "pytest numpy pandas"
+test-command = "python -c \"import aqequil; print('Import test passed')\""
+
+# Platform-specific settings
+[tool.cibuildwheel.linux]
+# Use manylinux_2_28 (AlmaLinux 8, has dnf and better package support)
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+# gfortran installation is handled via CIBW_BEFORE_ALL_LINUX in GitHub Actions
+
+[tool.cibuildwheel.macos]
+# Architecture selection is handled in GitHub Actions workflow
+# (x86_64 on macos-15-intel, arm64 on macos-latest)
+# Homebrew gcc on macOS 15 requires 15.0 minimum for both Intel and ARM
+environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
+
+[tool.cibuildwheel.windows]
+# Only build for 64-bit Windows
+archs = "AMD64"
+# MinGW installation is handled via CIBW_BEFORE_ALL_WINDOWS in GitHub Actions

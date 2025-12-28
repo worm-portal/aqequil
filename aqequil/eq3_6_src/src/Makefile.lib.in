@@ -1,0 +1,13 @@
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	ar rsc $(TARGET) $^
+
+obj/%.o: src/%.f
+	@mkdir -p obj
+	gfortran $(FFLAGS) $(INCLUDES) -c -o $@ $^
+
+clean:
+	@rm -rf obj
+
+.PHONY: clean

@@ -14,27 +14,28 @@ Speciated fluids can be further reacted with minerals or other fluids in mass tr
 
 ## Requirements
 
-AqEquil has been tested with Ubuntu 22.04.3 LTS.
+AqEquil works on Linux, macOS, and Windows.
 
-This installation requires the Linux version of EQ3/6 v8.0a, which can downloaded [here](https://github.com/LLNL/EQ3_6). Installation instructions are provided there.
+**Python Requirements:**
+- Python >= 3.10
+- pandas, numpy, matplotlib, plotly, and other dependencies (automatically installed)
 
-AqEquil must be installed into an environment with an R installation. See [these instructions](https://docs.anaconda.com/anaconda/user-guide/tasks/using-r-language/) for installing R with Anaconda.
+**Additional Requirements:**
+- R installation with CHNOSZ package version 1.4.3 (see instructions below)
 
-Additionally, the CHNOSZ package must be installed in R (see instructions below).
+**Note:** As of version 0.41.0, EQ3/6 executables are bundled with aqequil and no longer need to be installed separately. The package includes pre-compiled binaries for Linux, macOS, and Windows.
 
 ## Installation
 
-### Installing EQ3/6 for Linux
-
-I recommend using [this github version of EQ3/6 v.8.0a adapted by the 39Alpha team](https://github.com/39alpha/eq3_6/tree/main). Installation instructions are found there.
-
-Create an environment variable called `EQ36DO` and set it to wherever you installed EQ3/6. (`/usr/local/bin` by default). Set another environment variable called `EQ36DA` to the directory containing your data1 thermodynamic database files (if you have one).
-
 ### Installing CHNOSZ version 1.4.3
 
-Open an R session. Install CHNOSZ version 1.4.3 package with:
+AqEquil requires an R installation with the CHNOSZ package. See [these instructions](https://docs.anaconda.com/anaconda/user-guide/tasks/using-r-language/) for installing R with Anaconda.
 
-```install.packages('http://cran.r-project.org/src/contrib/Archive/CHNOSZ/CHNOSZ_1.4.3.tar.gz', repos=NULL, type='source')```
+Open an R session and install CHNOSZ version 1.4.3 package with:
+
+```r
+install.packages('http://cran.r-project.org/src/contrib/Archive/CHNOSZ/CHNOSZ_1.4.3.tar.gz', repos=NULL, type='source')
+```
 
 Once CHNOSZ is installed you can quit the R session.
 
@@ -44,8 +45,25 @@ Compatibility with CHNOSZ v.2.0.0 is forthcoming.
 
 Install AqEquil using pip:
 
-```pip install AqEquil```
+```bash
+pip install aqequil
+```
 
-### Usage
+The bundled EQ3/6 executables will be automatically installed with the package. No additional configuration or environment variables are needed.
+
+## Usage
 
 See this [demo notebook](https://nbviewer.jupyter.org/github/worm-portal/WORM-Library/blob/master/3-Aqueous-Speciation/1-Introduction-to-Aq-Speciation/2-Intro-to-Multi-Aq-Speciation.ipynb) for usage examples.
+
+## Bundled Software
+
+This package includes pre-compiled binaries from [EQ3/6 v8.0a](https://github.com/39alpha/eq3_6), a software package for geochemical modeling developed by Thomas Wolery at Lawrence Livermore National Laboratory.
+
+**EQ3/6 License:** BSD 3-Clause License
+**Copyright:** (c) 1987, 1990-1993, 1995, 1997, 2002, 2013 The Regents of the University of California, Lawrence Livermore National Laboratory.
+
+See `THIRD_PARTY_LICENSES.txt` for the full EQ3/6 license text.
+
+**References:**
+- Wolery, T. J., and USDOE. EQ3/6 A Software Package for Geochemical Modeling. Computer software. December 13, 2010. https://www.osti.gov//servlets/purl/1231666. doi:https://doi.org/10.11578/dc.20210416.44.
+- Wolery, T. J. and R. L. Jarek. Software User's Manual EQ36, Version 8.0. U.S. Tech. Rep. 2003. Department of Energy, Office of Civilian Radioactive Waste Management, Office of Repository Development. 10813-UM-8.0-00.

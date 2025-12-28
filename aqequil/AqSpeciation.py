@@ -130,6 +130,32 @@ def _all_equal(iterable):
     g = itertools.groupby(iterable)
     return next(g, True) and not next(g, False)
 
+
+def _get_bundled_exe_path():
+    """
+    Get the path to bundled EQ3/6 executables.
+
+    Returns the path to the aqequil/bin directory containing pre-compiled
+    EQ3/6 executables. Returns None if the directory doesn't exist or is empty.
+    """
+    try:
+        # Get the directory where this module is located
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        bin_dir = os.path.join(module_dir, 'bin')
+
+        # Check if bin directory exists and contains executables
+        if os.path.isdir(bin_dir):
+            # Check for at least eq3nr executable (with or without .exe extension)
+            eq3nr = os.path.join(bin_dir, 'eq3nr')
+            eq3nr_exe = os.path.join(bin_dir, 'eq3nr.exe')
+
+            if os.path.isfile(eq3nr) or os.path.isfile(eq3nr_exe):
+                return bin_dir
+
+        return None
+    except Exception:
+        return None
+
 class AqEquil(object):
 
     """
@@ -306,7 +332,15 @@ class AqEquil(object):
         if not isinstance(eq36da, str):
             eq36da = os.environ.get('EQ36DA')
         if not isinstance(eq36co, str):
+            # Try environment variable first
             eq36co = os.environ.get('EQ36CO')
+            # If not set, try to use bundled executables
+            if eq36co is None:
+                bundled_path = _get_bundled_exe_path()
+                if bundled_path is not None:
+                    eq36co = bundled_path
+                    if verbose >= 1:
+                        print(f"Using bundled EQ3/6 executables from: {eq36co}")
 
         self.eq36da = eq36da
         self.eq36co = eq36co

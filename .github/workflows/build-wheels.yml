@@ -1,0 +1,203 @@
+name: Build Wheels
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [published]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # Use ubuntu-latest for Linux, windows-2019 for Windows
+        # For macOS: macos-15-intel (Intel x86_64) and macos-latest (Apple Silicon ARM64)
+        os: [ubuntu-latest, windows-2019, macos-15-intel, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.22.0
+
+      - name: Set up MinGW on Windows
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc-fortran
+            make
+
+      - name: Install x86_64 gfortran on macOS Intel runner
+        if: matrix.os == 'macos-15-intel'
+        run: |
+          echo "===== Installing x86_64 Homebrew and gfortran ====="
+
+          # Remove ARM64 brew from PATH to avoid confusion
+          export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+          # Install x86_64 Homebrew if needed
+          if [ ! -f /usr/local/bin/brew ]; then
+            echo "Installing x86_64 Homebrew..."
+            arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          fi
+
+          # Verify x86_64 Homebrew
+          if [ -f /usr/local/bin/brew ]; then
+            echo "x86_64 Homebrew installed"
+            arch -x86_64 /usr/local/bin/brew --version
+
+            # Install gcc
+            echo "Installing x86_64 gcc..."
+            arch -x86_64 /usr/local/bin/brew install gcc
+
+            # Find and verify gfortran
+            GFORTRAN_PATH=$(arch -x86_64 /usr/local/bin/brew --prefix gcc)/bin/gfortran
+            echo "Found gfortran at: $GFORTRAN_PATH"
+
+            echo "Checking gfortran architecture:"
+            file "$GFORTRAN_PATH"
+
+            # Export for later steps
+            echo "X86_GFORTRAN=$GFORTRAN_PATH" >> $GITHUB_ENV
+            echo "X86_GCC_PREFIX=$(arch -x86_64 /usr/local/bin/brew --prefix gcc)" >> $GITHUB_ENV
+          else
+            echo "ERROR: Failed to install x86_64 Homebrew"
+            exit 1
+          fi
+
+      - name: Install ARM64 gfortran on macOS ARM runner
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install gcc
+          GFORTRAN_PATH=$(brew --prefix gcc)/bin/gfortran
+          echo "Installed gfortran at: $GFORTRAN_PATH"
+
+      - name: Build wheels (macOS Intel)
+        if: matrix.os == 'macos-15-intel'
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD_VERBOSITY: 1
+          # CRITICAL: Only build x86_64 on this runner
+          CIBW_ARCHS_MACOS: x86_64
+          # Use x86_64 gfortran explicitly
+          CIBW_ENVIRONMENT_MACOS: >
+            MACOSX_DEPLOYMENT_TARGET=15.0
+            ARCHFLAGS="-arch x86_64"
+            GFORTRAN_PATH=${{ env.X86_GFORTRAN }}
+          CIBW_BEFORE_BUILD_MACOS: >
+            echo "===== Build Environment =====" &&
+            echo "GFORTRAN_PATH: $GFORTRAN_PATH" &&
+            echo "ARCHFLAGS: $ARCHFLAGS" &&
+            file "$GFORTRAN_PATH" &&
+            python compile_eq3_6.py
+
+      - name: Build wheels (macOS ARM)
+        if: matrix.os == 'macos-latest'
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD_VERBOSITY: 1
+          # CRITICAL: Only build arm64 on this runner
+          CIBW_ARCHS_MACOS: arm64
+          CIBW_ENVIRONMENT_MACOS: >
+            MACOSX_DEPLOYMENT_TARGET=15.0
+            ARCHFLAGS="-arch arm64"
+          CIBW_BEFORE_BUILD_MACOS: python compile_eq3_6.py
+
+      - name: Build wheels (Linux/Windows)
+        if: runner.os != 'macOS'
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_BEFORE_ALL_LINUX: >
+            bash -c "
+            if command -v dnf &> /dev/null; then
+              dnf install -y gcc-gfortran make
+            elif command -v yum &> /dev/null; then
+              yum install -y gcc-gfortran make
+            elif command -v apt-get &> /dev/null; then
+              apt-get update && apt-get install -y gfortran make
+            else
+              echo 'No supported package manager found' && exit 1
+            fi
+            "
+          CIBW_BEFORE_BUILD_WINDOWS: >
+            C:\msys64\usr\bin\bash -lc "pacman -S --noconfirm make" &&
+            python compile_eq3_6.py
+          # Add MinGW to PATH on Windows for compilation
+          CIBW_ENVIRONMENT_WINDOWS: PATH="C:\\msys64\\mingw64\\bin;$PATH"
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+          if-no-files-found: error
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build
+        run: python -m pip install build
+
+      - name: Build sdist
+        run: python -m build --sdist
+
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  upload_pypi:
+    name: Upload to PyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    # Only upload on release
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    permissions:
+      id-token: write  # For trusted publishing
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List files
+        run: ls -lh dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Use trusted publishing (no API token needed if configured on PyPI)
+          # Or you can use: password: ${{ secrets.PYPI_API_TOKEN }}
+          skip-existing: true
+          verbose: true
