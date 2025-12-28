@@ -90,6 +90,11 @@ jobs:
           brew install gcc
           GFORTRAN_PATH=$(brew --prefix gcc)/bin/gfortran
           echo "Installed gfortran at: $GFORTRAN_PATH"
+          lipo -info "$GFORTRAN_PATH" || file "$GFORTRAN_PATH"
+
+          # Export for later steps
+          echo "ARM_GFORTRAN=$GFORTRAN_PATH" >> $GITHUB_ENV
+          echo "ARM_GCC_PREFIX=$(brew --prefix gcc)" >> $GITHUB_ENV
 
       - name: Build wheels (macOS Intel)
         if: matrix.os == 'macos-15-intel'
@@ -103,10 +108,13 @@ jobs:
             MACOSX_DEPLOYMENT_TARGET=15.0
             ARCHFLAGS="-arch x86_64"
             GFORTRAN_PATH=${{ env.X86_GFORTRAN }}
+            PATH=${{ env.X86_GCC_PREFIX }}/bin:$PATH
           CIBW_BEFORE_BUILD_MACOS: >
             echo "===== Build Environment =====" &&
             echo "GFORTRAN_PATH: $GFORTRAN_PATH" &&
             echo "ARCHFLAGS: $ARCHFLAGS" &&
+            echo "PATH: $PATH" &&
+            which gfortran &&
             file "$GFORTRAN_PATH" &&
             python compile_eq3_6.py
 
@@ -120,7 +128,15 @@ jobs:
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET=15.0
             ARCHFLAGS="-arch arm64"
-          CIBW_BEFORE_BUILD_MACOS: python compile_eq3_6.py
+            GFORTRAN_PATH=${{ env.ARM_GFORTRAN }}
+            PATH=${{ env.ARM_GCC_PREFIX }}/bin:$PATH
+          CIBW_BEFORE_BUILD_MACOS: >
+            echo "===== Build Environment =====" &&
+            echo "GFORTRAN_PATH: $GFORTRAN_PATH" &&
+            echo "ARCHFLAGS: $ARCHFLAGS" &&
+            echo "PATH: $PATH" &&
+            which gfortran &&
+            python compile_eq3_6.py
 
       - name: Build wheels (Linux/Windows)
         if: runner.os != 'macOS'
