@@ -3,12 +3,14 @@ name: Build Wheels
 on:
   push:
     branches:
-      - main
+      - master
+      - dev  # Build and test on dev branch
     tags:
       - 'v*'
   pull_request:
     branches:
-      - main
+      - master
+      - dev
   release:
     types: [published]
   workflow_dispatch:  # Allow manual trigger
@@ -178,7 +180,7 @@ jobs:
     name: Upload to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # Only upload on release
+    # Only upload on release (NOT on dev/master branch pushes)
     if: github.event_name == 'release' && github.event.action == 'published'
 
     permissions:
