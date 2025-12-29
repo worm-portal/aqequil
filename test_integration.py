@@ -13,10 +13,11 @@ This is run during the wheel build process to ensure the package works correctly
 import sys
 import os
 
-# Set matplotlib to non-GUI backend before importing any packages
+# Set matplotlib to non-GUI backend BEFORE any imports that might use matplotlib
 # This prevents font cache building issues in headless CI environments
+os.environ['MPLBACKEND'] = 'Agg'
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg', force=True)
 
 
 def test_bundled_executables():
