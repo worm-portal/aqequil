@@ -21,10 +21,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Temporarily testing only Ubuntu/Linux
+        # Temporarily testing only Windows with Python 3.13
         # Use ubuntu-latest for Linux, windows-2019 for Windows
         # For macOS: macos-15-intel (Intel x86_64) and macos-latest (Apple Silicon ARM64)
-        os: [ubuntu-latest]  # Temporarily disabled: windows-2019, macos-15-intel, macos-latest
+        os: [windows-2019]  # Temporarily disabled: ubuntu-latest, macos-15-intel, macos-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -143,6 +143,7 @@ jobs:
         if: runner.os != 'macOS'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD: "cp313-*"  # Temporarily test only Python 3.13
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BEFORE_ALL_LINUX: >
             bash -c "
