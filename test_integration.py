@@ -181,16 +181,6 @@ def test_speciation():
             print("[INFO] Skipping speciation test on macOS due to EQ3/6 runtime issues")
             return True  # Pass the test despite EQ3/6 calculation failure
 
-        # Handle pychnosz numpy/pandas compatibility issues
-        # Temporary workaround until pychnosz 1.1.8+ is released
-        if 'only 0-dimensional arrays' in str(e) or ('pychnosz' in str(e) and 'float' in str(e)):
-            print("[WARN] pychnosz dependency compatibility issue detected")
-            print("[WARN] This is a third-party dependency issue, not a packaging problem")
-            print("[WARN] Executables are bundled correctly (Test 1 passed)")
-            print("[INFO] Skipping full speciation test due to pychnosz dependency issue")
-            print("[INFO] This will be fixed when pychnosz 1.1.8+ is released")
-            return True  # Pass the test despite pychnosz compatibility issue
-
         return False
 
 
