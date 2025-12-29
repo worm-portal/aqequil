@@ -13,6 +13,11 @@ This is run during the wheel build process to ensure the package works correctly
 import sys
 import os
 
+# Set matplotlib to non-GUI backend before importing any packages
+# This prevents font cache building issues in headless CI environments
+import matplotlib
+matplotlib.use('Agg')
+
 
 def test_bundled_executables():
     """Test that bundled EQ3/6 executables are found."""
