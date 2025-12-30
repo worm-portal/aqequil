@@ -162,7 +162,7 @@ jobs:
 
       - name: Test wheels
         run: |
-          python -m pip install wheelhouse/aqequil-*.whl
+          python -m pip install wheelhouse/aqequil-*-cp313-*.whl
           python test_integration.py
         shell: bash
 
