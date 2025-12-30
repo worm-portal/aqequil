@@ -134,6 +134,20 @@ def compile_eq3_6():
     try:
         # Clean any previous builds
         print("Cleaning previous builds...")
+
+        # Remove old binaries from source directory
+        source_bin_dir = source_dir / "bin"
+        if source_bin_dir.exists():
+            shutil.rmtree(source_bin_dir)
+            print(f"Removed {source_bin_dir}")
+
+        # Remove old binaries from output directory
+        if output_dir.exists():
+            shutil.rmtree(output_dir)
+            print(f"Removed {output_dir}")
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Run make clean
         subprocess.run(
             [make_cmd, 'clean'],
             cwd=source_dir,
