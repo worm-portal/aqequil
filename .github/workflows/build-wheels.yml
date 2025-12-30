@@ -200,11 +200,12 @@ jobs:
 
       - name: Check executable architecture (macOS only)
         if: runner.os == 'macOS'
+        # Run from temp directory to import the installed wheel, not local source
         run: |
+          cd "$RUNNER_TEMP"
           echo "Checking architecture of bundled executables..."
           python -c "import aqequil; from aqequil.AqSpeciation import _get_bundled_exe_path; import os; bin_path = _get_bundled_exe_path(); print(f'Binary path: {bin_path}'); import subprocess; result = subprocess.run(['file', os.path.join(bin_path, 'eqpt')], capture_output=True, text=True); print(result.stdout)"
         shell: bash
-        continue-on-error: true
 
       - name: Run integration tests
         # Copy test script to temp and run from there to ensure Python imports
