@@ -160,18 +160,45 @@ jobs:
             C:\msys64\usr\bin\bash -lc "pacman -S --noconfirm make" &&
             python compile_eq3_6.py
 
-      - name: Test wheels
-        run: |
-          python -m pip install wheelhouse/aqequil-*-cp313-*.whl
-          python test_integration.py
-        shell: bash
-
       - name: Upload wheels
         uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
           if-no-files-found: error
+
+  test_wheels:
+    name: Test wheels on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    needs: [build_wheels]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-2019, macos-15-intel, macos-latest]
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: wheelhouse
+
+      - name: Install wheel
+        run: |
+          PYVER=$(echo "${{ matrix.python-version }}" | tr -d '.')
+          python -m pip install wheelhouse/aqequil-*-cp${PYVER}-*.whl
+        shell: bash
+
+      - name: Run integration tests
+        run: python test_integration.py
+        shell: bash
 
   build_sdist:
     name: Build source distribution
@@ -199,7 +226,7 @@ jobs:
 
   upload_pypi:
     name: Upload to PyPI
-    needs: [build_wheels, build_sdist]
+    needs: [build_wheels, test_wheels, build_sdist]
     runs-on: ubuntu-latest
     # Only upload on release (NOT on dev/master branch pushes)
     if: github.event_name == 'release' && github.event.action == 'published'
