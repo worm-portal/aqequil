@@ -27,8 +27,7 @@ recursive-include aqequil/eq3_6_src/include *.inc *.h
 
 # NOTE: EQ3/6 executables (eq3nr, eq6, etc.) are NOT included in the source distribution
 # They are compiled during the wheel build process via compile_eq3_6.py
-global-exclude aqequil/bin/*
-prune aqequil/bin
+# The aqequil.bin package and its contents will be included in wheels via package-data in pyproject.toml
 
 # Exclude test files and development artifacts
 prune test
