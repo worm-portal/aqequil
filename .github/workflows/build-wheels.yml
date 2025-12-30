@@ -212,11 +212,13 @@ jobs:
         continue-on-error: true
 
       - name: Run integration tests
-        # Run from temp directory to ensure we import the installed wheel,
-        # not the local source directory
+        # Copy test script to temp and run from there to ensure Python imports
+        # the installed wheel, not the local source directory.
+        # (Running python /path/to/script.py adds script's dir to sys.path[0])
         run: |
+          cp "$GITHUB_WORKSPACE/test_integration.py" "$RUNNER_TEMP/"
           cd "$RUNNER_TEMP"
-          python "$GITHUB_WORKSPACE/test_integration.py"
+          python test_integration.py
         shell: bash
 
   build_sdist:
