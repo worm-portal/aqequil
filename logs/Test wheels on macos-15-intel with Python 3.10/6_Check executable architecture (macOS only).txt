@@ -1,0 +1,20 @@
+﻿2025-12-30T17:26:20.3759370Z ##[group]Run echo "Checking architecture of bundled executables..."
+2025-12-30T17:26:20.3760800Z [36;1mecho "Checking architecture of bundled executables..."[0m
+2025-12-30T17:26:20.3764170Z [36;1mpython -c "import aqequil; from aqequil.AqSpeciation import _get_bundled_exe_path; import os; bin_path = _get_bundled_exe_path(); print(f'Binary path: {bin_path}'); import subprocess; result = subprocess.run(['file', os.path.join(bin_path, 'eqpt')], capture_output=True, text=True); print(result.stdout)"[0m
+2025-12-30T17:26:20.3853050Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2025-12-30T17:26:20.3853870Z env:
+2025-12-30T17:26:20.3855020Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.10.19/x64
+2025-12-30T17:26:20.3856350Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.10.19/x64/lib/pkgconfig
+2025-12-30T17:26:20.3857550Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.19/x64
+2025-12-30T17:26:20.3858750Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.19/x64
+2025-12-30T17:26:20.3860240Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.19/x64
+2025-12-30T17:26:20.3861240Z ##[endgroup]
+2025-12-30T17:26:20.4143190Z Checking architecture of bundled executables...
+2025-12-30T17:26:28.0218380Z Matplotlib is building the font cache; this may take a moment.
+2025-12-30T17:26:49.6024060Z Traceback (most recent call last):
+2025-12-30T17:26:49.6034590Z   File "<string>", line 1, in <module>
+2025-12-30T17:26:49.6035240Z Binary path: None
+2025-12-30T17:26:49.6036370Z   File "/Users/runner/hostedtoolcache/Python/3.10.19/x64/lib/python3.10/posixpath.py", line 76, in join
+2025-12-30T17:26:49.6037510Z     a = os.fspath(a)
+2025-12-30T17:26:49.6038210Z TypeError: expected str, bytes or os.PathLike object, not NoneType
+2025-12-30T17:26:49.9949550Z ##[error]Process completed with exit code 1.

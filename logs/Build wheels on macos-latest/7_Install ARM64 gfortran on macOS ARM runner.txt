@@ -1,0 +1,25 @@
+﻿2025-12-30T16:54:39.7086850Z ##[group]Run brew install gcc
+2025-12-30T16:54:39.7087110Z [36;1mbrew install gcc[0m
+2025-12-30T16:54:39.7087350Z [36;1mGFORTRAN_PATH=$(brew --prefix gcc)/bin/gfortran[0m
+2025-12-30T16:54:39.7087680Z [36;1mecho "Installed gfortran at: $GFORTRAN_PATH"[0m
+2025-12-30T16:54:39.7087970Z [36;1mlipo -info "$GFORTRAN_PATH" || file "$GFORTRAN_PATH"[0m
+2025-12-30T16:54:39.7088220Z [36;1m[0m
+2025-12-30T16:54:39.7088360Z [36;1m# Export for later steps[0m
+2025-12-30T16:54:39.7088620Z [36;1mecho "ARM_GFORTRAN=$GFORTRAN_PATH" >> $GITHUB_ENV[0m
+2025-12-30T16:54:39.7088940Z [36;1mecho "ARM_GCC_PREFIX=$(brew --prefix gcc)" >> $GITHUB_ENV[0m
+2025-12-30T16:54:39.7121060Z shell: /bin/bash -e {0}
+2025-12-30T16:54:39.7121380Z env:
+2025-12-30T16:54:39.7121610Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T16:54:39.7122090Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/arm64/lib/pkgconfig
+2025-12-30T16:54:39.7122510Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T16:54:39.7122960Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T16:54:39.7123310Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T16:54:39.7123580Z ##[endgroup]
+2025-12-30T16:54:42.2680470Z ✔︎ JSON API formula_tap_migrations.jws.json
+2025-12-30T16:54:42.2683170Z ✔︎ JSON API cask_tap_migrations.jws.json
+2025-12-30T16:54:43.2314420Z ##[warning]gcc 15.2.0 is already installed and up-to-date.
+To reinstall 15.2.0, run:
+  brew reinstall gcc
+
+2025-12-30T16:54:43.2785980Z Installed gfortran at: /opt/homebrew/opt/gcc/bin/gfortran
+2025-12-30T16:54:43.6425360Z Non-fat file: /opt/homebrew/opt/gcc/bin/gfortran is architecture: arm64

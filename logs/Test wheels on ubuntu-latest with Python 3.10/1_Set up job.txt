@@ -1,0 +1,45 @@
+﻿2025-12-30T17:24:44.4702455Z Current runner version: '2.330.0'
+2025-12-30T17:24:44.4726581Z ##[group]Runner Image Provisioner
+2025-12-30T17:24:44.4727471Z Hosted Compute Agent
+2025-12-30T17:24:44.4728035Z Version: 20251211.462
+2025-12-30T17:24:44.4728603Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T17:24:44.4729628Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T17:24:44.4730316Z Worker ID: {2d1eff7f-7607-4274-8616-e3eec809ad3d}
+2025-12-30T17:24:44.4731042Z ##[endgroup]
+2025-12-30T17:24:44.4731602Z ##[group]Operating System
+2025-12-30T17:24:44.4732210Z Ubuntu
+2025-12-30T17:24:44.4732673Z 24.04.3
+2025-12-30T17:24:44.4733166Z LTS
+2025-12-30T17:24:44.4733654Z ##[endgroup]
+2025-12-30T17:24:44.4734145Z ##[group]Runner Image
+2025-12-30T17:24:44.4734750Z Image: ubuntu-24.04
+2025-12-30T17:24:44.4735256Z Version: 20251215.174.1
+2025-12-30T17:24:44.4736276Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T17:24:44.4737613Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T17:24:44.4738883Z ##[endgroup]
+2025-12-30T17:24:44.4741913Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T17:24:44.4744231Z Actions: write
+2025-12-30T17:24:44.4744792Z ArtifactMetadata: write
+2025-12-30T17:24:44.4745454Z Attestations: write
+2025-12-30T17:24:44.4745959Z Checks: write
+2025-12-30T17:24:44.4746464Z Contents: write
+2025-12-30T17:24:44.4747006Z Deployments: write
+2025-12-30T17:24:44.4747556Z Discussions: write
+2025-12-30T17:24:44.4748026Z Issues: write
+2025-12-30T17:24:44.4748569Z Metadata: read
+2025-12-30T17:24:44.4749037Z Models: read
+2025-12-30T17:24:44.4749814Z Packages: write
+2025-12-30T17:24:44.4750423Z Pages: write
+2025-12-30T17:24:44.4750925Z PullRequests: write
+2025-12-30T17:24:44.4751551Z RepositoryProjects: write
+2025-12-30T17:24:44.4752675Z SecurityEvents: write
+2025-12-30T17:24:44.4753263Z Statuses: write
+2025-12-30T17:24:44.4753726Z ##[endgroup]
+2025-12-30T17:24:44.4755759Z Secret source: Actions
+2025-12-30T17:24:44.4756798Z Prepare workflow directory
+2025-12-30T17:24:44.5076592Z Prepare all required actions
+2025-12-30T17:24:44.5116425Z Getting action download info
+2025-12-30T17:24:44.8897580Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2025-12-30T17:24:45.0022285Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2025-12-30T17:24:45.0843747Z Download action repository 'actions/download-artifact@v4' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2025-12-30T17:24:46.1468403Z Complete job name: Test wheels on ubuntu-latest with Python 3.10

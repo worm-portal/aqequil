@@ -1,0 +1,59 @@
+﻿2025-12-30T17:24:47.0332126Z ##[group]Run actions/checkout@v4
+2025-12-30T17:24:47.0333668Z with:
+2025-12-30T17:24:47.0334542Z   repository: worm-portal/aqequil
+2025-12-30T17:24:47.0335982Z   token: ***
+2025-12-30T17:24:47.0336804Z   ssh-strict: true
+2025-12-30T17:24:47.0337661Z   ssh-user: git
+2025-12-30T17:24:47.0338993Z   persist-credentials: true
+2025-12-30T17:24:47.0340025Z   clean: true
+2025-12-30T17:24:47.0340895Z   sparse-checkout-cone-mode: true
+2025-12-30T17:24:47.0341953Z   fetch-depth: 1
+2025-12-30T17:24:47.0342798Z   fetch-tags: false
+2025-12-30T17:24:47.0343516Z   show-progress: true
+2025-12-30T17:24:47.0344232Z   lfs: false
+2025-12-30T17:24:47.0344881Z   submodules: false
+2025-12-30T17:24:47.0345603Z   set-safe-directory: true
+2025-12-30T17:24:47.0346632Z ##[endgroup]
+2025-12-30T17:24:47.1959016Z Syncing repository: worm-portal/aqequil
+2025-12-30T17:24:47.1961391Z ##[group]Getting Git version info
+2025-12-30T17:24:47.1962429Z Working directory is 'D:\a\aqequil\aqequil'
+2025-12-30T17:24:47.2995484Z [command]"C:\Program Files\Git\bin\git.exe" version
+2025-12-30T17:24:47.6821560Z git version 2.50.0.windows.1
+2025-12-30T17:24:47.6873438Z ##[endgroup]
+2025-12-30T17:24:47.6891953Z Temporarily overriding HOME='D:\a\_temp\ae6ce43a-a4a9-4e51-9b78-d48c84943088' before making global git config changes
+2025-12-30T17:24:47.6895183Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T17:24:47.6907246Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\aqequil\aqequil
+2025-12-30T17:24:47.7435312Z Deleting the contents of 'D:\a\aqequil\aqequil'
+2025-12-30T17:24:47.7441284Z ##[group]Initializing the repository
+2025-12-30T17:24:47.7454366Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\aqequil\aqequil
+2025-12-30T17:24:47.8473448Z Initialized empty Git repository in D:/a/aqequil/aqequil/.git/
+2025-12-30T17:24:47.8526989Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/worm-portal/aqequil
+2025-12-30T17:24:47.9077829Z ##[endgroup]
+2025-12-30T17:24:47.9078352Z ##[group]Disabling automatic garbage collection
+2025-12-30T17:24:47.9092822Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2025-12-30T17:24:47.9344424Z ##[endgroup]
+2025-12-30T17:24:47.9345020Z ##[group]Setting up auth
+2025-12-30T17:24:47.9362388Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T17:24:47.9627565Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2025-12-30T17:24:49.5352475Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T17:24:49.5620428Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2025-12-30T17:24:49.9938482Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2025-12-30T17:24:50.0212113Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2025-12-30T17:24:50.4248624Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2025-12-30T17:24:50.4520342Z ##[endgroup]
+2025-12-30T17:24:50.4521077Z ##[group]Fetching the repository
+2025-12-30T17:24:50.4537366Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e6190a14876ae468a4b5041a8a90e6974fe01773:refs/remotes/origin/dev
+2025-12-30T17:24:51.7075909Z From https://github.com/worm-portal/aqequil
+2025-12-30T17:24:51.7076757Z  * [new ref]         e6190a14876ae468a4b5041a8a90e6974fe01773 -> origin/dev
+2025-12-30T17:24:51.7364790Z ##[endgroup]
+2025-12-30T17:24:51.7365264Z ##[group]Determining the checkout info
+2025-12-30T17:24:51.7368405Z ##[endgroup]
+2025-12-30T17:24:51.7387133Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2025-12-30T17:24:51.7788192Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2025-12-30T17:24:51.8053076Z ##[group]Checking out the ref
+2025-12-30T17:24:51.8067160Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B dev refs/remotes/origin/dev
+2025-12-30T17:24:52.1185744Z branch 'dev' set up to track 'origin/dev'.
+2025-12-30T17:24:52.1187709Z Switched to a new branch 'dev'
+2025-12-30T17:24:52.1231622Z ##[endgroup]
+2025-12-30T17:24:52.1617204Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2025-12-30T17:24:52.1840559Z e6190a14876ae468a4b5041a8a90e6974fe01773

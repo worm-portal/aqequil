@@ -1,0 +1,72 @@
+﻿2025-12-30T17:24:46.9321723Z ##[group]Run actions/checkout@v4
+2025-12-30T17:24:46.9322699Z with:
+2025-12-30T17:24:46.9323138Z   repository: worm-portal/aqequil
+2025-12-30T17:24:46.9323856Z   token: ***
+2025-12-30T17:24:46.9324270Z   ssh-strict: true
+2025-12-30T17:24:46.9324680Z   ssh-user: git
+2025-12-30T17:24:46.9325271Z   persist-credentials: true
+2025-12-30T17:24:46.9325744Z   clean: true
+2025-12-30T17:24:46.9326438Z   sparse-checkout-cone-mode: true
+2025-12-30T17:24:46.9327282Z   fetch-depth: 1
+2025-12-30T17:24:46.9327993Z   fetch-tags: false
+2025-12-30T17:24:46.9328768Z   show-progress: true
+2025-12-30T17:24:46.9329577Z   lfs: false
+2025-12-30T17:24:46.9330330Z   submodules: false
+2025-12-30T17:24:46.9331202Z   set-safe-directory: true
+2025-12-30T17:24:46.9332267Z ##[endgroup]
+2025-12-30T17:24:47.0489885Z Syncing repository: worm-portal/aqequil
+2025-12-30T17:24:47.0493405Z ##[group]Getting Git version info
+2025-12-30T17:24:47.0495008Z Working directory is '/home/runner/work/aqequil/aqequil'
+2025-12-30T17:24:47.0496973Z [command]/usr/bin/git version
+2025-12-30T17:24:47.0574646Z git version 2.52.0
+2025-12-30T17:24:47.0603004Z ##[endgroup]
+2025-12-30T17:24:47.0619886Z Temporarily overriding HOME='/home/runner/work/_temp/e98126a2-d448-4ad3-869a-560359a76bf8' before making global git config changes
+2025-12-30T17:24:47.0622566Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T17:24:47.0627052Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/aqequil/aqequil
+2025-12-30T17:24:47.0671267Z Deleting the contents of '/home/runner/work/aqequil/aqequil'
+2025-12-30T17:24:47.0675626Z ##[group]Initializing the repository
+2025-12-30T17:24:47.0680483Z [command]/usr/bin/git init /home/runner/work/aqequil/aqequil
+2025-12-30T17:24:47.0801275Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T17:24:47.0802530Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T17:24:47.0804298Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T17:24:47.0805621Z hint: call:
+2025-12-30T17:24:47.0806358Z hint:
+2025-12-30T17:24:47.0807349Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T17:24:47.0808743Z hint:
+2025-12-30T17:24:47.0809871Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T17:24:47.0811686Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T17:24:47.0813143Z hint:
+2025-12-30T17:24:47.0813894Z hint: 	git branch -m <name>
+2025-12-30T17:24:47.0814714Z hint:
+2025-12-30T17:24:47.0816052Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T17:24:47.0817986Z Initialized empty Git repository in /home/runner/work/aqequil/aqequil/.git/
+2025-12-30T17:24:47.0821344Z [command]/usr/bin/git remote add origin https://github.com/worm-portal/aqequil
+2025-12-30T17:24:47.0859693Z ##[endgroup]
+2025-12-30T17:24:47.0861043Z ##[group]Disabling automatic garbage collection
+2025-12-30T17:24:47.0865047Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T17:24:47.0896731Z ##[endgroup]
+2025-12-30T17:24:47.0898098Z ##[group]Setting up auth
+2025-12-30T17:24:47.0905052Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T17:24:47.0938964Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T17:24:47.1333008Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T17:24:47.1366677Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T17:24:47.1597836Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2025-12-30T17:24:47.1633640Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2025-12-30T17:24:47.1869484Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T17:24:47.1906607Z ##[endgroup]
+2025-12-30T17:24:47.1907490Z ##[group]Fetching the repository
+2025-12-30T17:24:47.1915774Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e6190a14876ae468a4b5041a8a90e6974fe01773:refs/remotes/origin/dev
+2025-12-30T17:24:47.7435651Z From https://github.com/worm-portal/aqequil
+2025-12-30T17:24:47.7437147Z  * [new ref]         e6190a14876ae468a4b5041a8a90e6974fe01773 -> origin/dev
+2025-12-30T17:24:47.7476349Z ##[endgroup]
+2025-12-30T17:24:47.7477705Z ##[group]Determining the checkout info
+2025-12-30T17:24:47.7479164Z ##[endgroup]
+2025-12-30T17:24:47.7484486Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T17:24:47.7532685Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T17:24:47.7564930Z ##[group]Checking out the ref
+2025-12-30T17:24:47.7569067Z [command]/usr/bin/git checkout --progress --force -B dev refs/remotes/origin/dev
+2025-12-30T17:24:47.8721337Z Switched to a new branch 'dev'
+2025-12-30T17:24:47.8722864Z branch 'dev' set up to track 'origin/dev'.
+2025-12-30T17:24:47.8733725Z ##[endgroup]
+2025-12-30T17:24:47.8776754Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T17:24:47.8802241Z e6190a14876ae468a4b5041a8a90e6974fe01773

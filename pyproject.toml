@@ -44,8 +44,8 @@ zip-safe = false
 "*" = ["*.r", "*.min", "*.csv", "*.txt"]
 # Include compiled EQ3/6 executables in wheels
 "aqequil.bin" = ["*"]
-# Include EQ3/6 source code for source distribution
-"aqequil.eq3_6_src" = ["**/*"]
+# Include EQ3/6 source code for source distribution (exclude bin/ and lib/ directories)
+"aqequil.eq3_6_src" = ["src/**/*", "include/**/*", "Makefile"]
 # Include test data
 "aqequil.test_data" = ["*.csv"]
 

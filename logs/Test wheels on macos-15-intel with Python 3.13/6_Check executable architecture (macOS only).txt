@@ -1,0 +1,21 @@
+﻿2025-12-30T17:26:36.0295980Z ##[group]Run echo "Checking architecture of bundled executables..."
+2025-12-30T17:26:36.0297270Z [36;1mecho "Checking architecture of bundled executables..."[0m
+2025-12-30T17:26:36.0300260Z [36;1mpython -c "import aqequil; from aqequil.AqSpeciation import _get_bundled_exe_path; import os; bin_path = _get_bundled_exe_path(); print(f'Binary path: {bin_path}'); import subprocess; result = subprocess.run(['file', os.path.join(bin_path, 'eqpt')], capture_output=True, text=True); print(result.stdout)"[0m
+2025-12-30T17:26:36.0382590Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2025-12-30T17:26:36.0383370Z env:
+2025-12-30T17:26:36.0383960Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T17:26:36.0385030Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2025-12-30T17:26:36.0386060Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T17:26:36.0386980Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T17:26:36.0387960Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T17:26:36.0388680Z ##[endgroup]
+2025-12-30T17:26:36.0633400Z Checking architecture of bundled executables...
+2025-12-30T17:26:43.6387380Z Matplotlib is building the font cache; this may take a moment.
+2025-12-30T17:27:02.5670890Z Traceback (most recent call last):
+2025-12-30T17:27:02.5671890Z Binary path: None
+2025-12-30T17:27:02.5950600Z   File "<string>", line 1, in <module>
+2025-12-30T17:27:02.5960790Z     import aqequil; from aqequil.AqSpeciation import _get_bundled_exe_path; import os; bin_path = _get_bundled_exe_path(); print(f'Binary path: {bin_path}'); import subprocess; result = subprocess.run(['file', os.path.join(bin_path, 'eqpt')], capture_output=True, text=True); print(result.stdout)
+2025-12-30T17:27:02.6260040Z                                                                                                                                                                                                                   ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+2025-12-30T17:27:02.6424960Z   File "<frozen posixpath>", line 77, in join
+2025-12-30T17:27:02.6630980Z TypeError: expected str, bytes or os.PathLike object, not NoneType
+2025-12-30T17:27:03.0704560Z ##[error]Process completed with exit code 1.

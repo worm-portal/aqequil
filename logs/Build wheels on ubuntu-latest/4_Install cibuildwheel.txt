@@ -1,0 +1,38 @@
+﻿2025-12-30T16:54:36.0996600Z ##[group]Run python -m pip install cibuildwheel==2.22.0
+2025-12-30T16:54:36.0998351Z [36;1mpython -m pip install cibuildwheel==2.22.0[0m
+2025-12-30T16:54:36.1363453Z shell: /usr/bin/bash -e {0}
+2025-12-30T16:54:36.1364922Z env:
+2025-12-30T16:54:36.1366214Z   pythonLocation: /opt/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T16:54:36.1368653Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2025-12-30T16:54:36.1370439Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T16:54:36.1371973Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T16:54:36.1373533Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.11/x64
+2025-12-30T16:54:36.1375882Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.11/x64/lib
+2025-12-30T16:54:36.1378023Z ##[endgroup]
+2025-12-30T16:54:38.6669515Z Collecting cibuildwheel==2.22.0
+2025-12-30T16:54:38.7692401Z   Downloading cibuildwheel-2.22.0-py3-none-any.whl.metadata (22 kB)
+2025-12-30T16:54:38.7971293Z Collecting bashlex!=0.13 (from cibuildwheel==2.22.0)
+2025-12-30T16:54:38.8162121Z   Downloading bashlex-0.18-py2.py3-none-any.whl.metadata (1.1 kB)
+2025-12-30T16:54:38.8316915Z Collecting bracex (from cibuildwheel==2.22.0)
+2025-12-30T16:54:38.8506763Z   Downloading bracex-2.6-py3-none-any.whl.metadata (3.6 kB)
+2025-12-30T16:54:38.8712487Z Collecting certifi (from cibuildwheel==2.22.0)
+2025-12-30T16:54:38.8903566Z   Downloading certifi-2025.11.12-py3-none-any.whl.metadata (2.5 kB)
+2025-12-30T16:54:38.9029059Z Collecting dependency-groups>=1.2 (from cibuildwheel==2.22.0)
+2025-12-30T16:54:38.9235987Z   Downloading dependency_groups-1.3.1-py3-none-any.whl.metadata (2.3 kB)
+2025-12-30T16:54:38.9440312Z Collecting filelock (from cibuildwheel==2.22.0)
+2025-12-30T16:54:38.9633015Z   Downloading filelock-3.20.1-py3-none-any.whl.metadata (2.1 kB)
+2025-12-30T16:54:38.9841803Z Collecting packaging>=20.9 (from cibuildwheel==2.22.0)
+2025-12-30T16:54:39.0031921Z   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2025-12-30T16:54:39.0222466Z Collecting platformdirs (from cibuildwheel==2.22.0)
+2025-12-30T16:54:39.0414579Z   Downloading platformdirs-4.5.1-py3-none-any.whl.metadata (12 kB)
+2025-12-30T16:54:39.0724273Z Downloading cibuildwheel-2.22.0-py3-none-any.whl (91 kB)
+2025-12-30T16:54:39.1171919Z Downloading bashlex-0.18-py2.py3-none-any.whl (69 kB)
+2025-12-30T16:54:39.1434211Z Downloading dependency_groups-1.3.1-py3-none-any.whl (8.7 kB)
+2025-12-30T16:54:39.1646757Z Downloading packaging-25.0-py3-none-any.whl (66 kB)
+2025-12-30T16:54:39.1887235Z Downloading bracex-2.6-py3-none-any.whl (11 kB)
+2025-12-30T16:54:39.2094623Z Downloading certifi-2025.11.12-py3-none-any.whl (159 kB)
+2025-12-30T16:54:39.2478044Z Downloading filelock-3.20.1-py3-none-any.whl (16 kB)
+2025-12-30T16:54:39.2693914Z Downloading platformdirs-4.5.1-py3-none-any.whl (18 kB)
+2025-12-30T16:54:39.3036587Z Installing collected packages: platformdirs, packaging, filelock, certifi, bracex, bashlex, dependency-groups, cibuildwheel
+2025-12-30T16:54:39.5321318Z 
+2025-12-30T16:54:39.5339616Z Successfully installed bashlex-0.18 bracex-2.6 certifi-2025.11.12 cibuildwheel-2.22.0 dependency-groups-1.3.1 filelock-3.20.1 packaging-25.0 platformdirs-4.5.1

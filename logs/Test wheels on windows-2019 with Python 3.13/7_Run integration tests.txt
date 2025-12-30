@@ -1,0 +1,146 @@
+﻿2025-12-30T17:26:09.4257428Z ##[group]Run python test_integration.py
+2025-12-30T17:26:09.4257816Z [36;1mpython test_integration.py[0m
+2025-12-30T17:26:09.4270005Z shell: C:\Program Files\Git\bin\bash.EXE --noprofile --norc -e -o pipefail {0}
+2025-12-30T17:26:09.4270402Z env:
+2025-12-30T17:26:09.4270663Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2025-12-30T17:26:09.4271133Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.13.5\x64/lib/pkgconfig
+2025-12-30T17:26:09.4271721Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2025-12-30T17:26:09.4272569Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2025-12-30T17:26:09.4273160Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2025-12-30T17:26:09.4273484Z ##[endgroup]
+2025-12-30T17:26:15.9154509Z Traceback (most recent call last):
+2025-12-30T17:26:15.9165307Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 854, in runeqpt
+2025-12-30T17:26:15.9165959Z     self.__run_eq_executable('eqpt', [data0_path], cwd=os.getcwd())
+2025-12-30T17:26:15.9166487Z     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:15.9167105Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 1104, in __run_eq_executable
+2025-12-30T17:26:15.9167696Z     exe_path = os.path.join(self.eq36co, f"{exe_name}.exe")
+2025-12-30T17:26:15.9168110Z   File "<frozen ntpath>", line 100, in join
+2025-12-30T17:26:15.9168550Z TypeError: expected str, bytes or os.PathLike object, not NoneType
+2025-12-30T17:26:15.9168887Z 
+2025-12-30T17:26:15.9169091Z During handling of the above exception, another exception occurred:
+2025-12-30T17:26:15.9169407Z 
+2025-12-30T17:26:15.9169496Z Traceback (most recent call last):
+2025-12-30T17:26:15.9169898Z   File "D:\a\aqequil\aqequil\test_integration.py", line 119, in test_runeqpt
+2025-12-30T17:26:15.9170292Z     ae.runeqpt('wrm')
+2025-12-30T17:26:15.9170477Z     ~~~~~~~~~~^^^^^^^
+2025-12-30T17:26:15.9170811Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 856, in runeqpt
+2025-12-30T17:26:15.9171223Z     self.err_handler.raise_exception(
+2025-12-30T17:26:15.9171480Z     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+2025-12-30T17:26:15.9171784Z         "Error: EQPT failed to run on {}.".format("data0."+db))
+2025-12-30T17:26:15.9172129Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:15.9172780Z   File "C:\hostedtoolcache\windows\Python\3.13.5\x64\Lib\site-packages\wormutils\Error_Handler.py", line 57, in raise_exception
+2025-12-30T17:26:15.9173420Z     raise Exception(msg)
+2025-12-30T17:26:15.9173676Z Exception: Error: EQPT failed to run on data0.wrm.
+2025-12-30T17:26:15.9204311Z Traceback (most recent call last):
+2025-12-30T17:26:15.9207534Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 854, in runeqpt
+2025-12-30T17:26:15.9208248Z     self.__run_eq_executable('eqpt', [data0_path], cwd=os.getcwd())
+2025-12-30T17:26:15.9208716Z     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:15.9209259Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 1104, in __run_eq_executable
+2025-12-30T17:26:15.9209782Z     exe_path = os.path.join(self.eq36co, f"{exe_name}.exe")
+2025-12-30T17:26:15.9210157Z   File "<frozen ntpath>", line 100, in join
+2025-12-30T17:26:15.9210533Z TypeError: expected str, bytes or os.PathLike object, not NoneType
+2025-12-30T17:26:15.9210857Z 
+2025-12-30T17:26:15.9211156Z During handling of the above exception, another exception occurred:
+2025-12-30T17:26:15.9211593Z 
+2025-12-30T17:26:15.9211718Z Traceback (most recent call last):
+2025-12-30T17:26:15.9212281Z   File "D:\a\aqequil\aqequil\test_integration.py", line 186, in test_speciation_simple
+2025-12-30T17:26:15.9212732Z     ae_eqpt.runeqpt('wrm')
+2025-12-30T17:26:15.9212937Z     ~~~~~~~~~~~~~~~^^^^^^^
+2025-12-30T17:26:15.9213299Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 856, in runeqpt
+2025-12-30T17:26:15.9213691Z     self.err_handler.raise_exception(
+2025-12-30T17:26:15.9213933Z     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+2025-12-30T17:26:15.9217702Z         "Error: EQPT failed to run on {}.".format("data0."+db))
+2025-12-30T17:26:15.9218524Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:15.9219654Z   File "C:\hostedtoolcache\windows\Python\3.13.5\x64\Lib\site-packages\wormutils\Error_Handler.py", line 57, in raise_exception
+2025-12-30T17:26:15.9220679Z     raise Exception(msg)
+2025-12-30T17:26:15.9221097Z Exception: Error: EQPT failed to run on data0.wrm.
+2025-12-30T17:26:24.0120190Z Traceback (most recent call last):
+2025-12-30T17:26:24.0123600Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 854, in runeqpt
+2025-12-30T17:26:24.0124342Z     self.__run_eq_executable('eqpt', [data0_path], cwd=os.getcwd())
+2025-12-30T17:26:24.0124812Z     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:24.0126381Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 1104, in __run_eq_executable
+2025-12-30T17:26:24.0127193Z     exe_path = os.path.join(self.eq36co, f"{exe_name}.exe")
+2025-12-30T17:26:24.0127736Z   File "<frozen ntpath>", line 100, in join
+2025-12-30T17:26:24.0128312Z TypeError: expected str, bytes or os.PathLike object, not NoneType
+2025-12-30T17:26:24.0128771Z 
+2025-12-30T17:26:24.0129068Z During handling of the above exception, another exception occurred:
+2025-12-30T17:26:24.0129578Z 
+2025-12-30T17:26:24.0129726Z Traceback (most recent call last):
+2025-12-30T17:26:24.0130565Z   File "D:\a\aqequil\aqequil\test_integration.py", line 253, in test_water_rock_reaction
+2025-12-30T17:26:24.0131318Z     speciation = ae.speciate(
+2025-12-30T17:26:24.0131691Z         input_filename=test_csv,
+2025-12-30T17:26:24.0132054Z         exclude=["Year", "Area"]
+2025-12-30T17:26:24.0132289Z     )
+2025-12-30T17:26:24.0132973Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 1926, in speciate
+2025-12-30T17:26:24.0133731Z     self.runeqpt(data0_lettercode, dynamic_db=True)
+2025-12-30T17:26:24.0134326Z     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:24.0135208Z   File "D:\a\aqequil\aqequil\aqequil\AqSpeciation.py", line 856, in runeqpt
+2025-12-30T17:26:24.0136034Z     self.err_handler.raise_exception(
+2025-12-30T17:26:24.0136530Z     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+2025-12-30T17:26:24.0137099Z         "Error: EQPT failed to run on {}.".format("data0."+db))
+2025-12-30T17:26:24.0137535Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-12-30T17:26:24.0138300Z   File "C:\hostedtoolcache\windows\Python\3.13.5\x64\Lib\site-packages\wormutils\Error_Handler.py", line 57, in raise_exception
+2025-12-30T17:26:24.0139017Z     raise Exception(msg)
+2025-12-30T17:26:24.0139341Z Exception: Error: EQPT failed to run on data0.dyn.
+2025-12-30T17:26:24.0139781Z 
+2025-12-30T17:26:24.0139962Z ============================================================
+2025-12-30T17:26:24.0140449Z AQEQUIL INTEGRATION TEST SUITE
+2025-12-30T17:26:24.0140868Z ============================================================
+2025-12-30T17:26:24.0141333Z Python: 3.13.5
+2025-12-30T17:26:24.0141610Z Platform: win32
+2025-12-30T17:26:24.0141905Z Architecture: AMD64
+2025-12-30T17:26:24.0142242Z ============================================================
+2025-12-30T17:26:24.0142685Z ============================================================
+2025-12-30T17:26:24.0143282Z Test 1: Checking for bundled EQ3/6 executables
+2025-12-30T17:26:24.0143734Z ============================================================
+2025-12-30T17:26:24.0144178Z [FAIL] No bundled executables found!
+2025-12-30T17:26:24.0144461Z 
+2025-12-30T17:26:24.0144590Z ============================================================
+2025-12-30T17:26:24.0145040Z Test 2: Testing aqequil import and basic usage
+2025-12-30T17:26:24.0145470Z ============================================================
+2025-12-30T17:26:24.0145871Z [OK] Successfully imported aqequil
+2025-12-30T17:26:24.0146417Z [OK] Found test data at: D:\a\aqequil\aqequil\aqequil\test_data\input_example_wrm.csv
+2025-12-30T17:26:24.0148172Z 
+2025-12-30T17:26:24.0148329Z ============================================================
+2025-12-30T17:26:24.0149770Z Test 3: Testing runeqpt (data0 to data1 conversion)
+2025-12-30T17:26:24.0150317Z ============================================================
+2025-12-30T17:26:24.0151037Z [INFO] Working directory: C:\Users\RUNNER~1\AppData\Local\Temp\tmpvlpwtxmw
+2025-12-30T17:26:24.0151580Z [OK] Copied data0.wrm to working directory
+2025-12-30T17:26:24.0151859Z Running EQPT on data0.wrm...
+2025-12-30T17:26:24.0152191Z [FAIL] Error during runeqpt: Error: EQPT failed to run on data0.wrm.
+2025-12-30T17:26:24.0152595Z [WARN] Known win32 issue with EQPT runtime detected
+2025-12-30T17:26:24.0152975Z [INFO] Skipping runeqpt test due to platform-specific issues
+2025-12-30T17:26:24.0153235Z 
+2025-12-30T17:26:24.0153326Z ============================================================
+2025-12-30T17:26:24.0153637Z Test 4: Testing simple speciation (wrm database)
+2025-12-30T17:26:24.0153955Z ============================================================
+2025-12-30T17:26:24.0154423Z Running speciation on D:\a\aqequil\aqequil\aqequil\test_data\input_example_wrm.csv...
+2025-12-30T17:26:24.0154995Z [INFO] Working directory: C:\Users\RUNNER~1\AppData\Local\Temp\tmpqm48kmre
+2025-12-30T17:26:24.0155409Z [OK] Copied data0.wrm to working directory
+2025-12-30T17:26:24.0155679Z Running EQPT to create data1.wrm...
+2025-12-30T17:26:24.0156060Z [FAIL] Error during simple speciation: Error: EQPT failed to run on data0.wrm.
+2025-12-30T17:26:24.0156485Z [WARN] Known win32 issue - skipping test
+2025-12-30T17:26:24.0156674Z 
+2025-12-30T17:26:24.0156771Z ============================================================
+2025-12-30T17:26:24.0157054Z Test 5: Testing water-rock reaction
+2025-12-30T17:26:24.0157301Z ============================================================
+2025-12-30T17:26:24.0157736Z Running speciation on D:\a\aqequil\aqequil\aqequil\test_data\input_example_wrm.csv...
+2025-12-30T17:26:24.0158299Z [INFO] Working directory: C:\Users\RUNNER~1\AppData\Local\Temp\tmp_kist47d
+2025-12-30T17:26:24.0158830Z Getting wrm_data_latest.csv ready. This will take a moment...
+2025-12-30T17:26:24.0159415Z No 'charge_balance_on' column found in input file. Defaulting to no charge balancing for all samples.
+2025-12-30T17:26:24.0160196Z Warning: a column for Pressure was not found in the sample input file. Defaulting to water saturation pressure...
+2025-12-30T17:26:24.0160901Z [FAIL] Error during water-rock reaction: Error: EQPT failed to run on data0.dyn.
+2025-12-30T17:26:24.0181734Z [WARN] Known win32 issue - skipping test
+2025-12-30T17:26:24.0182101Z 
+2025-12-30T17:26:24.0182266Z ============================================================
+2025-12-30T17:26:24.0182690Z TEST SUMMARY
+2025-12-30T17:26:24.0182984Z ============================================================
+2025-12-30T17:26:24.0183449Z [FAIL] Bundled Executables
+2025-12-30T17:26:24.0183828Z [PASS] Import and Basic Usage
+2025-12-30T17:26:24.0184266Z [PASS] EQPT Data0 to Data1 Conversion
+2025-12-30T17:26:24.0184734Z [PASS] Simple Speciation (wrm database)
+2025-12-30T17:26:24.0185182Z [PASS] Water-Rock Reaction
+2025-12-30T17:26:24.0185589Z ============================================================
+2025-12-30T17:26:24.0185939Z 
+2025-12-30T17:26:24.0186054Z [FAIL] Some tests failed!
+2025-12-30T17:26:24.2592179Z ##[error]Process completed with exit code 1.

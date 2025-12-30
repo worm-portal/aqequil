@@ -1,0 +1,31 @@
+﻿2025-12-30T17:09:19.1098590Z ##[group]Run actions/upload-artifact@v4
+2025-12-30T17:09:19.1098910Z with:
+2025-12-30T17:09:19.1099120Z   name: wheels-macos-latest
+2025-12-30T17:09:19.1099370Z   path: ./wheelhouse/*.whl
+2025-12-30T17:09:19.1099560Z   if-no-files-found: error
+2025-12-30T17:09:19.1099810Z   compression-level: 6
+2025-12-30T17:09:19.1099990Z   overwrite: false
+2025-12-30T17:09:19.1100180Z   include-hidden-files: false
+2025-12-30T17:09:19.1100380Z env:
+2025-12-30T17:09:19.1100740Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T17:09:19.1101180Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/arm64/lib/pkgconfig
+2025-12-30T17:09:19.1101610Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T17:09:19.1102260Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T17:09:19.1102650Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/arm64
+2025-12-30T17:09:19.1103020Z   ARM_GFORTRAN: /opt/homebrew/opt/gcc/bin/gfortran
+2025-12-30T17:09:19.1103380Z   ARM_GCC_PREFIX: /opt/homebrew/opt/gcc
+2025-12-30T17:09:19.1103650Z ##[endgroup]
+2025-12-30T17:09:19.4845360Z With the provided path, there will be 4 files uploaded
+2025-12-30T17:09:19.4848490Z Artifact name is valid!
+2025-12-30T17:09:19.4849820Z Root directory input is valid!
+2025-12-30T17:09:19.5672660Z Beginning upload of artifact content to blob storage
+2025-12-30T17:09:20.0217070Z Uploaded bytes 8388608
+2025-12-30T17:09:20.2336330Z Uploaded bytes 16777216
+2025-12-30T17:09:20.4836340Z Uploaded bytes 25165824
+2025-12-30T17:09:20.6354710Z Uploaded bytes 30983820
+2025-12-30T17:09:20.6504530Z Finished uploading artifact content to blob storage!
+2025-12-30T17:09:20.6505540Z SHA256 digest of uploaded artifact zip is b92d9f14eefa557fd743c8b0126078f58eb51c970eb7f7b4c069e486416b03a2
+2025-12-30T17:09:20.6506510Z Finalizing artifact upload
+2025-12-30T17:09:20.7388180Z Artifact wheels-macos-latest.zip successfully finalized. Artifact ID 4992705722
+2025-12-30T17:09:20.7390430Z Artifact wheels-macos-latest has been successfully uploaded! Final size is 30983820 bytes. Artifact ID is 4992705722
+2025-12-30T17:09:20.7403060Z Artifact download URL: https://github.com/worm-portal/aqequil/actions/runs/20601542873/artifacts/4992705722
