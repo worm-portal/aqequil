@@ -21,12 +21,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # TEMPORARY: Isolate Windows for testing
         # Build wheels for all supported platforms
         # Use ubuntu-latest for Linux, windows-2019 for Windows
         # For macOS: macos-15-intel (Intel x86_64) and macos-latest (Apple Silicon ARM64)
-        # os: [ubuntu-latest, windows-2019, macos-15-intel, macos-latest]
-        os: [windows-2019]
+        os: [ubuntu-latest, windows-2019, macos-15-intel, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -177,10 +175,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # TEMPORARY: Isolate Windows/Python 3.13 for testing
-        # os: [ubuntu-latest, windows-2019, macos-15-intel, macos-latest]
-        # python-version: ['3.10', '3.11', '3.12', '3.13']
-        os: [windows-2019]
+        os: [ubuntu-latest, windows-2019, macos-15-intel, macos-latest]
+        # Test with Python 3.13 only for now (all versions after full validation)
         python-version: ['3.13']
 
     steps:
