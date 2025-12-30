@@ -43,7 +43,7 @@ zip-safe = false
 [tool.setuptools.package-data]
 "*" = ["*.r", "*.min", "*.csv", "*.txt"]
 # Include compiled EQ3/6 executables in wheels
-"aqequil.bin" = ["*"]
+"aqequil.bin" = ["__init__.py", "*"]
 # Include EQ3/6 source code for source distribution (exclude bin/ and lib/ directories)
 "aqequil.eq3_6_src" = ["src/**/*", "include/**/*", "Makefile"]
 # Include test data

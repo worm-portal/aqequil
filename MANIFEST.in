@@ -20,6 +20,9 @@ recursive-include aqequil *.r *.min *.csv *.txt
 # Include test data
 recursive-include aqequil/test_data *.csv
 
+# Include bin package (needed for wheel building)
+include aqequil/bin/__init__.py
+
 # Include EQ3/6 source files (will be compiled during wheel build)
 recursive-include aqequil/eq3_6_src *.f *.f90 *.for
 include aqequil/eq3_6_src/Makefile
