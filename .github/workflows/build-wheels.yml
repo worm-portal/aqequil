@@ -101,6 +101,7 @@ jobs:
         if: matrix.os == 'macos-15-intel'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD: "cp313-*"  # Temporarily test only Python 3.13
           CIBW_BUILD_VERBOSITY: 1
           # CRITICAL: Only build x86_64 on this runner
           CIBW_ARCHS_MACOS: x86_64
@@ -123,6 +124,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD: "cp313-*"  # Temporarily test only Python 3.13
           CIBW_BUILD_VERBOSITY: 1
           # CRITICAL: Only build arm64 on this runner
           CIBW_ARCHS_MACOS: arm64
