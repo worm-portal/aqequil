@@ -95,6 +95,15 @@ def compile_eq3_6():
     # Set FC to explicitly use gfortran
     env['FC'] = gfortran
 
+    # Find make command
+    if sys.platform == 'win32':
+        # On Windows, use the full path to make.exe in MSYS2
+        make_cmd = r'C:\msys64\usr\bin\make.exe'
+        if not os.path.isfile(make_cmd):
+            raise RuntimeError("make not found. Please install with: pacman -S make")
+    else:
+        make_cmd = 'make'
+
     # Platform-specific FFLAGS
     if sys.platform == "darwin":
         # macOS: detect architecture
@@ -126,7 +135,7 @@ def compile_eq3_6():
         # Clean any previous builds
         print("Cleaning previous builds...")
         subprocess.run(
-            ['make', 'clean'],
+            [make_cmd, 'clean'],
             cwd=source_dir,
             env=env,
             check=False,  # Don't fail if clean fails
@@ -136,7 +145,7 @@ def compile_eq3_6():
         # Build all executables
         print("Compiling EQ3/6 executables...")
         result = subprocess.run(
-            ['make', 'all'],
+            [make_cmd, 'all'],
             cwd=source_dir,
             env=env,
             check=True,

@@ -342,6 +342,11 @@ class AqEquil(object):
                     if verbose >= 1:
                         print(f"Using bundled EQ3/6 executables from: {eq36co}")
 
+        # If eq36da is still None, default to current working directory
+        # This allows data0/data1 files to be found in the current directory
+        if eq36da is None:
+            eq36da = os.getcwd()
+
         self.eq36da = eq36da
         self.eq36co = eq36co
         self.df_input_processed = None
@@ -620,7 +625,7 @@ class AqEquil(object):
         elif self.thermo.dynamic_db:
             data_path = self.thermo.thermo_db_filename
         else:
-            data_path = self.eq36da + "/data0." + db
+            data_path = os.path.join(self.eq36da, f"data0.{db}")
         
         if self.thermo.thermo_db_type == "data0" and self.thermo.thermo_db_source == "URL":
             data_path = "data0." + self.thermo.data0_lettercode
@@ -840,12 +845,13 @@ class AqEquil(object):
             os.remove("data1."+db)
 
         self.__move_eqpt_extra_output()
-        
-        args = ["cd", os.getcwd(), ";", self.eq36co+'/eqpt', "'"+os.getcwd()+"/data0."+db+"'"]
-        args = " ".join(args)
+
+        # Build path to data0 file using os.path.join for cross-platform compatibility
+        data0_path = os.path.join(os.getcwd(), f"data0.{db}")
 
         try:
-            self.__run_script_and_wait(args) # run EQPT
+            # Run EQPT with cross-platform execution method
+            self.__run_eq_executable('eqpt', [data0_path], cwd=os.getcwd())
         except:
             self.err_handler.raise_exception(
                 "Error: EQPT failed to run on {}.".format("data0."+db))
@@ -926,24 +932,34 @@ class AqEquil(object):
             print('Using ' + db + ' to speciate ' + samplename)
         elif self.verbose > 0 and isinstance(dynamic_db_name, str):
             print('Using ' + dynamic_db_name + ' to speciate ' + samplename)
-            
-        args = ["cd", "'" + cwdd+path_3i+"'", ";", # change directory to where 3i files are stored
-                self.eq36co + '/eq3nr', # path to EQ3NR executable
-                "'" + data1_path + "/data1." + db+"'", # path to data1 file
-                "'"+cwdd + path_3i +"/"+ filename_3i+"'"] # path to 3i file
-        
-        args = " ".join(args)
-        
-        self.__run_script_and_wait(args) # run EQ3
+
+        # Build paths using os.path.join for cross-platform compatibility
+        data1_file = os.path.join(data1_path, f"data1.{db}")
+
+        # If data1 file doesn't exist in the specified path, check current directory as fallback
+        if not os.path.exists(data1_file) or not os.path.isfile(data1_file):
+            cwd_data1_file = os.path.join(cwd, f"data1.{db}")
+            if os.path.exists(cwd_data1_file) and os.path.isfile(cwd_data1_file):
+                data1_file = cwd_data1_file
+
+        work_dir = os.path.join(cwd, path_3i)
+
+        # Run EQ3NR with cross-platform execution method
+        # Pass just the filename (not full path) since we're setting cwd to work_dir
+        self.__run_eq_executable('eq3nr', [data1_file, filename_3i], cwd=work_dir)
         
         filename_3o = filename_3i[:-1] + 'o'
         filename_3p = filename_3i[:-1] + 'p'
-        
+
         # The new eq36 build truncates names, e.g., MLS.Source.3i creates MLS.3o
         # Correct for this here:
-        files_3o = [file for file in os.listdir(cwdd + path_3i) if ".3o" in file]
-        files_3p = [file for file in os.listdir(cwdd + path_3i) if ".3p" in file]
-        
+        input_dir = os.path.join(cwd, path_3i)
+        output_dir = os.path.join(cwd, path_3o)
+        pickup_dir = os.path.join(cwd, path_3p)
+
+        files_3o = [file for file in os.listdir(input_dir) if ".3o" in file]
+        files_3p = [file for file in os.listdir(input_dir) if ".3p" in file]
+
         if len(files_3o) == 0:
             if self.verbose > 0:
                 print('Error: EQ3 failed to produce output for ' + filename_3i)
@@ -951,14 +967,14 @@ class AqEquil(object):
             file_3o = files_3o[0]
             try:
                 # move output
-                shutil.move(cwdd + path_3i+"/"+file_3o, cwdd + path_3o+"/"+filename_3o)
+                shutil.move(os.path.join(input_dir, file_3o), os.path.join(output_dir, filename_3o))
             except:
-                self.err_handler.raise_exception("Error: could not move", path_3i+"/"+file_3o, "to", path_3o+"/"+filename_3o)
+                self.err_handler.raise_exception("Error: could not move", os.path.join(path_3i, file_3o), "to", os.path.join(path_3o, filename_3o))
         else:
             # multiple 3o output files are present in the directory
             # this might happen when using runeq3() by itself in a directory with 3o files
             pass
-            
+
         if len(files_3p) == 0:
             if self.verbose > 0:
                 print('Error: EQ3 failed to produce output for ' + filename_3i)
@@ -966,9 +982,9 @@ class AqEquil(object):
             file_3p = files_3p[0]
             try:
                 # move output
-                shutil.move(cwdd + path_3i+"/"+file_3p, cwdd + path_3p+"/"+filename_3p)
+                shutil.move(os.path.join(input_dir, file_3p), os.path.join(pickup_dir, filename_3p))
             except:
-                self.err_handler.raise_exception("Error: could not move", path_3i+"/"+file_3p, "to", path_3p+"/"+filename_3p)
+                self.err_handler.raise_exception("Error: could not move", os.path.join(path_3i, file_3p), "to", os.path.join(path_3p, filename_3p))
         else:
             # multiple 3p output files are present in the directory
             # this might happen when using runeq3() by itself in a directory with 3p files
@@ -1027,14 +1043,20 @@ class AqEquil(object):
         elif self.verbose > 0 and isinstance(dynamic_db_name, str):
             print('Using ' + dynamic_db_name + ' to react ' + samplename)
 
-        args = ["cd", "'" + cwdd+path_6i+"'", ";", # change directory to 6i folder
-                self.eq36co+'/eq6', # path of EQ6 executable
-                "'" + data1_path + "/data1." + db+"'", # path to data1 file
-                "'"+cwdd+path_6i + filename_6i+"'"] # path of 6i file
-        
-        args = " ".join(args)
-        
-        self.__run_script_and_wait(args) # run EQ6
+        # Build paths using os.path.join for cross-platform compatibility
+        data1_file = os.path.join(data1_path, f"data1.{db}")
+
+        # If data1 file doesn't exist in the specified path, check current directory as fallback
+        if not os.path.exists(data1_file) or not os.path.isfile(data1_file):
+            cwd_data1_file = os.path.join(cwd, f"data1.{db}")
+            if os.path.exists(cwd_data1_file) and os.path.isfile(cwd_data1_file):
+                data1_file = cwd_data1_file
+
+        work_dir = os.path.join(cwd, path_6i)
+
+        # Run EQ6 with cross-platform execution method
+        # Pass just the filename (not full path) since we're setting cwd to work_dir
+        self.__run_eq_executable('eq6', [data1_file, filename_6i], cwd=work_dir)
         
                 
     def __mk_check_del_directory(self, path):
@@ -1052,13 +1074,56 @@ class AqEquil(object):
 
     
     def __run_script_and_wait(self, args):
-        
+
         """
         Runs shell commands.
+
+        DEPRECATED: This method is kept for backward compatibility but should not be used.
+        Use __run_eq_executable() instead for cross-platform support.
         """
-        
+
         # DEVNULL and STDOUT needed to suppress all warnings
         subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, shell=True).wait()
+
+
+    def __run_eq_executable(self, exe_name, args, cwd=None):
+        """
+        Run an EQ3/6 executable in a cross-platform way.
+
+        Parameters
+        ----------
+        exe_name : str
+            Name of the executable (without .exe extension)
+        args : list
+            List of command-line arguments to pass to the executable
+        cwd : str, optional
+            Working directory to run the command in
+        """
+        if sys.platform == "win32":
+            # On Windows, run the MinGW executables directly
+            exe_path = os.path.join(self.eq36co, f"{exe_name}.exe")
+            cmd = [exe_path] + args
+
+            # MinGW executables need DLLs from the MinGW bin directory
+            # Add it to PATH for this subprocess
+            env = os.environ.copy()
+            mingw_bin = r'C:\msys64\mingw64\bin'
+            env['PATH'] = mingw_bin + os.pathsep + env.get('PATH', '')
+        else:
+            # On Linux/Mac, run directly
+            exe_path = os.path.join(self.eq36co, exe_name)
+            cmd = [exe_path] + args
+            env = None  # Use parent environment
+
+        subprocess.run(
+            cmd,
+            cwd=cwd,
+            env=env,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+            check=False
+        )
 
             
     def _delete_rxn_folders(self):
@@ -1683,15 +1748,15 @@ class AqEquil(object):
                     if self.verbose > 0:
                         print('Error: Could not move', "data1."+data0_lettercode, "to eqpt_files")
             
-            data1_path = os.getcwd()+"/eqpt_files" # creating a folder name without spaces to store the data1 overcomes the problem where environment variables with spaces do not work properly when assigned to EQ36DA
-            
+            data1_path = os.path.join(os.getcwd(), "eqpt_files")  # creating a folder name without spaces to store the data1 overcomes the problem where environment variables with spaces do not work properly when assigned to EQ36DA
+
             data0_path = "data0." + data0_lettercode
             
         elif dynamic_db:
             self.__mk_check_del_directory('eqpt_files')
-            
+
         else:
-            data0_path = self.eq36da + "/data0." + data0_lettercode
+            data0_path = os.path.join(self.eq36da, f"data0.{data0_lettercode}")
 
         # gather information from data0 file and perform checks
         if not dynamic_db:
@@ -1871,7 +1936,7 @@ class AqEquil(object):
                         if self.verbose > 0:
                             print('Error: Could not move', "data1."+data0_lettercode, "to eqpt_files")
 
-                data1_path = os.getcwd()+"/eqpt_files" # creating a folder name without spaces to store the data1 overcomes the problem where environment variables with spaces do not work properly when assigned to EQ36DA
+                data1_path = os.path.join(os.getcwd(), "eqpt_files")  # creating a folder name without spaces to store the data1 overcomes the problem where environment variables with spaces do not work properly when assigned to EQ36DA
 
                 data0_path = "data0." + data0_lettercode
 
@@ -3352,14 +3417,15 @@ class AqEquil(object):
                     self.dynamic_db = False
                     
                     # search for a data1 file in the eq36da directory
-                    if os.path.exists(self.eq36da + "/data1." + db) and os.path.isfile(self.eq36da + "/data1." + db):
+                    data1_path = os.path.join(self.eq36da, f"data1.{db}")
+                    if os.path.exists(data1_path) and os.path.isfile(data1_path):
                         self.thermo_db = None
                         self.thermo_db_type = "data1"
                         self.thermo_db_source = "file"
                         self.thermo_db_filename = "data1."+db
-    
+
                         # store contents of data1 file in AqEquil object
-                        with open(self.eq36da + "/data1." + db, mode='rb') as data1_file:
+                        with open(data1_path, mode='rb') as data1_file:
                             self.data1["all_samples"] = data1_file.read()
     
                     elif os.path.exists("data0." + db) and os.path.isfile("data0." + db):
@@ -3377,18 +3443,18 @@ class AqEquil(object):
                         self.thermo_db_source = "file"
                         self.custom_data0 = True
                         self.data0_lettercode = db[-3:].lower()
-                        self.eq36da = os.getcwd()+"/eqpt_files"
-    
+                        self.eq36da = os.path.join(os.getcwd(), "eqpt_files")
+
                     elif os.path.exists("data1." + db) and os.path.isfile("data1." + db):
-                        
+
                         if self.verbose > 0:
                             print("data1." + db + " was not found in the EQ36DA directory "
                                   "but a data1."+db+" was found in the current working "
                                   "directory. Using it...")
-    
+
                         self.custom_data0 = True
                         self.thermo_db = None
-                        self.eq36da = os.getcwd()+"/eqpt_files"
+                        self.eq36da = os.path.join(os.getcwd(), "eqpt_files")
     
                         # search for a data1 locally
     

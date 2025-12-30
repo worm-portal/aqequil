@@ -3370,7 +3370,7 @@ c
           write (noutpt,1720) ux16a(1:j1),ux16b(1:j2)
           write (nttyo,1720) ux16a(1:j1),ux16b(1:j2)
  1720     format(/' * Warning - (EQ3NR/eq3nr) The calculated density',
-     $    ' of ',a,' g/mL',/7x'differs from the input file/default',
+     $    ' of ',a,' g/mL',/7x,'differs from the input file/default',
      $    ' value of ',a,' g/mL',/7x,'by more than 1%.',
      $    ' The calculated value will be used',/7x,'in subsequent',
      $    ' calculations.')
@@ -3393,7 +3393,7 @@ c
             write (noutpt,1730) ux16a(1:j1),ux16b(1:j2)
             write (nttyo,1730) ux16a(1:j1),ux16b(1:j2)
  1730       format(/' * Warning - (EQ3NR/eq3nr) The calculated TDS',
-     $      ' of ',a,' mg/kg.sol',/7x'differs from the input',
+     $      ' of ',a,' mg/kg.sol',/7x,'differs from the input',
      $      ' file/default value of ',a,' mg/kg.sol',/7x,'by more',
      $      ' than 1%. The calculated value will be used in',
      $      /7x,'subsequent calculations.')
@@ -3408,7 +3408,7 @@ c
           write (noutpt,1732) ux16a(1:j1),ux16b(1:j2)
           write (nttyo,1732) ux16a(1:j1),ux16b(1:j2)
  1732     format(/' * Warning - (EQ3NR/eq3nr) The calculated TDS',
-     $    ' of ',a,' mg/kg.sol',/7x'differs from the input',
+     $    ' of ',a,' mg/kg.sol',/7x,'differs from the input',
      $    ' file/default value of ',a,' mg/kg.sol.',/7x,
      $    'The calculated value will be used in subsequent',
      $    ' calculations.')
@@ -3426,7 +3426,7 @@ c
             write (noutpt,1740) ux16a(1:j1),ux16b(1:j2)
             write (nttyo,1740) ux16a(1:j1),ux16b(1:j2)
  1740       format(/' * Warning - (EQ3NR/eq3nr) The calculated TDS',
-     $      ' of ',a,' mg/L',/7x'differs from the input',
+     $      ' of ',a,' mg/L',/7x,'differs from the input',
      $      ' file value of ',a,' mg/L',/7x,'by more',
      $      ' than 1%. The calculated value will be used in',
      $      /7x,'subsequent calculations.')
@@ -3441,7 +3441,7 @@ c
           write (noutpt,1742) ux16a(1:j1),ux16b(1:j2)
           write (nttyo,1742) ux16a(1:j1),ux16b(1:j2)
  1742     format(/' * Warning - (EQ3NR/eq3nr) The calculated TDS',
-     $    ' of ',a,' mg/L',/7x'differs from the input',
+     $    ' of ',a,' mg/L',/7x,'differs from the input',
      $    ' file/default value of ',a,' mg/L.',/7x,
      $    'The calculated value will be used in subsequent',
      $    ' calculations.')
