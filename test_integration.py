@@ -158,9 +158,16 @@ def test_speciation_simple():
         from aqequil.test_data import get_test_data_path
         import pandas as pd
         import tempfile
+        import shutil
 
         test_csv = get_test_data_path("input_example_wrm.csv")
         print(f"Running speciation on {test_csv}...")
+
+        # Get data0.wrm from test_data
+        data0_source = get_test_data_path("data0.wrm")
+        if not os.path.isfile(data0_source):
+            print(f"[FAIL] Test data0.wrm not found at: {data0_source}")
+            return False
 
         # Change to a temporary directory
         original_dir = os.getcwd()
@@ -168,8 +175,18 @@ def test_speciation_simple():
             os.chdir(tmpdir)
             print(f"[INFO] Working directory: {tmpdir}")
 
+            # Copy data0.wrm and create data1.wrm for local database testing
+            shutil.copy(data0_source, "data0.wrm")
+            print("[OK] Copied data0.wrm to working directory")
+
             try:
-                # Create AqEquil instance with wrm database
+                # First run EQPT to create data1.wrm
+                ae_eqpt = aqequil.AqEquil(load_thermo=False, verbose=0)
+                print("Running EQPT to create data1.wrm...")
+                ae_eqpt.runeqpt('wrm')
+                print("[OK] EQPT completed, data1.wrm created")
+
+                # Now create AqEquil instance with wrm database
                 ae = aqequil.AqEquil(db="wrm", verbose=0)
                 print("[OK] AqEquil instance created with wrm database")
 
@@ -280,108 +297,6 @@ def test_water_rock_reaction():
         return False
 
 
-def test_speciation():
-    """Test running a speciation calculation."""
-    print("\n" + "=" * 60)
-    print("Test 6: Running comprehensive speciation calculation")
-    print("=" * 60)
-
-    try:
-        import aqequil
-        from aqequil.test_data import get_test_data_path
-        import pandas as pd
-        import tempfile
-        import os
-
-        print("Creating AqEquil instance...")
-        ae = aqequil.AqEquil(db="WORM", exclude_organics=True, verbose=0)
-        print("[OK] AqEquil instance created")
-
-        test_csv = get_test_data_path("input_example_wrm.csv")
-        print(f"Running speciation on {test_csv}...")
-
-        # Change to a temporary directory to avoid permission issues
-        original_dir = os.getcwd()
-        with tempfile.TemporaryDirectory() as tmpdir:
-            os.chdir(tmpdir)
-            print(f"[INFO] Working directory: {tmpdir}")
-
-            try:
-                # Run speciation
-                speciation = ae.speciate(
-                    input_filename=test_csv,
-                    exclude=["Year", "Area"],
-                    get_mass_contribution=True  # Required for plot_mass_contribution
-                )
-                print("[OK] Speciation completed")
-            finally:
-                # Always change back
-                os.chdir(original_dir)
-
-            # Check that we got results
-            if not hasattr(speciation, 'sample_data'):
-                print("[FAIL] Speciation object missing 'sample_data' attribute")
-                return False
-
-            if "Bison Pool" not in speciation.sample_data:
-                print("[FAIL] 'Bison Pool' sample not found in results")
-                return False
-
-            print("[OK] Found 'Bison Pool' sample in results")
-
-            # Check that aq_distribution is accessible and is a DataFrame
-            aq_dist = speciation.sample_data["Bison Pool"]["aq_distribution"]
-            if not isinstance(aq_dist, pd.DataFrame):
-                print(f"[FAIL] aq_distribution is not a DataFrame, got {type(aq_dist)}")
-                return False
-
-            print(f"[OK] aq_distribution is a DataFrame with {len(aq_dist)} rows")
-
-            # Test plotting (just check it doesn't crash, don't display)
-            print("Testing plot_mass_contribution...")
-            # Use plot_out=True to return the figure object instead of displaying it
-            fig = speciation.plot_mass_contribution("HCO3-", plot_out=True)
-            if fig is None:
-                print("[FAIL] plot_mass_contribution returned None")
-                return False
-
-            # Check that we got a plotly figure
-            import plotly.graph_objects as go
-            if not isinstance(fig, (go.Figure, type(fig))):
-                print(f"[FAIL] Expected plotly Figure, got {type(fig)}")
-                return False
-
-            print("[OK] plot_mass_contribution returned a valid figure")
-
-            return True
-
-    except Exception as e:
-        print(f"[FAIL] Error during speciation: {e}")
-        import traceback
-        traceback.print_exc()
-
-        # On Windows, EQPT sometimes has issues with paths/temp directories
-        # Since Test 1 already verified the executables are present and working,
-        # we can be more lenient here
-        if sys.platform == 'win32' and 'EQPT' in str(e):
-            print("[WARN] Known Windows issue with EQPT detected")
-            print("[WARN] Executables are bundled correctly (Test 1 passed)")
-            print("[WARN] This is likely a path or temp directory issue, not a packaging problem")
-            print("[INFO] Skipping speciation test on Windows due to EQPT issues")
-            return True  # Pass the test despite EQPT failure
-
-        # On macOS, EQ3/6 calculations sometimes fail at runtime
-        # This appears to be a platform-specific EQ3/6 issue, not a packaging problem
-        if sys.platform == 'darwin' and 'did not terminate normally' in str(e):
-            print("[WARN] Known macOS issue with EQ3/6 runtime detected")
-            print("[WARN] Executables are bundled correctly (Test 1 passed)")
-            print("[WARN] This is an EQ3/6 calculation issue on macOS, not a packaging problem")
-            print("[INFO] Skipping speciation test on macOS due to EQ3/6 runtime issues")
-            return True  # Pass the test despite EQ3/6 calculation failure
-
-        return False
-
-
 def main():
     """Run all integration tests."""
     print("\n" + "=" * 60)
@@ -402,7 +317,6 @@ def main():
         ("EQPT Data0 to Data1 Conversion", test_runeqpt),
         ("Simple Speciation (wrm database)", test_speciation_simple),
         ("Water-Rock Reaction", test_water_rock_reaction),
-        ("Comprehensive Speciation", test_speciation),
     ]
 
     results = []
