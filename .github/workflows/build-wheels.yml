@@ -21,10 +21,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Temporarily testing only macOS ARM (Apple Silicon) with Python 3.13
+        # Temporarily testing only macOS Intel (x86_64) with Python 3.13
         # Use ubuntu-latest for Linux, windows-2019 for Windows
         # For macOS: macos-15-intel (Intel x86_64) and macos-latest (Apple Silicon ARM64)
-        os: [macos-latest]  # Temporarily disabled: ubuntu-latest, windows-2019, macos-15-intel
+        os: [macos-15-intel]  # Temporarily disabled: ubuntu-latest, windows-2019, macos-latest
 
     steps:
       - uses: actions/checkout@v4
