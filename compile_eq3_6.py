@@ -141,11 +141,28 @@ def compile_eq3_6():
             shutil.rmtree(source_bin_dir)
             print(f"Removed {source_bin_dir}")
 
-        # Remove old binaries from output directory
+        # Remove old binaries from output directory (preserve __init__.py)
         if output_dir.exists():
-            shutil.rmtree(output_dir)
-            print(f"Removed {output_dir}")
-        output_dir.mkdir(parents=True, exist_ok=True)
+            # Save __init__.py if it exists
+            init_file = output_dir / "__init__.py"
+            init_content = None
+            if init_file.exists():
+                init_content = init_file.read_text()
+
+            # Remove all files in the directory
+            for item in output_dir.iterdir():
+                if item.is_file():
+                    item.unlink()
+                elif item.is_dir():
+                    shutil.rmtree(item)
+            print(f"Cleaned {output_dir}")
+
+            # Restore __init__.py
+            if init_content is not None:
+                init_file.write_text(init_content)
+                print(f"Preserved {init_file}")
+        else:
+            output_dir.mkdir(parents=True, exist_ok=True)
 
         # Run make clean
         subprocess.run(
