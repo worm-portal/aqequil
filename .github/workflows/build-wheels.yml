@@ -163,7 +163,7 @@ jobs:
 
       - name: Test wheels
         run: |
-          python -m pip install --find-links wheelhouse aqequil
+          python -m pip install --no-index --find-links wheelhouse aqequil
           python test_integration.py
         shell: bash
 
