@@ -103,3 +103,16 @@ test/
 *.tmp
 *.bak
 *.backup
+
+# Compiled EQ3/6 executables (generated during build)
+aqequil/bin/eq3nr
+aqequil/bin/eq3nr.exe
+aqequil/bin/eq6
+aqequil/bin/eq6.exe
+aqequil/bin/eqpt
+aqequil/bin/eqpt.exe
+aqequil/bin/xcon3
+aqequil/bin/xcon3.exe
+aqequil/bin/xcon6
+aqequil/bin/xcon6.exe
+aqequil/eq3_6_src/bin/
