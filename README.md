@@ -1,6 +1,6 @@
 # AqEquil
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13530217.svg)](https://doi.org/10.5281/zenodo.13530217)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5534831.svg)](https://doi.org/10.5281/zenodo.5534831)
 
 Boyer, G., Robare, J., Park, N., Ely, T., Shock, E.L.
 
@@ -12,6 +12,8 @@ Water sample data in CSV format is automatically converted to a format readable 
 
 Speciated fluids can be further reacted with minerals or other fluids in mass transfer calculations to produce tables and interactive diagrams of reaction paths and composition changes as a function of reaction progress.
 
+Development of AqEquil was made possible by National Science Foundation (NSF) grants EAR-1949030 and EAR-2149016.
+
 ## Requirements
 
 AqEquil works on Linux, macOS, and Windows.
@@ -20,28 +22,9 @@ AqEquil works on Linux, macOS, and Windows.
 - Python >= 3.10
 - pandas, numpy, matplotlib, plotly, and other dependencies (automatically installed)
 
-**Additional Requirements:**
-- R installation with CHNOSZ package version 1.4.3 (see instructions below)
-
-**Note:** As of version 0.41.0, EQ3/6 executables are bundled with aqequil and no longer need to be installed separately. The package includes pre-compiled binaries for Linux, macOS, and Windows.
+**Note:** As of version 1.0.0, EQ3/6 executables are bundled with aqequil and no longer need to be installed separately. The package includes pre-compiled binaries for Linux, macOS, and Windows.
 
 ## Installation
-
-### Installing CHNOSZ version 1.4.3
-
-AqEquil requires an R installation with the CHNOSZ package. See [these instructions](https://docs.anaconda.com/anaconda/user-guide/tasks/using-r-language/) for installing R with Anaconda.
-
-Open an R session and install CHNOSZ version 1.4.3 package with:
-
-```r
-install.packages('http://cran.r-project.org/src/contrib/Archive/CHNOSZ/CHNOSZ_1.4.3.tar.gz', repos=NULL, type='source')
-```
-
-Once CHNOSZ is installed you can quit the R session.
-
-Compatibility with CHNOSZ v.2.0.0 is forthcoming.
-
-### Installing AqEquil
 
 Install AqEquil using pip:
 
@@ -57,7 +40,7 @@ See this [demo notebook](https://nbviewer.jupyter.org/github/worm-portal/WORM-Li
 
 ## Bundled Software
 
-This package includes pre-compiled binaries from [EQ3/6 v8.0a](https://github.com/39alpha/eq3_6), a software package for geochemical modeling developed by Thomas Wolery at Lawrence Livermore National Laboratory.
+This package includes pre-compiled binaries from [EQ3/6 v8.0a](https://github.com/39alpha/eq3_6), a software package for geochemical modeling developed by Thomas Wolery at Lawrence Livermore National Laboratory and updated by [39 Alpha](https://github.com/39alpha/eq3_6).
 
 **EQ3/6 License:** BSD 3-Clause License
 **Copyright:** (c) 1987, 1990-1993, 1995, 1997, 2002, 2013 The Regents of the University of California, Lawrence Livermore National Laboratory.
