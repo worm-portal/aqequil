@@ -156,6 +156,32 @@ def _get_bundled_exe_path():
     except Exception:
         return None
 
+
+def _get_bundled_data_path():
+    """
+    Get the path to bundled EQ3/6 data files (e.g., data1.wrm).
+
+    Returns the path to the aqequil/databases directory containing bundled
+    thermodynamic database files. Returns None if the directory doesn't exist
+    or doesn't contain data1 files.
+    """
+    try:
+        # Get the directory where this module is located
+        module_dir = os.path.dirname(os.path.abspath(__file__))
+        data_dir = os.path.join(module_dir, 'databases')
+
+        # Check if databases directory exists and contains data1 files
+        if os.path.isdir(data_dir):
+            # Check for at least data1.wrm
+            data1_wrm = os.path.join(data_dir, 'data1.wrm')
+
+            if os.path.isfile(data1_wrm):
+                return data_dir
+
+        return None
+    except Exception:
+        return None
+
 class AqEquil(object):
 
     """
@@ -330,7 +356,17 @@ class AqEquil(object):
                  hide_traceback=True):
 
         if not isinstance(eq36da, str):
+            # Try environment variable first
             eq36da = os.environ.get('EQ36DA')
+            # If not set, try to use bundled data files
+            if eq36da is None:
+                bundled_data_path = _get_bundled_data_path()
+                if bundled_data_path is not None:
+                    eq36da = bundled_data_path
+            # Final fallback: current working directory
+            if eq36da is None:
+                eq36da = os.getcwd()
+
         if not isinstance(eq36co, str):
             # Try environment variable first
             eq36co = os.environ.get('EQ36CO')
@@ -339,13 +375,6 @@ class AqEquil(object):
                 bundled_path = _get_bundled_exe_path()
                 if bundled_path is not None:
                     eq36co = bundled_path
-                    if verbose >= 1:
-                        print(f"Using bundled EQ3/6 executables from: {eq36co}")
-
-        # If eq36da is still None, default to current working directory
-        # This allows data0/data1 files to be found in the current directory
-        if eq36da is None:
-            eq36da = os.getcwd()
 
         self.eq36da = eq36da
         self.eq36co = eq36co
@@ -3552,25 +3581,43 @@ class AqEquil(object):
         def __df_from_url(self, url, download_csv_files=False):
             """
             Get a filename and dataframe from a URL pointing to a CSV file.
+            Falls back to bundled databases if the URL cannot be reached.
             """
-
             filename = url.split("/")[-1].lower()
 
             try:
                 # Download from URL and decode as UTF-8 text.
                 with urlopen(url) as webpage:
                     content = webpage.read().decode()
-            except:
+
+                if download_csv_files:
+                    if self.verbose > 0:
+                        print("Downloading", filename, "from", url)
+                    with open(filename, 'w') as output:
+                        output.write(content)
+
+                return filename, pd.read_csv(StringIO(content), sep=",")
+
+            except Exception:
+                # Fallback to bundled databases if URL cannot be reached
+                bundled_path = _get_bundled_data_path()
+                if bundled_path is not None:
+                    bundled_file = os.path.join(bundled_path, filename)
+                    if os.path.isfile(bundled_file):
+                        if self.verbose > 0:
+                            print(f"Cannot reach {url}, using bundled database: {filename}")
+
+                        # If download_csv_files is True, copy bundled file to cwd
+                        if download_csv_files:
+                            shutil.copy(bundled_file, filename)
+                            if self.verbose > 0:
+                                print(f"Copied bundled {filename} to current working directory")
+
+                        return filename, pd.read_csv(bundled_file, sep=",")
+
+                # If no bundled fallback available, raise the original error
                 self.err_handler.raise_exception("The webpage "+str(url)+" cannot"
-                        " be reached at this time.")
-
-            if download_csv_files:
-                if self.verbose > 0:
-                    print("Downloading", filename, "from", url)
-                with open(filename, 'w') as output:
-                    output.write(content)
-
-            return filename, pd.read_csv(StringIO(content), sep=",")
+                        " be reached at this time and no bundled database is available.")
 
 
         def __str_from_url(self, url):

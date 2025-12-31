@@ -37,13 +37,15 @@ dependencies = [
 Homepage = "https://github.com/worm-portal/aqequil"
 
 [tool.setuptools]
-packages = ["aqequil", "aqequil.bin", "aqequil.eq3_6_src", "aqequil.test_data"]
+packages = ["aqequil", "aqequil.bin", "aqequil.databases", "aqequil.eq3_6_src", "aqequil.test_data"]
 zip-safe = false
 
 [tool.setuptools.package-data]
 "*" = ["*.r", "*.min", "*.csv", "*.txt"]
 # Include compiled EQ3/6 executables in wheels
 "aqequil.bin" = ["__init__.py", "*"]
+# Include bundled thermodynamic databases (data1 files and WORM CSV databases)
+"aqequil.databases" = ["__init__.py", "*.wrm", "*.csv"]
 # Include EQ3/6 source code for source distribution (exclude bin/ and lib/ directories)
 "aqequil.eq3_6_src" = ["src/**/*", "include/**/*", "Makefile"]
 # Include test data

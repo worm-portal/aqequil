@@ -82,15 +82,67 @@ def test_import_and_basic_usage():
         return False
 
 
+def test_download_data0():
+    """Download latest data0.wrm from WORM-db and update bundled copies."""
+    print("\n" + "=" * 60)
+    print("Test 3: Downloading latest data0.wrm from WORM-db")
+    print("=" * 60)
+
+    try:
+        from aqequil.test_data import get_test_data_path
+        from aqequil.databases import get_database_path
+        from urllib.request import urlopen
+        import shutil
+
+        data0_url = "https://raw.githubusercontent.com/worm-portal/WORM-db/master/data0.wrm"
+        print(f"Downloading data0.wrm from {data0_url}...")
+
+        # Download data0.wrm from WORM-db
+        with urlopen(data0_url) as response:
+            content = response.read()
+
+        size_kb = len(content) / 1024
+        print(f"[OK] Downloaded data0.wrm ({size_kb:.1f} KB)")
+
+        # Get destination paths
+        test_data_dir = os.path.dirname(get_test_data_path("data0.wrm"))
+        databases_dir = get_database_path()
+
+        # Copy to test_data folder
+        test_data_dest = os.path.join(test_data_dir, "data0.wrm")
+        if os.path.exists(test_data_dest):
+            os.remove(test_data_dest)
+        with open(test_data_dest, 'wb') as f:
+            f.write(content)
+        print(f"[OK] Copied data0.wrm to test_data (replaced existing)")
+
+        # Copy to databases folder
+        databases_dest = os.path.join(databases_dir, "data0.wrm")
+        if os.path.exists(databases_dest):
+            os.remove(databases_dest)
+        with open(databases_dest, 'wb') as f:
+            f.write(content)
+        print(f"[OK] Copied data0.wrm to databases (replaced existing)")
+
+        return True
+
+    except Exception as e:
+        print(f"[FAIL] Error downloading data0.wrm: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 def test_runeqpt():
     """Test runeqpt - converting data0 to data1 format."""
     print("\n" + "=" * 60)
-    print("Test 3: Testing runeqpt (data0 to data1 conversion)")
+    print("Test 4: Testing runeqpt (data0 to data1 conversion)")
     print("=" * 60)
 
     try:
         import aqequil
         from aqequil.test_data import get_test_data_path
+        from aqequil.databases import get_database_path
         import tempfile
         import shutil
 
@@ -127,6 +179,16 @@ def test_runeqpt():
                 size_mb = os.path.getsize("data1.wrm") / (1024 * 1024)
                 print(f"[OK] data1.wrm created ({size_mb:.2f} MB)")
 
+                # Copy data1.wrm to the bundled databases directory
+                # This ensures the wheel includes a freshly compiled data1.wrm
+                # File is overwritten if it already exists
+                databases_dir = get_database_path()
+                dest_data1 = os.path.join(databases_dir, "data1.wrm")
+                if os.path.exists(dest_data1):
+                    os.remove(dest_data1)
+                shutil.copy("data1.wrm", dest_data1)
+                print(f"[OK] Copied data1.wrm to bundled databases (replaced existing)")
+
                 return True
 
             finally:
@@ -150,7 +212,7 @@ def test_runeqpt():
 def test_speciation_simple():
     """Test simple speciation with wrm database."""
     print("\n" + "=" * 60)
-    print("Test 4: Testing simple speciation (wrm database)")
+    print("Test 5: Testing simple speciation (wrm database)")
     print("=" * 60)
 
     try:
@@ -229,14 +291,16 @@ def test_speciation_simple():
 def test_water_rock_reaction():
     """Test water-rock reaction with EQ6."""
     print("\n" + "=" * 60)
-    print("Test 5: Testing water-rock reaction")
+    print("Test 6: Testing water-rock reaction")
     print("=" * 60)
 
     try:
         import aqequil
         from aqequil.test_data import get_test_data_path
+        from aqequil.databases import get_database_path
         import pandas as pd
         import tempfile
+        import shutil
 
         test_csv = get_test_data_path("input_example_wrm.csv")
         print(f"Running speciation on {test_csv}...")
@@ -249,7 +313,31 @@ def test_water_rock_reaction():
 
             try:
                 # Create AqEquil instance and run speciation
-                ae = aqequil.AqEquil(db="WORM", exclude_organics=True, verbose=0)
+                # download_csv_files=True downloads the WORM database CSV files
+                ae = aqequil.AqEquil(db="WORM", exclude_organics=True, download_csv_files=True, verbose=0)
+
+                # Copy downloaded CSV files to the bundled databases directory
+                # This ensures the wheel includes the latest WORM database files
+                # Files are overwritten if they already exist
+                databases_dir = get_database_path()
+                csv_files = [
+                    "wrm_data_latest.csv",
+                    "elements.csv",
+                    "solid_solutions.csv",
+                    "wrm_data_logk.csv",
+                    "wrm_data_logk_s.csv",
+                ]
+                for csv_file in csv_files:
+                    if os.path.isfile(csv_file):
+                        dest_path = os.path.join(databases_dir, csv_file)
+                        # Remove existing file first to ensure clean replacement
+                        if os.path.exists(dest_path):
+                            os.remove(dest_path)
+                        shutil.copy(csv_file, dest_path)
+                        print(f"[OK] Copied {csv_file} to bundled databases (replaced existing)")
+                    else:
+                        print(f"[WARN] {csv_file} not found in working directory")
+
                 speciation = ae.speciate(
                     input_filename=test_csv,
                     exclude=["Year", "Area"]
@@ -314,6 +402,7 @@ def main():
     tests = [
         ("Bundled Executables", test_bundled_executables),
         ("Import and Basic Usage", test_import_and_basic_usage),
+        ("Download Latest data0.wrm", test_download_data0),
         ("EQPT Data0 to Data1 Conversion", test_runeqpt),
         ("Simple Speciation (wrm database)", test_speciation_simple),
         ("Water-Rock Reaction", test_water_rock_reaction),
