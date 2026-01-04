@@ -774,25 +774,27 @@ class AqEquil(object):
                 if df_in_headercheck["O2(g)"][1] == "Hetero. equil.":
                     redox_flag = "O2(g)"
                     redox_selection_made = True
-            if self.verbose > 0 and redox_selection_made and redox_flag != "O2":
-                print("The input file column '"+redox_flag+"' will be used to "
-                      "set sample redox state. If a another column is desired, "
-                      "set it manually using the redox_flag parameter.")
-            elif self.verbose > 0 and redox_selection_made and redox_flag == "O2":
-                redox_flag = "logfO2" # nothing else is needed here
-            elif self.verbose > 0:
-                print("A column to set sample redox state could not be "
-                      "automatically detected in the input file. Valid columns "
-                      "include 'logfO2' (with subheader 'logfO2'), 'O2' "
-                      "(with a valid concentration subheader), 'Eh' "
-                      "(with subheader 'volts'), 'pe' (with subheader 'pe'), and "
-                      "'O2(g)' (with subheader 'Hetero. equil.'). A "
-                      "default logfO2 value will be used to set sample redox "
-                      "state. It is also possible to set sample redox state "
-                      "based on a valid auxiliary basis species/basis species "
-                      "combo (e.g., Fe+3/Fe+2) by setting the redox_flag "
-                      "parameter to 'redox aux' and the redox_aux parameter to "
-                      "the name of the desired auxiliary basis species.")
+            if redox_selection_made:
+                if redox_flag == "O2":
+                    redox_flag = "logfO2"
+                if self.verbose > 0:
+                    print("The input file column '"+redox_flag+"' will be used to "
+                          "set sample redox state. If a another column is desired, "
+                          "set it manually using the redox_flag parameter.")
+            else:
+                if self.verbose > 0:
+                    print("A column to set sample redox state could not be "
+                          "automatically detected in the input file. Valid columns "
+                          "include 'logfO2' (with subheader 'logfO2'), 'O2' "
+                          "(with a valid concentration subheader), 'Eh' "
+                          "(with subheader 'volts'), 'pe' (with subheader 'pe'), and "
+                          "'O2(g)' (with subheader 'Hetero. equil.'). A "
+                          "default logfO2 value will be used to set sample redox "
+                          "state. It is also possible to set sample redox state "
+                          "based on a valid auxiliary basis species/basis species "
+                          "combo (e.g., Fe+3/Fe+2) by setting the redox_flag "
+                          "parameter to 'redox aux' and the redox_aux parameter to "
+                          "the name of the desired auxiliary basis species.")
                 redox_flag = "logfO2"
         
         # is the 'O2(g)' redox flag set up correctly?
