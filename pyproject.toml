@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0", "wheel", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "aqequil"
-version = "1.0.0"
+dynamic = ["version"]
 description = "Python tools for aqueous chemical speciation."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -85,3 +85,6 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 # Only build for 64-bit Windows
 archs = "AMD64"
 # MinGW installation is handled via CIBW_BEFORE_ALL_WINDOWS in GitHub Actions
+
+[tool.setuptools_scm]
+version_file = "aqequil/_version.py"

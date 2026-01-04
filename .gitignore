@@ -104,6 +104,9 @@ test/
 *.bak
 *.backup
 
+# Auto-generated version file (setuptools_scm)
+aqequil/_version.py
+
 # Compiled EQ3/6 executables (generated during build)
 aqequil/bin/eq3nr
 aqequil/bin/eq3nr.exe
