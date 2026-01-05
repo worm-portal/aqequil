@@ -1,0 +1,22 @@
+﻿2026-01-05T01:36:20.4141174Z ##[group]Run ls -lh dist/
+2026-01-05T01:36:20.4141585Z [36;1mls -lh dist/[0m
+2026-01-05T01:36:20.4179908Z shell: /usr/bin/bash -e {0}
+2026-01-05T01:36:20.4180285Z ##[endgroup]
+2026-01-05T01:36:20.4269855Z total 100M
+2026-01-05T01:36:20.4270584Z -rw-r--r-- 1 runner runner 3.1M Jan  5 01:36 aqequil-1.0.1.tar.gz
+2026-01-05T01:36:20.4271969Z -rw-r--r-- 1 runner runner 6.0M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp310-cp310-macosx_15_0_arm64.whl
+2026-01-05T01:36:20.4273679Z -rw-r--r-- 1 runner runner 6.4M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp310-cp310-macosx_15_0_x86_64.whl
+2026-01-05T01:36:20.4275601Z -rw-r--r-- 1 runner runner 6.0M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp310-cp310-manylinux_2_28_x86_64.whl
+2026-01-05T01:36:20.4277365Z -rw-r--r-- 1 runner runner 5.6M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp310-cp310-win_amd64.whl
+2026-01-05T01:36:20.4278787Z -rw-r--r-- 1 runner runner 6.1M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp311-cp311-macosx_15_0_arm64.whl
+2026-01-05T01:36:20.4279890Z -rw-r--r-- 1 runner runner 6.4M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp311-cp311-macosx_15_0_x86_64.whl
+2026-01-05T01:36:20.4281068Z -rw-r--r-- 1 runner runner 6.1M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp311-cp311-manylinux_2_28_x86_64.whl
+2026-01-05T01:36:20.4281992Z -rw-r--r-- 1 runner runner 5.7M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp311-cp311-win_amd64.whl
+2026-01-05T01:36:20.4282869Z -rw-r--r-- 1 runner runner 6.1M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp312-cp312-macosx_15_0_arm64.whl
+2026-01-05T01:36:20.4283781Z -rw-r--r-- 1 runner runner 6.4M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp312-cp312-macosx_15_0_x86_64.whl
+2026-01-05T01:36:20.4284721Z -rw-r--r-- 1 runner runner 6.1M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp312-cp312-manylinux_2_28_x86_64.whl
+2026-01-05T01:36:20.4285651Z -rw-r--r-- 1 runner runner 5.7M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp312-cp312-win_amd64.whl
+2026-01-05T01:36:20.4286531Z -rw-r--r-- 1 runner runner 6.1M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp313-cp313-macosx_15_0_arm64.whl
+2026-01-05T01:36:20.4287702Z -rw-r--r-- 1 runner runner 6.4M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp313-cp313-macosx_15_0_x86_64.whl
+2026-01-05T01:36:20.4288693Z -rw-r--r-- 1 runner runner 6.1M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp313-cp313-manylinux_2_28_x86_64.whl
+2026-01-05T01:36:20.4289595Z -rw-r--r-- 1 runner runner 5.7M Jan  5 01:36 aqequil-1.0.2.dev0+g0fba86417.d20260105-cp313-cp313-win_amd64.whl

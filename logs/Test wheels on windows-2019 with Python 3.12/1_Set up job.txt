@@ -1,0 +1,45 @@
+﻿2026-01-05T01:33:08.1618073Z Current runner version: '2.330.0'
+2026-01-05T01:33:08.1666286Z ##[group]Runner Image Provisioner
+2026-01-05T01:33:08.1667025Z Hosted Compute Agent
+2026-01-05T01:33:08.1667481Z Version: 20251202.455
+2026-01-05T01:33:08.1668001Z Commit: 6c10caca4910e198df60de23adf20ad317c474e3
+2026-01-05T01:33:08.1668579Z Build Date: 2025-12-02T15:56:59Z
+2026-01-05T01:33:08.1669163Z Worker ID: {2f478361-ab46-4ca9-a3fd-ef123900dd4e}
+2026-01-05T01:33:08.1669725Z ##[endgroup]
+2026-01-05T01:33:08.1670148Z ##[group]Operating System
+2026-01-05T01:33:08.1670643Z Microsoft Windows Server 2019
+2026-01-05T01:33:08.1671132Z 10.0.17763
+2026-01-05T01:33:08.1671511Z Datacenter
+2026-01-05T01:33:08.1671888Z ##[endgroup]
+2026-01-05T01:33:08.1672284Z ##[group]Runner Image
+2026-01-05T01:33:08.1672703Z Image: windows-2019
+2026-01-05T01:33:08.1673130Z Version: 20250623.2.0
+2026-01-05T01:33:08.1673993Z Included Software: https://github.com/actions/runner-images/blob/win19/20250623.2/images/windows/Windows2019-Readme.md
+2026-01-05T01:33:08.1675658Z Image Release: https://github.com/actions/runner-images/releases/tag/win19%2F20250623.2
+2026-01-05T01:33:08.1676432Z ##[endgroup]
+2026-01-05T01:33:08.1678894Z ##[group]GITHUB_TOKEN Permissions
+2026-01-05T01:33:08.1680678Z Actions: write
+2026-01-05T01:33:08.1681167Z ArtifactMetadata: write
+2026-01-05T01:33:08.1681635Z Attestations: write
+2026-01-05T01:33:08.1682061Z Checks: write
+2026-01-05T01:33:08.1682441Z Contents: write
+2026-01-05T01:33:08.1682858Z Deployments: write
+2026-01-05T01:33:08.1683265Z Discussions: write
+2026-01-05T01:33:08.1683678Z Issues: write
+2026-01-05T01:33:08.1684075Z Metadata: read
+2026-01-05T01:33:08.1684972Z Models: read
+2026-01-05T01:33:08.1685407Z Packages: write
+2026-01-05T01:33:08.1685780Z Pages: write
+2026-01-05T01:33:08.1686213Z PullRequests: write
+2026-01-05T01:33:08.1686716Z RepositoryProjects: write
+2026-01-05T01:33:08.1687205Z SecurityEvents: write
+2026-01-05T01:33:08.1687673Z Statuses: write
+2026-01-05T01:33:08.1688065Z ##[endgroup]
+2026-01-05T01:33:08.1690103Z Secret source: Actions
+2026-01-05T01:33:08.1690736Z Prepare workflow directory
+2026-01-05T01:33:08.2027273Z Prepare all required actions
+2026-01-05T01:33:08.2066989Z Getting action download info
+2026-01-05T01:33:08.4833106Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-01-05T01:33:08.9416087Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-01-05T01:33:09.4228394Z Download action repository 'actions/download-artifact@v4' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2026-01-05T01:33:10.0402478Z Complete job name: Test wheels on windows-2019 with Python 3.12

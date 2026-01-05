@@ -1,0 +1,52 @@
+﻿2026-01-05T01:33:10.8583190Z ##[group]Run actions/setup-python@v5
+2026-01-05T01:33:10.8583500Z with:
+2026-01-05T01:33:10.8583720Z   python-version: 3.10
+2026-01-05T01:33:10.8583950Z   check-latest: false
+2026-01-05T01:33:10.8584290Z   token: ***
+2026-01-05T01:33:10.8584500Z   update-environment: true
+2026-01-05T01:33:10.8584750Z   allow-prereleases: false
+2026-01-05T01:33:10.8584960Z   freethreaded: false
+2026-01-05T01:33:10.8585160Z ##[endgroup]
+2026-01-05T01:33:10.9928150Z ##[group]Installed versions
+2026-01-05T01:33:10.9975750Z Version 3.10 was not found in the local cache
+2026-01-05T01:33:11.9954500Z Version 3.10 is available for downloading
+2026-01-05T01:33:11.9955700Z Download from "https://github.com/actions/python-versions/releases/download/3.10.11-11114431484/python-3.10.11-darwin-arm64.tar.gz"
+2026-01-05T01:33:12.6141360Z Extract downloaded archive
+2026-01-05T01:33:12.6261510Z [command]/usr/bin/tar xz -C /Users/runner/work/_temp/29ae0c3b-85fd-4673-b22e-47f168acf4d8 -f /Users/runner/work/_temp/f23ccdf2-62c6-45a6-a7cf-0ff9877e89fb
+2026-01-05T01:33:12.6808730Z Execute installation script
+2026-01-05T01:33:12.6940730Z Check if Python hostedtoolcache folder exist...
+2026-01-05T01:33:12.6981310Z Install Python binaries from prebuilt package
+2026-01-05T01:33:24.4770760Z installer: Package name is Python
+2026-01-05T01:33:24.4771900Z installer: Upgrading at base path /
+2026-01-05T01:33:24.4773030Z installer: The upgrade was successful.
+2026-01-05T01:33:24.4795500Z Create hostedtoolcach symlinks (Required for the backward compatibility)
+2026-01-05T01:33:24.4796020Z Create Python 3.10.11 folder
+2026-01-05T01:33:24.4922020Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-01-05T01:33:24.4987310Z Upgrading pip...
+2026-01-05T01:33:25.5103840Z Looking in links: /var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/tmp402uzn34
+2026-01-05T01:33:25.5105230Z Requirement already satisfied: setuptools in /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages (65.5.0)
+2026-01-05T01:33:25.5107910Z Requirement already satisfied: pip in /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages (23.0.1)
+2026-01-05T01:33:25.9042770Z Collecting pip
+2026-01-05T01:33:25.9699060Z Downloading pip-25.3-py3-none-any.whl (1.8 MB)
+2026-01-05T01:33:26.0444540Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 24.5 MB/s eta 0:00:00
+2026-01-05T01:33:26.0444930Z 
+2026-01-05T01:33:26.0735650Z Installing collected packages: pip
+2026-01-05T01:33:26.0735930Z Attempting uninstall: pip
+2026-01-05T01:33:26.0736390Z Found existing installation: pip 23.0.1
+2026-01-05T01:33:26.1662550Z Uninstalling pip-23.0.1:
+2026-01-05T01:33:26.3269640Z Successfully uninstalled pip-23.0.1
+2026-01-05T01:33:26.8012430Z Successfully installed pip-25.3
+2026-01-05T01:33:26.8325890Z Install OpenSSL certificates
+2026-01-05T01:33:27.2063550Z Collecting certifi
+2026-01-05T01:33:27.2513670Z Downloading certifi-2026.1.4-py3-none-any.whl.metadata (2.5 kB)
+2026-01-05T01:33:27.3072490Z Downloading certifi-2026.1.4-py3-none-any.whl (152 kB)
+2026-01-05T01:33:27.3705950Z Installing collected packages: certifi
+2026-01-05T01:33:27.3755180Z Successfully installed certifi-2026.1.4
+2026-01-05T01:33:27.5358300Z -- pip install --upgrade certifi
+2026-01-05T01:33:27.5358690Z  -- removing any existing file or link
+2026-01-05T01:33:27.5358930Z  -- creating symlink to certifi certificate bundle
+2026-01-05T01:33:27.5359180Z  -- setting permissions
+2026-01-05T01:33:27.5359350Z  -- update complete
+2026-01-05T01:33:27.5402500Z Create complete file
+2026-01-05T01:33:27.5475200Z Successfully set up CPython (3.10.11)
+2026-01-05T01:33:27.5483180Z ##[endgroup]

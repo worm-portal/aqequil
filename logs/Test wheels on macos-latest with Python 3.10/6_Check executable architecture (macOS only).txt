@@ -1,0 +1,17 @@
+﻿2026-01-05T01:33:45.3125200Z ##[group]Run cd "$RUNNER_TEMP"
+2026-01-05T01:33:45.3125520Z [36;1mcd "$RUNNER_TEMP"[0m
+2026-01-05T01:33:45.3125820Z [36;1mecho "Checking architecture of bundled executables..."[0m
+2026-01-05T01:33:45.3126880Z [36;1mpython -c "import aqequil; from aqequil.AqSpeciation import _get_bundled_exe_path; import os; bin_path = _get_bundled_exe_path(); print(f'Binary path: {bin_path}'); import subprocess; result = subprocess.run(['file', os.path.join(bin_path, 'eqpt')], capture_output=True, text=True); print(result.stdout)"[0m
+2026-01-05T01:33:45.3169510Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-01-05T01:33:45.3169810Z env:
+2026-01-05T01:33:45.3170150Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
+2026-01-05T01:33:45.3170560Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.10.11/arm64/lib/pkgconfig
+2026-01-05T01:33:45.3171120Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
+2026-01-05T01:33:45.3171590Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
+2026-01-05T01:33:45.3172100Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.10.11/arm64
+2026-01-05T01:33:45.3172420Z ##[endgroup]
+2026-01-05T01:33:45.3978510Z Checking architecture of bundled executables...
+2026-01-05T01:33:51.6631690Z Matplotlib is building the font cache; this may take a moment.
+2026-01-05T01:33:56.2996650Z Binary path: /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/aqequil/bin
+2026-01-05T01:33:56.2997500Z /Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/aqequil/bin/eqpt: Mach-O 64-bit executable arm64
+2026-01-05T01:33:56.2997970Z 

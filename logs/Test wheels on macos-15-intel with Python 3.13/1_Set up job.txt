@@ -1,0 +1,45 @@
+﻿2026-01-05T01:34:11.2423770Z Current runner version: '2.330.0'
+2026-01-05T01:34:11.2454370Z ##[group]Runner Image Provisioner
+2026-01-05T01:34:11.2455310Z Hosted Compute Agent
+2026-01-05T01:34:11.2455950Z Version: 20251211.462
+2026-01-05T01:34:11.2456660Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2026-01-05T01:34:11.2457540Z Build Date: 2025-12-11T16:28:49Z
+2026-01-05T01:34:11.2458340Z Worker ID: {31b5ed64-f2fe-4b43-b471-49ae9bcf14af}
+2026-01-05T01:34:11.2459180Z ##[endgroup]
+2026-01-05T01:34:11.2459790Z ##[group]Operating System
+2026-01-05T01:34:11.2460450Z macOS
+2026-01-05T01:34:11.2460960Z 15.7.3
+2026-01-05T01:34:11.2461470Z 24G419
+2026-01-05T01:34:11.2461980Z ##[endgroup]
+2026-01-05T01:34:11.2462530Z ##[group]Runner Image
+2026-01-05T01:34:11.2463150Z Image: macos-15
+2026-01-05T01:34:11.2463710Z Version: 20251216.0081.1
+2026-01-05T01:34:11.2465120Z Included Software: https://github.com/actions/runner-images/blob/macos-15/20251216.0081/images/macos/macos-15-Readme.md
+2026-01-05T01:34:11.2467200Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15%2F20251216.0081
+2026-01-05T01:34:11.2468630Z ##[endgroup]
+2026-01-05T01:34:11.2472800Z ##[group]GITHUB_TOKEN Permissions
+2026-01-05T01:34:11.2474960Z Actions: write
+2026-01-05T01:34:11.2475600Z ArtifactMetadata: write
+2026-01-05T01:34:11.2476250Z Attestations: write
+2026-01-05T01:34:11.2476850Z Checks: write
+2026-01-05T01:34:11.2477400Z Contents: write
+2026-01-05T01:34:11.2477970Z Deployments: write
+2026-01-05T01:34:11.2478570Z Discussions: write
+2026-01-05T01:34:11.2479160Z Issues: write
+2026-01-05T01:34:11.2479730Z Metadata: read
+2026-01-05T01:34:11.2480290Z Models: read
+2026-01-05T01:34:11.2480860Z Packages: write
+2026-01-05T01:34:11.2481430Z Pages: write
+2026-01-05T01:34:11.2481990Z PullRequests: write
+2026-01-05T01:34:11.2482740Z RepositoryProjects: write
+2026-01-05T01:34:11.2483440Z SecurityEvents: write
+2026-01-05T01:34:11.2484070Z Statuses: write
+2026-01-05T01:34:11.2484650Z ##[endgroup]
+2026-01-05T01:34:11.2487440Z Secret source: Actions
+2026-01-05T01:34:11.2488260Z Prepare workflow directory
+2026-01-05T01:34:11.2934580Z Prepare all required actions
+2026-01-05T01:34:11.2992050Z Getting action download info
+2026-01-05T01:34:11.7983260Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-01-05T01:34:11.9916950Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-01-05T01:34:12.0960410Z Download action repository 'actions/download-artifact@v4' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2026-01-05T01:34:13.0155010Z Complete job name: Test wheels on macos-15-intel with Python 3.13

@@ -1,0 +1,39 @@
+﻿2026-01-05T01:36:18.0799722Z ##[group]Run actions/download-artifact@v4
+2026-01-05T01:36:18.0800745Z with:
+2026-01-05T01:36:18.0801166Z   path: dist
+2026-01-05T01:36:18.0801602Z   merge-multiple: true
+2026-01-05T01:36:18.0802117Z   repository: worm-portal/aqequil
+2026-01-05T01:36:18.0802680Z   run-id: 20702070857
+2026-01-05T01:36:18.0803318Z ##[endgroup]
+2026-01-05T01:36:18.5153307Z Found 5 artifact(s)
+2026-01-05T01:36:18.5156113Z No input name, artifact-ids or pattern filtered specified, downloading all artifacts
+2026-01-05T01:36:18.5158575Z Preparing to download the following artifacts:
+2026-01-05T01:36:18.5161801Z - wheels-macos-15-intel (ID: 5019973661, Size: 26148667, Expected Digest: sha256:40ecc783ea82ded74149a05ecf5b655670ce481fd76ab07eaf1d605ad84d28cb)
+2026-01-05T01:36:18.5166876Z - wheels-windows-2019 (ID: 5019935684, Size: 23024769, Expected Digest: sha256:b79d51ee2f30d1247dff1e95897f46290a31dfe3822f377c914f152c5233a68a)
+2026-01-05T01:36:18.5172639Z - wheels-macos-latest (ID: 5019930544, Size: 24541316, Expected Digest: sha256:2f97e24188ff83f6551a913b53fdccfb8f5d5a9f65e4979d0734e1ef8a9e1c42)
+2026-01-05T01:36:18.5178832Z - wheels-ubuntu-latest (ID: 5019911133, Size: 24825482, Expected Digest: sha256:a6d43ff313b13b3a568b82ecd8c330433356ae553a4f11dccf013c81efd55f84)
+2026-01-05T01:36:18.5184751Z - sdist (ID: 5019870152, Size: 3147389, Expected Digest: sha256:659be1f652956bef5441040fa715c6957801dbb524317b33fa7f90be29feb60b)
+2026-01-05T01:36:18.6576920Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-6f850a1f-ea41-5e26-a818-bfd80f2283be/artifacts/4eca8f0ccca97b165c4a1ab157d96140287a95618c1d8fd484d0f307b4615528.zip
+2026-01-05T01:36:18.6583539Z Starting download of artifact to: /home/runner/work/aqequil/aqequil/dist
+2026-01-05T01:36:18.7554833Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-66f6ef14-6506-5d60-8448-8ebc37024ebe/artifacts/714772a9f82b2aeb4fa5f7092d00fe4ac4c9cdeb6800840b6ed39ea64c4d785a.zip
+2026-01-05T01:36:18.7561521Z Starting download of artifact to: /home/runner/work/aqequil/aqequil/dist
+2026-01-05T01:36:18.7719318Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-dc62d33d-f61e-5c66-b8b0-b0fb4e2697e9/artifacts/2d74564dac50ace46aa55f3b0736466cb259cb536408fda096bfbd335df3bf65.zip
+2026-01-05T01:36:18.7729068Z Starting download of artifact to: /home/runner/work/aqequil/aqequil/dist
+2026-01-05T01:36:18.7742661Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-10b32453-0282-5d43-9cab-5c3accd2aafc/artifacts/2d6b53937ef398bfc8399b6b7ef6373c2af7892c0717a43682f51187fe1997a9.zip
+2026-01-05T01:36:18.7748407Z Starting download of artifact to: /home/runner/work/aqequil/aqequil/dist
+2026-01-05T01:36:18.7982542Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-f38c2346-270b-5886-be73-912b89ebb7ce/artifacts/955ef54be1c50fb13a2980f81c148b7bb4d63dbb4dfacd45c21fd4e1b6813100.zip
+2026-01-05T01:36:18.7988274Z Starting download of artifact to: /home/runner/work/aqequil/aqequil/dist
+2026-01-05T01:36:18.9173778Z (node:1999) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-01-05T01:36:18.9178658Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-01-05T01:36:19.4725226Z SHA256 digest of downloaded artifact is 659be1f652956bef5441040fa715c6957801dbb524317b33fa7f90be29feb60b
+2026-01-05T01:36:19.4729919Z Artifact download completed successfully.
+2026-01-05T01:36:20.3358601Z SHA256 digest of downloaded artifact is b79d51ee2f30d1247dff1e95897f46290a31dfe3822f377c914f152c5233a68a
+2026-01-05T01:36:20.3360349Z Artifact download completed successfully.
+2026-01-05T01:36:20.3588967Z SHA256 digest of downloaded artifact is 40ecc783ea82ded74149a05ecf5b655670ce481fd76ab07eaf1d605ad84d28cb
+2026-01-05T01:36:20.3590382Z Artifact download completed successfully.
+2026-01-05T01:36:20.3811597Z SHA256 digest of downloaded artifact is a6d43ff313b13b3a568b82ecd8c330433356ae553a4f11dccf013c81efd55f84
+2026-01-05T01:36:20.3812891Z Artifact download completed successfully.
+2026-01-05T01:36:20.3929319Z SHA256 digest of downloaded artifact is 2f97e24188ff83f6551a913b53fdccfb8f5d5a9f65e4979d0734e1ef8a9e1c42
+2026-01-05T01:36:20.3930472Z Artifact download completed successfully.
+2026-01-05T01:36:20.3932616Z Total of 5 artifact(s) downloaded
+2026-01-05T01:36:20.3937875Z Download artifact has finished successfully

@@ -1,0 +1,25 @@
+﻿2026-01-05T01:33:12.1663900Z ##[group]Run actions/download-artifact@v4
+2026-01-05T01:33:12.1665180Z with:
+2026-01-05T01:33:12.1665810Z   name: wheels-macos-latest
+2026-01-05T01:33:12.1666520Z   path: wheelhouse
+2026-01-05T01:33:12.1667190Z   merge-multiple: false
+2026-01-05T01:33:12.1667900Z   repository: worm-portal/aqequil
+2026-01-05T01:33:12.1668640Z   run-id: 20702070857
+2026-01-05T01:33:12.1669250Z env:
+2026-01-05T01:33:12.1670080Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.11.9/arm64
+2026-01-05T01:33:12.1671520Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.11.9/arm64/lib/pkgconfig
+2026-01-05T01:33:12.1672940Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/arm64
+2026-01-05T01:33:12.1674220Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/arm64
+2026-01-05T01:33:12.1675520Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/arm64
+2026-01-05T01:33:12.1676530Z ##[endgroup]
+2026-01-05T01:33:12.3420940Z Downloading single artifact
+2026-01-05T01:33:12.7062170Z Preparing to download the following artifacts:
+2026-01-05T01:33:12.7063300Z - wheels-macos-latest (ID: 5019930544, Size: 24541316, Expected Digest: sha256:2f97e24188ff83f6551a913b53fdccfb8f5d5a9f65e4979d0734e1ef8a9e1c42)
+2026-01-05T01:33:12.9297950Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-f38c2346-270b-5886-be73-912b89ebb7ce/artifacts/955ef54be1c50fb13a2980f81c148b7bb4d63dbb4dfacd45c21fd4e1b6813100.zip
+2026-01-05T01:33:12.9399490Z Starting download of artifact to: /Users/runner/work/aqequil/aqequil/wheelhouse
+2026-01-05T01:33:13.1844040Z (node:20732) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-01-05T01:33:13.1845340Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-01-05T01:33:15.3458670Z SHA256 digest of downloaded artifact is 2f97e24188ff83f6551a913b53fdccfb8f5d5a9f65e4979d0734e1ef8a9e1c42
+2026-01-05T01:33:15.3460860Z Artifact download completed successfully.
+2026-01-05T01:33:15.3461390Z Total of 1 artifact(s) downloaded
+2026-01-05T01:33:15.3467470Z Download artifact has finished successfully

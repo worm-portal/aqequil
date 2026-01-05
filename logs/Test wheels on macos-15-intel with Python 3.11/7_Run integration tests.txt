@@ -1,0 +1,155 @@
+﻿2026-01-05T01:35:11.9909010Z ##[group]Run cp "$GITHUB_WORKSPACE/test_integration.py" "$RUNNER_TEMP/"
+2026-01-05T01:35:11.9910020Z [36;1mcp "$GITHUB_WORKSPACE/test_integration.py" "$RUNNER_TEMP/"[0m
+2026-01-05T01:35:11.9910740Z [36;1mcd "$RUNNER_TEMP"[0m
+2026-01-05T01:35:11.9911300Z [36;1mpython test_integration.py[0m
+2026-01-05T01:35:11.9970790Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-01-05T01:35:11.9971430Z env:
+2026-01-05T01:35:11.9972010Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+2026-01-05T01:35:11.9972950Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.11.9/x64/lib/pkgconfig
+2026-01-05T01:35:11.9973910Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+2026-01-05T01:35:11.9974790Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+2026-01-05T01:35:11.9975660Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.11.9/x64
+2026-01-05T01:35:11.9976330Z ##[endgroup]
+2026-01-05T01:35:45.6777570Z 
+2026-01-05T01:35:45.6778180Z ============================================================
+2026-01-05T01:35:45.6778920Z AQEQUIL INTEGRATION TEST SUITE
+2026-01-05T01:35:45.6779420Z ============================================================
+2026-01-05T01:35:45.6780000Z Python: 3.11.9
+2026-01-05T01:35:45.6780340Z Platform: darwin
+2026-01-05T01:35:45.6780730Z Architecture: x86_64
+2026-01-05T01:35:45.6781160Z ============================================================
+2026-01-05T01:35:45.6781730Z ============================================================
+2026-01-05T01:35:45.6782290Z Test 1: Checking for bundled EQ3/6 executables
+2026-01-05T01:35:45.6782850Z ============================================================
+2026-01-05T01:35:45.6783950Z [OK] Found bundled executables at: /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/aqequil/bin
+2026-01-05T01:35:45.6785030Z   [OK] eq3nr (1.08 MB)
+2026-01-05T01:35:45.6785410Z   [OK] eq6 (1.88 MB)
+2026-01-05T01:35:45.6785790Z   [OK] eqpt (0.64 MB)
+2026-01-05T01:35:45.6786020Z 
+2026-01-05T01:35:45.6786250Z ============================================================
+2026-01-05T01:35:45.6786800Z Test 2: Testing aqequil import and basic usage
+2026-01-05T01:35:45.6787360Z ============================================================
+2026-01-05T01:35:45.6787910Z [OK] Successfully imported aqequil
+2026-01-05T01:35:45.6789050Z [OK] Found test data at: /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/aqequil/test_data/input_example_wrm.csv
+2026-01-05T01:35:45.6790110Z 
+2026-01-05T01:35:45.6802700Z ============================================================
+2026-01-05T01:35:45.6803400Z Test 3: Downloading latest data0.wrm from WORM-db
+2026-01-05T01:35:45.6803990Z ============================================================
+2026-01-05T01:35:45.6805020Z Downloading data0.wrm from https://raw.githubusercontent.com/worm-portal/WORM-db/master/data0.wrm...
+2026-01-05T01:35:45.6806150Z [OK] Downloaded data0.wrm (573.8 KB)
+2026-01-05T01:35:45.6806770Z [OK] Copied data0.wrm to test_data (replaced existing)
+2026-01-05T01:35:45.6807440Z [OK] Copied data0.wrm to databases (replaced existing)
+2026-01-05T01:35:45.6807840Z 
+2026-01-05T01:35:45.6808030Z ============================================================
+2026-01-05T01:35:45.6809540Z Test 4: Testing runeqpt (data0 to data1 conversion)
+2026-01-05T01:35:45.6810110Z ============================================================
+2026-01-05T01:35:45.6810890Z [INFO] Working directory: /var/folders/6k/3_2ylbdd4rl8w3kbs55s3kk80000gn/T/tmpzjkdh1y3
+2026-01-05T01:35:45.6811690Z [OK] Copied data0.wrm to working directory
+2026-01-05T01:35:45.6812180Z Running EQPT on data0.wrm...
+2026-01-05T01:35:45.6812610Z [OK] EQPT completed
+2026-01-05T01:35:45.6813000Z [OK] data1.wrm created (0.36 MB)
+2026-01-05T01:35:45.6813550Z [OK] Copied data1.wrm to bundled databases (replaced existing)
+2026-01-05T01:35:45.6814020Z 
+2026-01-05T01:35:45.6814200Z ============================================================
+2026-01-05T01:35:45.6814760Z Test 5: Testing simple speciation (wrm database)
+2026-01-05T01:35:45.6815930Z ============================================================
+2026-01-05T01:35:45.6817160Z Running speciation on /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/aqequil/test_data/input_example_wrm.csv...
+2026-01-05T01:35:45.6818630Z [INFO] Working directory: /var/folders/6k/3_2ylbdd4rl8w3kbs55s3kk80000gn/T/tmpuslbqf5l
+2026-01-05T01:35:45.6819440Z [OK] Copied data0.wrm to working directory
+2026-01-05T01:35:45.6819940Z Running EQPT to create data1.wrm...
+2026-01-05T01:35:45.6820430Z [OK] EQPT completed, data1.wrm created
+2026-01-05T01:35:45.6820950Z [OK] AqEquil instance created with wrm database
+2026-01-05T01:35:45.6822110Z The input file column 'logfO2' will be used to set sample redox state. If a another column is desired, set it manually using the redox_flag parameter.
+2026-01-05T01:35:45.6823620Z No 'charge_balance_on' column found in input file. Defaulting to no charge balancing for all samples.
+2026-01-05T01:35:45.6825040Z Warning: no 'logfO2' column found. Attempting to find a column for aqueous O2 to estimate logfO2 at sample temperature and pressure...
+2026-01-05T01:35:45.6826140Z Using wrm to speciate Bison Pool
+2026-01-05T01:35:45.6826610Z Using wrm to speciate Spray Geyser Source
+2026-01-05T01:35:45.6827640Z Warning: non-numeric aqueous O2 value in sample Crater Hills Geyser. Resorting to using Log fO2 (log bars) with a value of -6
+2026-01-05T01:35:45.6828710Z Using wrm to speciate Crater Hills Geyser
+2026-01-05T01:35:45.6829220Z Using wrm to speciate Ambergris
+2026-01-05T01:35:45.6829650Z Using wrm to speciate MLS Source
+2026-01-05T01:35:45.6830110Z Using wrm to speciate Gas Crack
+2026-01-05T01:35:45.6830540Z Using wrm to speciate Snail
+2026-01-05T01:35:45.6830930Z Finished!
+2026-01-05T01:35:45.6831290Z [OK] Speciation completed
+2026-01-05T01:35:45.6831760Z [OK] aq_distribution is a DataFrame with 81 rows
+2026-01-05T01:35:45.6832130Z 
+2026-01-05T01:35:45.6832300Z ============================================================
+2026-01-05T01:35:45.6832820Z Test 6: Testing water-rock reaction
+2026-01-05T01:35:45.6833290Z ============================================================
+2026-01-05T01:35:45.6834470Z Running speciation on /Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/aqequil/test_data/input_example_wrm.csv...
+2026-01-05T01:35:45.6835910Z [INFO] Working directory: /var/folders/6k/3_2ylbdd4rl8w3kbs55s3kk80000gn/T/tmpcjtiizro
+2026-01-05T01:35:45.6836850Z [OK] Copied wrm_data_latest.csv to bundled databases (replaced existing)
+2026-01-05T01:35:45.6837670Z [OK] Copied elements.csv to bundled databases (replaced existing)
+2026-01-05T01:35:45.6838610Z [OK] Copied solid_solutions.csv to bundled databases (replaced existing)
+2026-01-05T01:35:45.6839480Z [OK] Copied wrm_data_logk.csv to bundled databases (replaced existing)
+2026-01-05T01:35:45.6840300Z [OK] Copied wrm_data_logk_s.csv to bundled databases (replaced existing)
+2026-01-05T01:35:45.6841630Z The input file column 'logfO2' will be used to set sample redox state. If a another column is desired, set it manually using the redox_flag parameter.
+2026-01-05T01:35:45.6842930Z Getting wrm_data_latest.csv ready. This will take a moment...
+2026-01-05T01:35:45.6844230Z No 'charge_balance_on' column found in input file. Defaulting to no charge balancing for all samples.
+2026-01-05T01:35:45.6845520Z Warning: a column for Pressure was not found in the sample input file. Defaulting to water saturation pressure...
+2026-01-05T01:35:45.6847020Z Warning: no 'logfO2' column found. Attempting to find a column for aqueous O2 to estimate logfO2 at sample temperature and pressure...
+2026-01-05T01:35:45.6848130Z Using wrm_data_latest.csv to speciate Bison Pool
+2026-01-05T01:35:45.6848750Z Using wrm_data_latest.csv to speciate Spray Geyser Source
+2026-01-05T01:35:45.6849840Z Warning: non-numeric aqueous O2 value in sample Crater Hills Geyser. Resorting to using Log fO2 (log bars) with a value of -6
+2026-01-05T01:35:45.6850980Z Using wrm_data_latest.csv to speciate Crater Hills Geyser
+2026-01-05T01:35:45.6851940Z Using wrm_data_latest.csv to speciate Ambergris
+2026-01-05T01:35:45.6852500Z Using wrm_data_latest.csv to speciate MLS Source
+2026-01-05T01:35:45.6853090Z Using wrm_data_latest.csv to speciate Gas Crack
+2026-01-05T01:35:45.6853690Z Using wrm_data_latest.csv to speciate Snail
+2026-01-05T01:35:45.6854150Z Finished!
+2026-01-05T01:35:45.6854500Z [OK] Initial speciation completed
+2026-01-05T01:35:45.6854960Z [OK] Reaction prepared
+2026-01-05T01:35:45.6855340Z Running water-rock reaction...
+2026-01-05T01:35:45.6855850Z Using wrm_data_latest.csv to react Bison.Pool
+2026-01-05T01:35:45.6856210Z 
+2026-01-05T01:35:45.6856530Z The sample 'Bison Pool' experienced errors during the reaction:
+2026-01-05T01:35:45.6857280Z  * Error - (EQ6/intmtb) A mass balance is defined on the input
+2026-01-05T01:35:45.6857990Z        file for NH4+ (Aqueous solution), but this species isn't in the
+2026-01-05T01:35:45.6858810Z        currently active basis set. Either it isn't on the current data file
+2026-01-05T01:35:45.6859610Z        or it has been suppressed as by an nxmod or iopt(15) option.
+2026-01-05T01:35:45.6860060Z 
+2026-01-05T01:35:45.6860680Z Mass transfer results for sample 'Bison Pool' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:35:45.6861530Z 
+2026-01-05T01:35:45.6861780Z Using wrm_data_latest.csv to react Spray.Geyser.Source
+2026-01-05T01:35:45.6862210Z 
+2026-01-05T01:35:45.6862540Z The sample 'Spray Geyser Source' experienced errors during the reaction:
+2026-01-05T01:35:45.6863340Z  * Error - (EQ6/intrct) The reactant antigorite isn't among
+2026-01-05T01:35:45.6863910Z        the loaded minerals.
+2026-01-05T01:35:45.6864190Z 
+2026-01-05T01:35:45.6864880Z Mass transfer results for sample 'Spray Geyser Source' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:35:45.6865800Z 
+2026-01-05T01:35:45.6866030Z Using wrm_data_latest.csv to react Crater.Hills.Geyser
+2026-01-05T01:35:45.6866640Z Using wrm_data_latest.csv to react Ambergris
+2026-01-05T01:35:45.6867170Z Using wrm_data_latest.csv to react MLS.Source
+2026-01-05T01:35:45.6867740Z Using wrm_data_latest.csv to react Gas.Crack
+2026-01-05T01:35:45.6868090Z 
+2026-01-05T01:35:45.6868380Z The sample 'Gas Crack' experienced errors during the reaction:
+2026-01-05T01:35:45.6869200Z  * Error - (EQ6/path) The equilibrium calculation failed at the initial value
+2026-01-05T01:35:45.6869870Z        of reaction progress.
+2026-01-05T01:35:45.6870160Z 
+2026-01-05T01:35:45.6870770Z Mass transfer results for sample 'Gas Crack' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:35:45.6871580Z 
+2026-01-05T01:35:45.6871790Z Using wrm_data_latest.csv to react Snail
+2026-01-05T01:35:45.6872120Z 
+2026-01-05T01:35:45.6872400Z The sample 'Snail' experienced errors during the reaction:
+2026-01-05T01:35:45.6873160Z  * Error - (EQ6/path) The equilibrium calculation failed at the initial value
+2026-01-05T01:35:45.6873870Z        of reaction progress.
+2026-01-05T01:35:45.6874140Z 
+2026-01-05T01:35:45.6874760Z Mass transfer results for sample 'Snail' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:35:45.6875960Z 
+2026-01-05T01:35:45.6876160Z [OK] Reaction completed
+2026-01-05T01:35:45.6876590Z [OK] misc_params is a DataFrame with 12 rows
+2026-01-05T01:35:45.6876960Z 
+2026-01-05T01:35:45.6877120Z ============================================================
+2026-01-05T01:35:45.6877610Z TEST SUMMARY
+2026-01-05T01:35:45.6877950Z ============================================================
+2026-01-05T01:35:45.6878460Z [PASS] Bundled Executables
+2026-01-05T01:35:45.6878870Z [PASS] Import and Basic Usage
+2026-01-05T01:35:45.6879310Z [PASS] Download Latest data0.wrm
+2026-01-05T01:35:45.6879790Z [PASS] EQPT Data0 to Data1 Conversion
+2026-01-05T01:35:45.6880290Z [PASS] Simple Speciation (wrm database)
+2026-01-05T01:35:45.6880770Z [PASS] Water-Rock Reaction
+2026-01-05T01:35:45.6881190Z ============================================================
+2026-01-05T01:35:45.6881890Z 
+2026-01-05T01:35:45.6882040Z [PASS] All tests passed!

@@ -1,0 +1,1497 @@
+﻿2026-01-05T01:06:18.4521506Z Current runner version: '2.330.0'
+2026-01-05T01:06:18.4546056Z ##[group]Runner Image Provisioner
+2026-01-05T01:06:18.4546875Z Hosted Compute Agent
+2026-01-05T01:06:18.4547458Z Version: 20251211.462
+2026-01-05T01:06:18.4548076Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2026-01-05T01:06:18.4548788Z Build Date: 2025-12-11T16:28:49Z
+2026-01-05T01:06:18.4549461Z Worker ID: {b0cbb250-b4f2-432c-b31e-e4a4a8c33f04}
+2026-01-05T01:06:18.4550184Z ##[endgroup]
+2026-01-05T01:06:18.4550671Z ##[group]Operating System
+2026-01-05T01:06:18.4551268Z Ubuntu
+2026-01-05T01:06:18.4551719Z 24.04.3
+2026-01-05T01:06:18.4552171Z LTS
+2026-01-05T01:06:18.4552571Z ##[endgroup]
+2026-01-05T01:06:18.4553162Z ##[group]Runner Image
+2026-01-05T01:06:18.4553692Z Image: ubuntu-24.04
+2026-01-05T01:06:18.4554147Z Version: 20251215.174.1
+2026-01-05T01:06:18.4555419Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2026-01-05T01:06:18.4556904Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2026-01-05T01:06:18.4557954Z ##[endgroup]
+2026-01-05T01:06:18.4560494Z ##[group]GITHUB_TOKEN Permissions
+2026-01-05T01:06:18.4562472Z Actions: write
+2026-01-05T01:06:18.4563023Z ArtifactMetadata: write
+2026-01-05T01:06:18.4563557Z Attestations: write
+2026-01-05T01:06:18.4564162Z Checks: write
+2026-01-05T01:06:18.4565142Z Contents: write
+2026-01-05T01:06:18.4565616Z Deployments: write
+2026-01-05T01:06:18.4566204Z Discussions: write
+2026-01-05T01:06:18.4566664Z Issues: write
+2026-01-05T01:06:18.4567146Z Metadata: read
+2026-01-05T01:06:18.4567662Z Models: read
+2026-01-05T01:06:18.4568163Z Packages: write
+2026-01-05T01:06:18.4568618Z Pages: write
+2026-01-05T01:06:18.4569153Z PullRequests: write
+2026-01-05T01:06:18.4569824Z RepositoryProjects: write
+2026-01-05T01:06:18.4570355Z SecurityEvents: write
+2026-01-05T01:06:18.4570954Z Statuses: write
+2026-01-05T01:06:18.4571424Z ##[endgroup]
+2026-01-05T01:06:18.4573857Z Secret source: Actions
+2026-01-05T01:06:18.4575281Z Prepare workflow directory
+2026-01-05T01:06:18.4902655Z Prepare all required actions
+2026-01-05T01:06:18.4952322Z Getting action download info
+2026-01-05T01:06:18.9892838Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-01-05T01:06:19.1165680Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-01-05T01:06:19.2469946Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-01-05T01:06:19.5279978Z Complete job name: Build source distribution
+2026-01-05T01:06:19.6094983Z ##[group]Run actions/checkout@v4
+2026-01-05T01:06:19.6096252Z with:
+2026-01-05T01:06:19.6096980Z   repository: worm-portal/aqequil
+2026-01-05T01:06:19.6098186Z   token: ***
+2026-01-05T01:06:19.6098873Z   ssh-strict: true
+2026-01-05T01:06:19.6099576Z   ssh-user: git
+2026-01-05T01:06:19.6100305Z   persist-credentials: true
+2026-01-05T01:06:19.6101123Z   clean: true
+2026-01-05T01:06:19.6101876Z   sparse-checkout-cone-mode: true
+2026-01-05T01:06:19.6102757Z   fetch-depth: 1
+2026-01-05T01:06:19.6103457Z   fetch-tags: false
+2026-01-05T01:06:19.6104183Z   show-progress: true
+2026-01-05T01:06:19.6105140Z   lfs: false
+2026-01-05T01:06:19.6105809Z   submodules: false
+2026-01-05T01:06:19.6106541Z   set-safe-directory: true
+2026-01-05T01:06:19.6107613Z ##[endgroup]
+2026-01-05T01:06:19.7212065Z Syncing repository: worm-portal/aqequil
+2026-01-05T01:06:19.7214963Z ##[group]Getting Git version info
+2026-01-05T01:06:19.7216236Z Working directory is '/home/runner/work/aqequil/aqequil'
+2026-01-05T01:06:19.7218106Z [command]/usr/bin/git version
+2026-01-05T01:06:19.7292307Z git version 2.52.0
+2026-01-05T01:06:19.7321175Z ##[endgroup]
+2026-01-05T01:06:19.7343430Z Temporarily overriding HOME='/home/runner/work/_temp/4e0d7398-8c7e-4ca5-bf10-504b1c953e54' before making global git config changes
+2026-01-05T01:06:19.7348493Z Adding repository directory to the temporary git global config as a safe directory
+2026-01-05T01:06:19.7351027Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/aqequil/aqequil
+2026-01-05T01:06:19.7391216Z Deleting the contents of '/home/runner/work/aqequil/aqequil'
+2026-01-05T01:06:19.7395220Z ##[group]Initializing the repository
+2026-01-05T01:06:19.7399348Z [command]/usr/bin/git init /home/runner/work/aqequil/aqequil
+2026-01-05T01:06:19.7517220Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-01-05T01:06:19.7519481Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-01-05T01:06:19.7522092Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-01-05T01:06:19.7523681Z hint: call:
+2026-01-05T01:06:19.7524673Z hint:
+2026-01-05T01:06:19.7525665Z hint: 	git config --global init.defaultBranch <name>
+2026-01-05T01:06:19.7527041Z hint:
+2026-01-05T01:06:19.7528088Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-01-05T01:06:19.7529822Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-01-05T01:06:19.7531208Z hint:
+2026-01-05T01:06:19.7531873Z hint: 	git branch -m <name>
+2026-01-05T01:06:19.7533044Z hint:
+2026-01-05T01:06:19.7534368Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-01-05T01:06:19.7536329Z Initialized empty Git repository in /home/runner/work/aqequil/aqequil/.git/
+2026-01-05T01:06:19.7539339Z [command]/usr/bin/git remote add origin https://github.com/worm-portal/aqequil
+2026-01-05T01:06:19.7571317Z ##[endgroup]
+2026-01-05T01:06:19.7572662Z ##[group]Disabling automatic garbage collection
+2026-01-05T01:06:19.7575218Z [command]/usr/bin/git config --local gc.auto 0
+2026-01-05T01:06:19.7604828Z ##[endgroup]
+2026-01-05T01:06:19.7606051Z ##[group]Setting up auth
+2026-01-05T01:06:19.7611667Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-01-05T01:06:19.7641691Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-01-05T01:06:19.7993028Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-01-05T01:06:19.8028227Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-01-05T01:06:19.8250234Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-01-05T01:06:19.8286026Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-01-05T01:06:19.8512563Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-01-05T01:06:19.8549035Z ##[endgroup]
+2026-01-05T01:06:19.8551302Z ##[group]Fetching the repository
+2026-01-05T01:06:19.8560640Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0fba8641708a9a29f5cf75d5e1aa5af56402a902:refs/tags/v1.0.1
+2026-01-05T01:06:20.4999518Z From https://github.com/worm-portal/aqequil
+2026-01-05T01:06:20.5000192Z  * [new ref]         0fba8641708a9a29f5cf75d5e1aa5af56402a902 -> v1.0.1
+2026-01-05T01:06:20.5028596Z ##[endgroup]
+2026-01-05T01:06:20.5029533Z ##[group]Determining the checkout info
+2026-01-05T01:06:20.5030962Z ##[endgroup]
+2026-01-05T01:06:20.5036794Z [command]/usr/bin/git sparse-checkout disable
+2026-01-05T01:06:20.5078527Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-01-05T01:06:20.5104193Z ##[group]Checking out the ref
+2026-01-05T01:06:20.5109150Z [command]/usr/bin/git checkout --progress --force refs/tags/v1.0.1
+2026-01-05T01:06:20.6054906Z Note: switching to 'refs/tags/v1.0.1'.
+2026-01-05T01:06:20.6055716Z 
+2026-01-05T01:06:20.6056322Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-01-05T01:06:20.6058231Z changes and commit them, and you can discard any commits you make in this
+2026-01-05T01:06:20.6059300Z state without impacting any branches by switching back to a branch.
+2026-01-05T01:06:20.6059806Z 
+2026-01-05T01:06:20.6060151Z If you want to create a new branch to retain commits you create, you may
+2026-01-05T01:06:20.6060949Z do so (now or later) by using -c with the switch command. Example:
+2026-01-05T01:06:20.6061417Z 
+2026-01-05T01:06:20.6061590Z   git switch -c <new-branch-name>
+2026-01-05T01:06:20.6061840Z 
+2026-01-05T01:06:20.6061997Z Or undo this operation with:
+2026-01-05T01:06:20.6062297Z 
+2026-01-05T01:06:20.6062483Z   git switch -
+2026-01-05T01:06:20.6062737Z 
+2026-01-05T01:06:20.6063101Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-01-05T01:06:20.6063754Z 
+2026-01-05T01:06:20.6064479Z HEAD is now at 0fba864 Add automatic versioning from git tags using setuptools_scm
+2026-01-05T01:06:20.6066507Z ##[endgroup]
+2026-01-05T01:06:20.6103064Z [command]/usr/bin/git log -1 --format=%H
+2026-01-05T01:06:20.6125612Z 0fba8641708a9a29f5cf75d5e1aa5af56402a902
+2026-01-05T01:06:20.6372153Z ##[group]Run actions/setup-python@v5
+2026-01-05T01:06:20.6372606Z with:
+2026-01-05T01:06:20.6372953Z   python-version: 3.11
+2026-01-05T01:06:20.6373315Z   check-latest: false
+2026-01-05T01:06:20.6373808Z   token: ***
+2026-01-05T01:06:20.6374152Z   update-environment: true
+2026-01-05T01:06:20.6374804Z   allow-prereleases: false
+2026-01-05T01:06:20.6375164Z   freethreaded: false
+2026-01-05T01:06:20.6375491Z ##[endgroup]
+2026-01-05T01:06:20.8083122Z ##[group]Installed versions
+2026-01-05T01:06:20.8834822Z Successfully set up CPython (3.11.14)
+2026-01-05T01:06:20.8836177Z ##[endgroup]
+2026-01-05T01:06:20.8956188Z ##[group]Run python -m pip install build
+2026-01-05T01:06:20.8956718Z [36;1mpython -m pip install build[0m
+2026-01-05T01:06:20.9172680Z shell: /usr/bin/bash -e {0}
+2026-01-05T01:06:20.9173100Z env:
+2026-01-05T01:06:20.9173501Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:20.9174107Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2026-01-05T01:06:20.9174875Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:20.9175394Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:20.9175911Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:20.9176429Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2026-01-05T01:06:20.9176859Z ##[endgroup]
+2026-01-05T01:06:24.1976474Z Collecting build
+2026-01-05T01:06:24.2539360Z   Downloading build-1.3.0-py3-none-any.whl.metadata (5.6 kB)
+2026-01-05T01:06:24.2757024Z Collecting packaging>=19.1 (from build)
+2026-01-05T01:06:24.2801142Z   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2026-01-05T01:06:24.2911877Z Collecting pyproject_hooks (from build)
+2026-01-05T01:06:24.2943656Z   Downloading pyproject_hooks-1.2.0-py3-none-any.whl.metadata (1.3 kB)
+2026-01-05T01:06:24.3014025Z Downloading build-1.3.0-py3-none-any.whl (23 kB)
+2026-01-05T01:06:24.3135566Z Downloading packaging-25.0-py3-none-any.whl (66 kB)
+2026-01-05T01:06:24.3241214Z Downloading pyproject_hooks-1.2.0-py3-none-any.whl (10 kB)
+2026-01-05T01:06:24.3712663Z Installing collected packages: pyproject_hooks, packaging, build
+2026-01-05T01:06:24.4398201Z 
+2026-01-05T01:06:24.4407484Z Successfully installed build-1.3.0 packaging-25.0 pyproject_hooks-1.2.0
+2026-01-05T01:06:24.5837229Z ##[group]Run python -m build --sdist
+2026-01-05T01:06:24.5837582Z [36;1mpython -m build --sdist[0m
+2026-01-05T01:06:24.5870232Z shell: /usr/bin/bash -e {0}
+2026-01-05T01:06:24.5870495Z env:
+2026-01-05T01:06:24.5870740Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:24.5871170Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2026-01-05T01:06:24.5871585Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:24.5871942Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:24.5872493Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:24.5872850Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2026-01-05T01:06:24.5873146Z ##[endgroup]
+2026-01-05T01:06:24.6924818Z * Creating isolated environment: venv+pip...
+2026-01-05T01:06:24.7310372Z * Installing packages in isolated environment:
+2026-01-05T01:06:26.2257420Z   - setuptools>=61.0
+2026-01-05T01:06:26.2258171Z   - setuptools_scm>=8
+2026-01-05T01:06:26.2258544Z   - wheel
+2026-01-05T01:06:26.2258875Z * Getting build dependencies for sdist...
+2026-01-05T01:06:26.5545240Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools_scm/git.py:202: UserWarning: "/home/runner/work/aqequil/aqequil" is shallow and may cause errors
+2026-01-05T01:06:26.5546570Z   warnings.warn(f'"{wd.path}" is shallow and may cause errors')
+2026-01-05T01:06:26.6670844Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+2026-01-05T01:06:26.6672277Z !!
+2026-01-05T01:06:26.6672451Z 
+2026-01-05T01:06:26.6672679Z         ********************************************************************************
+2026-01-05T01:06:26.6674064Z         Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+2026-01-05T01:06:26.6675439Z 
+2026-01-05T01:06:26.6675811Z         By 2026-Feb-18, you need to update your project and remove deprecated calls
+2026-01-05T01:06:26.6676537Z         or your builds will no longer be supported.
+2026-01-05T01:06:26.6676914Z 
+2026-01-05T01:06:26.6677501Z         See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+2026-01-05T01:06:26.6678375Z         ********************************************************************************
+2026-01-05T01:06:26.6678772Z 
+2026-01-05T01:06:26.6678886Z !!
+2026-01-05T01:06:26.6679222Z   corresp(dist, value, root_dir)
+2026-01-05T01:06:26.7619571Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:61: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+2026-01-05T01:06:26.7620886Z !!
+2026-01-05T01:06:26.7621052Z 
+2026-01-05T01:06:26.7621262Z         ********************************************************************************
+2026-01-05T01:06:26.7622130Z         Please consider removing the following classifiers in favor of a SPDX license expression:
+2026-01-05T01:06:26.7622753Z 
+2026-01-05T01:06:26.7623050Z         License :: OSI Approved :: MIT License
+2026-01-05T01:06:26.7623369Z 
+2026-01-05T01:06:26.7623892Z         See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+2026-01-05T01:06:26.7625001Z         ********************************************************************************
+2026-01-05T01:06:26.7625369Z 
+2026-01-05T01:06:26.7625488Z !!
+2026-01-05T01:06:26.7625820Z   dist._finalize_license_expression()
+2026-01-05T01:06:26.7626960Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools/dist.py:759: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+2026-01-05T01:06:26.7628041Z !!
+2026-01-05T01:06:26.7628211Z 
+2026-01-05T01:06:26.7628421Z         ********************************************************************************
+2026-01-05T01:06:26.7629589Z         Please consider removing the following classifiers in favor of a SPDX license expression:
+2026-01-05T01:06:26.7630219Z 
+2026-01-05T01:06:26.7630404Z         License :: OSI Approved :: MIT License
+2026-01-05T01:06:26.7630725Z 
+2026-01-05T01:06:26.7631241Z         See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+2026-01-05T01:06:26.7632097Z         ********************************************************************************
+2026-01-05T01:06:26.7632497Z 
+2026-01-05T01:06:26.7632612Z !!
+2026-01-05T01:06:26.7632926Z   self._finalize_license_expression()
+2026-01-05T01:06:26.7643519Z running egg_info
+2026-01-05T01:06:26.7657912Z creating aqequil.egg-info
+2026-01-05T01:06:26.7659121Z writing aqequil.egg-info/PKG-INFO
+2026-01-05T01:06:26.7663712Z writing dependency_links to aqequil.egg-info/dependency_links.txt
+2026-01-05T01:06:26.7666317Z writing requirements to aqequil.egg-info/requires.txt
+2026-01-05T01:06:26.7667545Z writing top-level names to aqequil.egg-info/top_level.txt
+2026-01-05T01:06:26.7669497Z writing manifest file 'aqequil.egg-info/SOURCES.txt'
+2026-01-05T01:06:26.9376237Z reading manifest template 'MANIFEST.in'
+2026-01-05T01:06:26.9391446Z warning: no files found matching '*.css' under directory 'html'
+2026-01-05T01:06:26.9395890Z warning: no files found matching '*.js' under directory 'html'
+2026-01-05T01:06:26.9576298Z warning: no files found matching '*.r' under directory 'aqequil'
+2026-01-05T01:06:27.0212795Z warning: no files found matching '*.f90' under directory 'aqequil/eq3_6_src'
+2026-01-05T01:06:27.0330794Z warning: no files found matching '*.for' under directory 'aqequil/eq3_6_src'
+2026-01-05T01:06:27.0335793Z warning: no files found matching '*.inc' under directory 'aqequil/eq3_6_src/include'
+2026-01-05T01:06:27.0346063Z no previously-included directories found matching 'test'
+2026-01-05T01:06:27.0359404Z warning: no previously-included files matching '*.pyc' found anywhere in distribution
+2026-01-05T01:06:27.0372466Z warning: no previously-included files matching '*.pyo' found anywhere in distribution
+2026-01-05T01:06:27.0385368Z warning: no previously-included files matching '*.pyd' found anywhere in distribution
+2026-01-05T01:06:27.0395893Z warning: no previously-included files matching '__pycache__' found anywhere in distribution
+2026-01-05T01:06:27.0406476Z warning: no previously-included files matching '.pytest_cache' found anywhere in distribution
+2026-01-05T01:06:27.0417076Z warning: no previously-included files matching '.ipynb_checkpoints' found anywhere in distribution
+2026-01-05T01:06:27.0429088Z warning: no previously-included files matching '*~' found anywhere in distribution
+2026-01-05T01:06:27.0442001Z warning: no previously-included files matching '*.swp' found anywhere in distribution
+2026-01-05T01:06:27.0452556Z warning: no previously-included files matching '.DS_Store' found anywhere in distribution
+2026-01-05T01:06:27.0453310Z adding license file 'LICENSE.txt'
+2026-01-05T01:06:27.0576865Z writing manifest file 'aqequil.egg-info/SOURCES.txt'
+2026-01-05T01:06:27.0832630Z * Building sdist...
+2026-01-05T01:06:27.2113529Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools_scm/git.py:202: UserWarning: "/home/runner/work/aqequil/aqequil" is shallow and may cause errors
+2026-01-05T01:06:27.2115111Z   warnings.warn(f'"{wd.path}" is shallow and may cause errors')
+2026-01-05T01:06:27.2268734Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+2026-01-05T01:06:27.2270085Z !!
+2026-01-05T01:06:27.2270305Z 
+2026-01-05T01:06:27.2270522Z         ********************************************************************************
+2026-01-05T01:06:27.2271854Z         Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+2026-01-05T01:06:27.2272896Z 
+2026-01-05T01:06:27.2273560Z         By 2026-Feb-18, you need to update your project and remove deprecated calls
+2026-01-05T01:06:27.2274493Z         or your builds will no longer be supported.
+2026-01-05T01:06:27.2274845Z 
+2026-01-05T01:06:27.2275367Z         See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+2026-01-05T01:06:27.2276266Z         ********************************************************************************
+2026-01-05T01:06:27.2276661Z 
+2026-01-05T01:06:27.2276781Z !!
+2026-01-05T01:06:27.2277069Z   corresp(dist, value, root_dir)
+2026-01-05T01:06:27.2447670Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools/config/_apply_pyprojecttoml.py:61: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+2026-01-05T01:06:27.2449222Z !!
+2026-01-05T01:06:27.2449393Z 
+2026-01-05T01:06:27.2449606Z         ********************************************************************************
+2026-01-05T01:06:27.2450466Z         Please consider removing the following classifiers in favor of a SPDX license expression:
+2026-01-05T01:06:27.2451125Z 
+2026-01-05T01:06:27.2451368Z         License :: OSI Approved :: MIT License
+2026-01-05T01:06:27.2451709Z 
+2026-01-05T01:06:27.2452224Z         See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+2026-01-05T01:06:27.2453109Z         ********************************************************************************
+2026-01-05T01:06:27.2453498Z 
+2026-01-05T01:06:27.2453609Z !!
+2026-01-05T01:06:27.2453919Z   dist._finalize_license_expression()
+2026-01-05T01:06:27.2458698Z /tmp/build-env-x97hf2r4/lib/python3.11/site-packages/setuptools/dist.py:759: SetuptoolsDeprecationWarning: License classifiers are deprecated.
+2026-01-05T01:06:27.2459856Z !!
+2026-01-05T01:06:27.2460017Z 
+2026-01-05T01:06:27.2460300Z         ********************************************************************************
+2026-01-05T01:06:27.2461143Z         Please consider removing the following classifiers in favor of a SPDX license expression:
+2026-01-05T01:06:27.2461791Z 
+2026-01-05T01:06:27.2462009Z         License :: OSI Approved :: MIT License
+2026-01-05T01:06:27.2462344Z 
+2026-01-05T01:06:27.2462857Z         See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+2026-01-05T01:06:27.2463747Z         ********************************************************************************
+2026-01-05T01:06:27.2464135Z 
+2026-01-05T01:06:27.2464466Z !!
+2026-01-05T01:06:27.2464786Z   self._finalize_license_expression()
+2026-01-05T01:06:27.2475501Z running sdist
+2026-01-05T01:06:27.2477583Z running egg_info
+2026-01-05T01:06:27.2503416Z writing aqequil.egg-info/PKG-INFO
+2026-01-05T01:06:27.2508628Z writing dependency_links to aqequil.egg-info/dependency_links.txt
+2026-01-05T01:06:27.2511365Z writing requirements to aqequil.egg-info/requires.txt
+2026-01-05T01:06:27.2513551Z writing top-level names to aqequil.egg-info/top_level.txt
+2026-01-05T01:06:27.4092232Z reading manifest template 'MANIFEST.in'
+2026-01-05T01:06:27.4103212Z warning: no files found matching '*.css' under directory 'html'
+2026-01-05T01:06:27.4106868Z warning: no files found matching '*.js' under directory 'html'
+2026-01-05T01:06:27.4234721Z warning: no files found matching '*.r' under directory 'aqequil'
+2026-01-05T01:06:27.4884202Z warning: no files found matching '*.f90' under directory 'aqequil/eq3_6_src'
+2026-01-05T01:06:27.5002448Z warning: no files found matching '*.for' under directory 'aqequil/eq3_6_src'
+2026-01-05T01:06:27.5008205Z warning: no files found matching '*.inc' under directory 'aqequil/eq3_6_src/include'
+2026-01-05T01:06:27.5018992Z no previously-included directories found matching 'test'
+2026-01-05T01:06:27.5033210Z warning: no previously-included files matching '*.pyc' found anywhere in distribution
+2026-01-05T01:06:27.5047141Z warning: no previously-included files matching '*.pyo' found anywhere in distribution
+2026-01-05T01:06:27.5060741Z warning: no previously-included files matching '*.pyd' found anywhere in distribution
+2026-01-05T01:06:27.5072523Z warning: no previously-included files matching '__pycache__' found anywhere in distribution
+2026-01-05T01:06:27.5083778Z warning: no previously-included files matching '.pytest_cache' found anywhere in distribution
+2026-01-05T01:06:27.5095486Z warning: no previously-included files matching '.ipynb_checkpoints' found anywhere in distribution
+2026-01-05T01:06:27.5108603Z warning: no previously-included files matching '*~' found anywhere in distribution
+2026-01-05T01:06:27.5122185Z warning: no previously-included files matching '*.swp' found anywhere in distribution
+2026-01-05T01:06:27.5133781Z warning: no previously-included files matching '.DS_Store' found anywhere in distribution
+2026-01-05T01:06:27.5134802Z adding license file 'LICENSE.txt'
+2026-01-05T01:06:27.5261922Z writing manifest file 'aqequil.egg-info/SOURCES.txt'
+2026-01-05T01:06:27.5265322Z running check
+2026-01-05T01:06:27.5293181Z creating aqequil-1.0.1
+2026-01-05T01:06:27.5308191Z creating aqequil-1.0.1/.github/workflows
+2026-01-05T01:06:27.5310450Z creating aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5311804Z creating aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5313617Z creating aqequil-1.0.1/aqequil/bin
+2026-01-05T01:06:27.5315381Z creating aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5316912Z creating aqequil-1.0.1/aqequil/eq3_6_src
+2026-01-05T01:06:27.5318457Z creating aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5320393Z creating aqequil-1.0.1/aqequil/eq3_6_src/include/xcon3
+2026-01-05T01:06:27.5321948Z creating aqequil-1.0.1/aqequil/eq3_6_src/include/xcon6
+2026-01-05T01:06:27.5323431Z creating aqequil-1.0.1/aqequil/eq3_6_src/src
+2026-01-05T01:06:27.5325164Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr
+2026-01-05T01:06:27.5326650Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5328138Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5329607Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq6
+2026-01-05T01:06:27.5331094Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/mod
+2026-01-05T01:06:27.5332554Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5334027Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5335738Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib
+2026-01-05T01:06:27.5337184Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.5338694Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.5340135Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg
+2026-01-05T01:06:27.5341743Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.5343205Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.5344658Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu
+2026-01-05T01:06:27.5346308Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.5347820Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.5349264Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt
+2026-01-05T01:06:27.5351026Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.5352300Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.5353802Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3
+2026-01-05T01:06:27.5355890Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.5357216Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.5358713Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6
+2026-01-05T01:06:27.5360267Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.5361760Z creating aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.5363277Z creating aqequil-1.0.1/aqequil/test_data
+2026-01-05T01:06:27.5364920Z creating aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.5366939Z copying files to aqequil-1.0.1...
+2026-01-05T01:06:27.5367591Z copying .gitignore -> aqequil-1.0.1
+2026-01-05T01:06:27.5369831Z copying CITATION.cff -> aqequil-1.0.1
+2026-01-05T01:06:27.5371685Z copying LICENSE.txt -> aqequil-1.0.1
+2026-01-05T01:06:27.5373143Z copying MANIFEST.in -> aqequil-1.0.1
+2026-01-05T01:06:27.5375293Z copying README.md -> aqequil-1.0.1
+2026-01-05T01:06:27.5377233Z copying THIRD_PARTY_LICENSES.txt -> aqequil-1.0.1
+2026-01-05T01:06:27.5378737Z copying compile_eq3_6.py -> aqequil-1.0.1
+2026-01-05T01:06:27.5380931Z copying pyproject.toml -> aqequil-1.0.1
+2026-01-05T01:06:27.5382411Z copying setup.py -> aqequil-1.0.1
+2026-01-05T01:06:27.5384457Z copying test_integration.py -> aqequil-1.0.1
+2026-01-05T01:06:27.5386572Z copying .github/workflows/build-wheels.yml -> aqequil-1.0.1/.github/workflows
+2026-01-05T01:06:27.5388139Z copying aqequil/AqSpeciation.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5393076Z copying aqequil/MassTransfer.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5397243Z copying aqequil/_HKF_cgl.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5398638Z copying aqequil/__init__.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5400516Z copying aqequil/_version.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5402112Z copying aqequil/check_TP_grid.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5403773Z copying aqequil/create_data0.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5406308Z copying aqequil/data0.min -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5408090Z copying aqequil/dissrxn_balancer.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5409729Z copying aqequil/dissrxn_generator.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5411865Z copying aqequil/fill_data0_header.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5413483Z copying aqequil/formula_parser.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5415665Z copying aqequil/half_cell_reactions.csv -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5417267Z copying aqequil/output_3o_mine.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5419668Z copying aqequil/preprocess_for_EQ3.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5421934Z copying aqequil/process_dissrxns.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5424056Z copying aqequil/redox_suppression.py -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5426297Z copying aqequil/speciation_groups_WORM.txt -> aqequil-1.0.1/aqequil
+2026-01-05T01:06:27.5428427Z copying aqequil.egg-info/PKG-INFO -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5429835Z copying aqequil.egg-info/SOURCES.txt -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5432380Z copying aqequil.egg-info/dependency_links.txt -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5433701Z copying aqequil.egg-info/not-zip-safe -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5435565Z copying aqequil.egg-info/requires.txt -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5437231Z copying aqequil.egg-info/top_level.txt -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.5438903Z copying aqequil/bin/__init__.py -> aqequil-1.0.1/aqequil/bin
+2026-01-05T01:06:27.5440671Z copying aqequil/databases/__init__.py -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5442383Z copying aqequil/databases/data1.wrm -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5447891Z copying aqequil/databases/elements.csv -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5449400Z copying aqequil/databases/solid_solutions.csv -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5451222Z copying aqequil/databases/wrm_data_latest.csv -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5457017Z copying aqequil/databases/wrm_data_logk.csv -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5458504Z copying aqequil/databases/wrm_data_logk_s.csv -> aqequil-1.0.1/aqequil/databases
+2026-01-05T01:06:27.5460235Z copying aqequil/eq3_6_src/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src
+2026-01-05T01:06:27.5461848Z copying aqequil/eq3_6_src/__init__.py -> aqequil-1.0.1/aqequil/eq3_6_src
+2026-01-05T01:06:27.5463620Z copying aqequil/eq3_6_src/include/eqlib/eql1s.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5465460Z copying aqequil/eq3_6_src/include/eqlib/eql1sd.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5467349Z copying aqequil/eq3_6_src/include/eqlib/eqldef.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5468895Z copying aqequil/eq3_6_src/include/eqlib/eqldv.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5470530Z copying aqequil/eq3_6_src/include/eqlib/eqlge.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5472149Z copying aqequil/eq3_6_src/include/eqlib/eqlj8.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5474144Z copying aqequil/eq3_6_src/include/eqlib/eqlj8d.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5476007Z copying aqequil/eq3_6_src/include/eqlib/eqlk8.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5477803Z copying aqequil/eq3_6_src/include/eqlib/eqlk8d.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5479450Z copying aqequil/eq3_6_src/include/eqlib/eqlo8.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5481207Z copying aqequil/eq3_6_src/include/eqlib/eqlo8d.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5483354Z copying aqequil/eq3_6_src/include/eqlib/eqlpar.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5485239Z copying aqequil/eq3_6_src/include/eqlib/eqltf1.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5486901Z copying aqequil/eq3_6_src/include/eqlib/eqltf2.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5488616Z copying aqequil/eq3_6_src/include/eqlib/eqlwd.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5490231Z copying aqequil/eq3_6_src/include/eqlib/eqlwdd.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/eqlib
+2026-01-05T01:06:27.5492047Z copying aqequil/eq3_6_src/include/xcon3/x3op7.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/xcon3
+2026-01-05T01:06:27.5493679Z copying aqequil/eq3_6_src/include/xcon3/x3op7d.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/xcon3
+2026-01-05T01:06:27.5495599Z copying aqequil/eq3_6_src/include/xcon6/x6op7.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/xcon6
+2026-01-05T01:06:27.5497268Z copying aqequil/eq3_6_src/include/xcon6/x6op7d.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/xcon6
+2026-01-05T01:06:27.5499098Z copying aqequil/eq3_6_src/include/xcon6/x6sbsp.h -> aqequil-1.0.1/aqequil/eq3_6_src/include/xcon6
+2026-01-05T01:06:27.5500818Z copying aqequil/eq3_6_src/src/Makefile.exe.in -> aqequil-1.0.1/aqequil/eq3_6_src/src
+2026-01-05T01:06:27.5502519Z copying aqequil/eq3_6_src/src/Makefile.lib.in -> aqequil-1.0.1/aqequil/eq3_6_src/src
+2026-01-05T01:06:27.5504160Z copying aqequil/eq3_6_src/src/eq3nr/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr
+2026-01-05T01:06:27.5506084Z copying aqequil/eq3_6_src/src/eq3nr/obj/aaaeq3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5507690Z copying aqequil/eq3_6_src/src/eq3nr/obj/arrset.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5509648Z copying aqequil/eq3_6_src/src/eq3nr/obj/arrsim.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5511533Z copying aqequil/eq3_6_src/src/eq3nr/obj/bkdeq3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5513709Z copying aqequil/eq3_6_src/src/eq3nr/obj/chkinx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5515802Z copying aqequil/eq3_6_src/src/eq3nr/obj/dawfix.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5517506Z copying aqequil/eq3_6_src/src/eq3nr/obj/dfaltx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5519139Z copying aqequil/eq3_6_src/src/eq3nr/obj/echox.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5521042Z copying aqequil/eq3_6_src/src/eq3nr/obj/eq3nr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5524824Z copying aqequil/eq3_6_src/src/eq3nr/obj/intbs3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5526485Z copying aqequil/eq3_6_src/src/eq3nr/obj/intge3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5528086Z copying aqequil/eq3_6_src/src/eq3nr/obj/intieb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5529813Z copying aqequil/eq3_6_src/src/eq3nr/obj/intinx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5531579Z copying aqequil/eq3_6_src/src/eq3nr/obj/intnsp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5533343Z copying aqequil/eq3_6_src/src/eq3nr/obj/jfloha.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5535270Z copying aqequil/eq3_6_src/src/eq3nr/obj/ndiagx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5536940Z copying aqequil/eq3_6_src/src/eq3nr/obj/rd3ind.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5540447Z copying aqequil/eq3_6_src/src/eq3nr/obj/rd3inw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5542327Z copying aqequil/eq3_6_src/src/eq3nr/obj/scripx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5544492Z copying aqequil/eq3_6_src/src/eq3nr/obj/setpk3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5546213Z copying aqequil/eq3_6_src/src/eq3nr/obj/setup.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5547865Z copying aqequil/eq3_6_src/src/eq3nr/obj/stpk36.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5549613Z copying aqequil/eq3_6_src/src/eq3nr/obj/wr3pkd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5551604Z copying aqequil/eq3_6_src/src/eq3nr/obj/wr3pkw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/obj
+2026-01-05T01:06:27.5553332Z copying aqequil/eq3_6_src/src/eq3nr/src/aaaeq3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5555217Z copying aqequil/eq3_6_src/src/eq3nr/src/arrset.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5557613Z copying aqequil/eq3_6_src/src/eq3nr/src/arrsim.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5559305Z copying aqequil/eq3_6_src/src/eq3nr/src/bkdeq3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5560960Z copying aqequil/eq3_6_src/src/eq3nr/src/chkinx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5562880Z copying aqequil/eq3_6_src/src/eq3nr/src/dawfix.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5564822Z copying aqequil/eq3_6_src/src/eq3nr/src/dfaltx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5566506Z copying aqequil/eq3_6_src/src/eq3nr/src/echox.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5568318Z copying aqequil/eq3_6_src/src/eq3nr/src/eq3nr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5571548Z copying aqequil/eq3_6_src/src/eq3nr/src/intbs3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5573000Z copying aqequil/eq3_6_src/src/eq3nr/src/intge3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5574939Z copying aqequil/eq3_6_src/src/eq3nr/src/intieb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5576718Z copying aqequil/eq3_6_src/src/eq3nr/src/intinx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5578481Z copying aqequil/eq3_6_src/src/eq3nr/src/intnsp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5580303Z copying aqequil/eq3_6_src/src/eq3nr/src/jfloha.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5581992Z copying aqequil/eq3_6_src/src/eq3nr/src/ndiagx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5583671Z copying aqequil/eq3_6_src/src/eq3nr/src/rd3ind.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5587090Z copying aqequil/eq3_6_src/src/eq3nr/src/rd3inw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5589669Z copying aqequil/eq3_6_src/src/eq3nr/src/scripx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5591302Z copying aqequil/eq3_6_src/src/eq3nr/src/setpk3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5593007Z copying aqequil/eq3_6_src/src/eq3nr/src/setup.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5594841Z copying aqequil/eq3_6_src/src/eq3nr/src/stpk36.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5596756Z copying aqequil/eq3_6_src/src/eq3nr/src/wr3pkd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5598608Z copying aqequil/eq3_6_src/src/eq3nr/src/wr3pkw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq3nr/src
+2026-01-05T01:06:27.5600286Z copying aqequil/eq3_6_src/src/eq6/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6
+2026-01-05T01:06:27.5602000Z copying aqequil/eq3_6_src/src/eq6/mod/mod6pt.mod -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/mod
+2026-01-05T01:06:27.5603637Z copying aqequil/eq3_6_src/src/eq6/mod/mod6xf.mod -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/mod
+2026-01-05T01:06:27.5605517Z copying aqequil/eq3_6_src/src/eq6/obj/aaaeq6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5607153Z copying aqequil/eq3_6_src/src/eq6/obj/absswb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5608902Z copying aqequil/eq3_6_src/src/eq6/obj/aderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5610533Z copying aqequil/eq3_6_src/src/eq6/obj/adprpl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5612183Z copying aqequil/eq3_6_src/src/eq6/obj/ataylr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5613805Z copying aqequil/eq3_6_src/src/eq6/obj/bderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5615670Z copying aqequil/eq3_6_src/src/eq6/obj/betars.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5617328Z copying aqequil/eq3_6_src/src/eq6/obj/bkdeq6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5619568Z copying aqequil/eq3_6_src/src/eq6/obj/caft1.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5621106Z copying aqequil/eq3_6_src/src/eq6/obj/cdappl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5622839Z copying aqequil/eq3_6_src/src/eq6/obj/chdxec.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5624729Z copying aqequil/eq3_6_src/src/eq6/obj/chdxgr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5626595Z copying aqequil/eq3_6_src/src/eq6/obj/chdxgz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5628323Z copying aqequil/eq3_6_src/src/eq6/obj/chdxtr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5630046Z copying aqequil/eq3_6_src/src/eq6/obj/chdxtz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5631731Z copying aqequil/eq3_6_src/src/eq6/obj/chkinz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5633589Z copying aqequil/eq3_6_src/src/eq6/obj/chksar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5635444Z copying aqequil/eq3_6_src/src/eq6/obj/chksir.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5638098Z copying aqequil/eq3_6_src/src/eq6/obj/chksrr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5639536Z copying aqequil/eq3_6_src/src/eq6/obj/chkstc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5641262Z copying aqequil/eq3_6_src/src/eq6/obj/chksti.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5643028Z copying aqequil/eq3_6_src/src/eq6/obj/chktmx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5644819Z copying aqequil/eq3_6_src/src/eq6/obj/chktpl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5646511Z copying aqequil/eq3_6_src/src/eq6/obj/chktpr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5648182Z copying aqequil/eq3_6_src/src/eq6/obj/chzrsr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5650069Z copying aqequil/eq3_6_src/src/eq6/obj/ckawmn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5651587Z copying aqequil/eq3_6_src/src/eq6/obj/ckawmx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5653326Z copying aqequil/eq3_6_src/src/eq6/obj/ckawpl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5655247Z copying aqequil/eq3_6_src/src/eq6/obj/ckawpr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5657001Z copying aqequil/eq3_6_src/src/eq6/obj/ckehmn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5658688Z copying aqequil/eq3_6_src/src/eq6/obj/ckehmx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5660362Z copying aqequil/eq3_6_src/src/eq6/obj/ckehpl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5662090Z copying aqequil/eq3_6_src/src/eq6/obj/ckehpr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5663807Z copying aqequil/eq3_6_src/src/eq6/obj/ckfrsr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5665738Z copying aqequil/eq3_6_src/src/eq6/obj/cko2mn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5667515Z copying aqequil/eq3_6_src/src/eq6/obj/cko2mx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5669184Z copying aqequil/eq3_6_src/src/eq6/obj/cko2pl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5670957Z copying aqequil/eq3_6_src/src/eq6/obj/cko2pr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5672680Z copying aqequil/eq3_6_src/src/eq6/obj/ckphmn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5674610Z copying aqequil/eq3_6_src/src/eq6/obj/ckphmx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5676378Z copying aqequil/eq3_6_src/src/eq6/obj/ckphpl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5678099Z copying aqequil/eq3_6_src/src/eq6/obj/ckphpr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5679846Z copying aqequil/eq3_6_src/src/eq6/obj/clress.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5681601Z copying aqequil/eq3_6_src/src/eq6/obj/combmb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5683311Z copying aqequil/eq3_6_src/src/eq6/obj/cophlm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5685230Z copying aqequil/eq3_6_src/src/eq6/obj/cophpl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5686961Z copying aqequil/eq3_6_src/src/eq6/obj/cophpr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5688703Z copying aqequil/eq3_6_src/src/eq6/obj/corrfd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5690383Z copying aqequil/eq3_6_src/src/eq6/obj/crrate.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5692101Z copying aqequil/eq3_6_src/src/eq6/obj/csfar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5693826Z copying aqequil/eq3_6_src/src/eq6/obj/d1ptay.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5695700Z copying aqequil/eq3_6_src/src/eq6/obj/d1ztay.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5697383Z copying aqequil/eq3_6_src/src/eq6/obj/d2ptay.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5699076Z copying aqequil/eq3_6_src/src/eq6/obj/d2ztay.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5700796Z copying aqequil/eq3_6_src/src/eq6/obj/dadjdx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5702473Z copying aqequil/eq3_6_src/src/eq6/obj/dfaltz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5704455Z copying aqequil/eq3_6_src/src/eq6/obj/dscramc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5706263Z copying aqequil/eq3_6_src/src/eq6/obj/dscrax.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5708136Z copying aqequil/eq3_6_src/src/eq6/obj/dumpdp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5709790Z copying aqequil/eq3_6_src/src/eq6/obj/echoz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5711901Z copying aqequil/eq3_6_src/src/eq6/obj/eq6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5715632Z copying aqequil/eq3_6_src/src/eq6/obj/eqcalc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5717538Z copying aqequil/eq3_6_src/src/eq6/obj/eqphas.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5719689Z copying aqequil/eq3_6_src/src/eq6/obj/eqshel.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5721930Z copying aqequil/eq3_6_src/src/eq6/obj/escalc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5723557Z copying aqequil/eq3_6_src/src/eq6/obj/evratc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5725593Z copying aqequil/eq3_6_src/src/eq6/obj/exivar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5727446Z copying aqequil/eq3_6_src/src/eq6/obj/fcopyx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5729137Z copying aqequil/eq3_6_src/src/eq6/obj/fpbdpp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5730885Z copying aqequil/eq3_6_src/src/eq6/obj/fpbflo.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5732605Z copying aqequil/eq3_6_src/src/eq6/obj/fpbnpp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5734510Z copying aqequil/eq3_6_src/src/eq6/obj/fpexrc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5736358Z copying aqequil/eq3_6_src/src/eq6/obj/gakmat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5738074Z copying aqequil/eq3_6_src/src/eq6/obj/garmat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5739844Z copying aqequil/eq3_6_src/src/eq6/obj/gmmmat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5741770Z copying aqequil/eq3_6_src/src/eq6/obj/gndacb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5743480Z copying aqequil/eq3_6_src/src/eq6/obj/goback.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5745455Z copying aqequil/eq3_6_src/src/eq6/obj/gpress.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5747197Z copying aqequil/eq3_6_src/src/eq6/obj/gsmder.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5748894Z copying aqequil/eq3_6_src/src/eq6/obj/gsmdez.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5750614Z copying aqequil/eq3_6_src/src/eq6/obj/gtemp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5752351Z copying aqequil/eq3_6_src/src/eq6/obj/gwhcfa.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5754086Z copying aqequil/eq3_6_src/src/eq6/obj/iiemop.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5756059Z copying aqequil/eq3_6_src/src/eq6/obj/intbs6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5757872Z copying aqequil/eq3_6_src/src/eq6/obj/integr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5759636Z copying aqequil/eq3_6_src/src/eq6/obj/intmat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5761469Z copying aqequil/eq3_6_src/src/eq6/obj/intmtb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5763204Z copying aqequil/eq3_6_src/src/eq6/obj/intrct.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5765883Z copying aqequil/eq3_6_src/src/eq6/obj/jgibbs.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5767820Z copying aqequil/eq3_6_src/src/eq6/obj/ldlxrc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5769633Z copying aqequil/eq3_6_src/src/eq6/obj/ldlxrd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5771612Z copying aqequil/eq3_6_src/src/eq6/obj/makrsr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5773249Z copying aqequil/eq3_6_src/src/eq6/obj/miidxz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5775295Z copying aqequil/eq3_6_src/src/eq6/obj/mincsp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5777142Z copying aqequil/eq3_6_src/src/eq6/obj/mod6pt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5778865Z copying aqequil/eq3_6_src/src/eq6/obj/mod6xf.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5780616Z copying aqequil/eq3_6_src/src/eq6/obj/nlkffg.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5782425Z copying aqequil/eq3_6_src/src/eq6/obj/optmzr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5785342Z copying aqequil/eq3_6_src/src/eq6/obj/path.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5789120Z copying aqequil/eq3_6_src/src/eq6/obj/pderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5790724Z copying aqequil/eq3_6_src/src/eq6/obj/phsdrp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5792457Z copying aqequil/eq3_6_src/src/eq6/obj/prrsr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5794388Z copying aqequil/eq3_6_src/src/eq6/obj/prtrct.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5796242Z copying aqequil/eq3_6_src/src/eq6/obj/pshfta.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5797993Z copying aqequil/eq3_6_src/src/eq6/obj/ptaylr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5799767Z copying aqequil/eq3_6_src/src/eq6/obj/raff.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5801649Z copying aqequil/eq3_6_src/src/eq6/obj/rd6ind.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5806427Z copying aqequil/eq3_6_src/src/eq6/obj/rd6inw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5809132Z copying aqequil/eq3_6_src/src/eq6/obj/rderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5810616Z copying aqequil/eq3_6_src/src/eq6/obj/reacts.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5812437Z copying aqequil/eq3_6_src/src/eq6/obj/rsatch.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5814500Z copying aqequil/eq3_6_src/src/eq6/obj/rsetup.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5816382Z copying aqequil/eq3_6_src/src/eq6/obj/rtaylr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5818180Z copying aqequil/eq3_6_src/src/eq6/obj/rtcalc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5820002Z copying aqequil/eq3_6_src/src/eq6/obj/satchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5821843Z copying aqequil/eq3_6_src/src/eq6/obj/scripz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5824424Z copying aqequil/eq3_6_src/src/eq6/obj/sderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5826119Z copying aqequil/eq3_6_src/src/eq6/obj/search.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5827949Z copying aqequil/eq3_6_src/src/eq6/obj/setffg.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5829770Z copying aqequil/eq3_6_src/src/eq6/obj/setpk6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5831672Z copying aqequil/eq3_6_src/src/eq6/obj/setrcp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5833474Z copying aqequil/eq3_6_src/src/eq6/obj/sfncge.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5835505Z copying aqequil/eq3_6_src/src/eq6/obj/shftph.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5837387Z copying aqequil/eq3_6_src/src/eq6/obj/sippdp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5839207Z copying aqequil/eq3_6_src/src/eq6/obj/stepfd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5841322Z copying aqequil/eq3_6_src/src/eq6/obj/stpkmd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5843045Z copying aqequil/eq3_6_src/src/eq6/obj/suprdx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5844913Z copying aqequil/eq3_6_src/src/eq6/obj/timeca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5846824Z copying aqequil/eq3_6_src/src/eq6/obj/tivchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5848592Z copying aqequil/eq3_6_src/src/eq6/obj/tpadv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5850456Z copying aqequil/eq3_6_src/src/eq6/obj/tstari.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5852253Z copying aqequil/eq3_6_src/src/eq6/obj/tstrdx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5854047Z copying aqequil/eq3_6_src/src/eq6/obj/wrentu.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5856045Z copying aqequil/eq3_6_src/src/eq6/obj/wrtabc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5859013Z copying aqequil/eq3_6_src/src/eq6/obj/wrtabx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5861149Z copying aqequil/eq3_6_src/src/eq6/obj/xderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5862853Z copying aqequil/eq3_6_src/src/eq6/obj/zderiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5864838Z copying aqequil/eq3_6_src/src/eq6/obj/ztaylr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/obj
+2026-01-05T01:06:27.5866616Z copying aqequil/eq3_6_src/src/eq6/src/aaaeq6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5868475Z copying aqequil/eq3_6_src/src/eq6/src/absswb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5870178Z copying aqequil/eq3_6_src/src/eq6/src/aderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5871878Z copying aqequil/eq3_6_src/src/eq6/src/adprpl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5873556Z copying aqequil/eq3_6_src/src/eq6/src/ataylr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5875393Z copying aqequil/eq3_6_src/src/eq6/src/bderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5877047Z copying aqequil/eq3_6_src/src/eq6/src/betars.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5878691Z copying aqequil/eq3_6_src/src/eq6/src/bkdeq6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5880324Z copying aqequil/eq3_6_src/src/eq6/src/caft1.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5882071Z copying aqequil/eq3_6_src/src/eq6/src/cdappl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5883971Z copying aqequil/eq3_6_src/src/eq6/src/chdxec.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5885871Z copying aqequil/eq3_6_src/src/eq6/src/chdxgr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5887561Z copying aqequil/eq3_6_src/src/eq6/src/chdxgz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5889251Z copying aqequil/eq3_6_src/src/eq6/src/chdxtr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5891035Z copying aqequil/eq3_6_src/src/eq6/src/chdxtz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5892738Z copying aqequil/eq3_6_src/src/eq6/src/chkinz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5894641Z copying aqequil/eq3_6_src/src/eq6/src/chksar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5896522Z copying aqequil/eq3_6_src/src/eq6/src/chksir.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5898397Z copying aqequil/eq3_6_src/src/eq6/src/chksrr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5900190Z copying aqequil/eq3_6_src/src/eq6/src/chkstc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5902073Z copying aqequil/eq3_6_src/src/eq6/src/chksti.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5903583Z copying aqequil/eq3_6_src/src/eq6/src/chktmx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5905536Z copying aqequil/eq3_6_src/src/eq6/src/chktpl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5907294Z copying aqequil/eq3_6_src/src/eq6/src/chktpr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5908996Z copying aqequil/eq3_6_src/src/eq6/src/chzrsr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5910739Z copying aqequil/eq3_6_src/src/eq6/src/ckawmn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5912455Z copying aqequil/eq3_6_src/src/eq6/src/ckawmx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5914155Z copying aqequil/eq3_6_src/src/eq6/src/ckawpl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5916116Z copying aqequil/eq3_6_src/src/eq6/src/ckawpr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5917821Z copying aqequil/eq3_6_src/src/eq6/src/ckehmn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5919570Z copying aqequil/eq3_6_src/src/eq6/src/ckehmx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5921260Z copying aqequil/eq3_6_src/src/eq6/src/ckehpl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5923028Z copying aqequil/eq3_6_src/src/eq6/src/ckehpr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5924922Z copying aqequil/eq3_6_src/src/eq6/src/ckfrsr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5926707Z copying aqequil/eq3_6_src/src/eq6/src/cko2mn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5928438Z copying aqequil/eq3_6_src/src/eq6/src/cko2mx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5930225Z copying aqequil/eq3_6_src/src/eq6/src/cko2pl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5931989Z copying aqequil/eq3_6_src/src/eq6/src/cko2pr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5933744Z copying aqequil/eq3_6_src/src/eq6/src/ckphmn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5935673Z copying aqequil/eq3_6_src/src/eq6/src/ckphmx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5937425Z copying aqequil/eq3_6_src/src/eq6/src/ckphpl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5939167Z copying aqequil/eq3_6_src/src/eq6/src/ckphpr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5940871Z copying aqequil/eq3_6_src/src/eq6/src/clress.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5942593Z copying aqequil/eq3_6_src/src/eq6/src/combmb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5944481Z copying aqequil/eq3_6_src/src/eq6/src/cophlm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5946295Z copying aqequil/eq3_6_src/src/eq6/src/cophpl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5948028Z copying aqequil/eq3_6_src/src/eq6/src/cophpr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5949734Z copying aqequil/eq3_6_src/src/eq6/src/corrfd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5951484Z copying aqequil/eq3_6_src/src/eq6/src/crrate.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5953275Z copying aqequil/eq3_6_src/src/eq6/src/csfar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5955132Z copying aqequil/eq3_6_src/src/eq6/src/d1ptay.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5956883Z copying aqequil/eq3_6_src/src/eq6/src/d1ztay.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5958629Z copying aqequil/eq3_6_src/src/eq6/src/d2ptay.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5960477Z copying aqequil/eq3_6_src/src/eq6/src/d2ztay.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5962036Z copying aqequil/eq3_6_src/src/eq6/src/dadjdx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5963726Z copying aqequil/eq3_6_src/src/eq6/src/dfaltz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5965763Z copying aqequil/eq3_6_src/src/eq6/src/dscramc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5967527Z copying aqequil/eq3_6_src/src/eq6/src/dscrax.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5969237Z copying aqequil/eq3_6_src/src/eq6/src/dumpdp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5971010Z copying aqequil/eq3_6_src/src/eq6/src/echoz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5972913Z copying aqequil/eq3_6_src/src/eq6/src/eq6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5976303Z copying aqequil/eq3_6_src/src/eq6/src/eqcalc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5978003Z copying aqequil/eq3_6_src/src/eq6/src/eqphas.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5980462Z copying aqequil/eq3_6_src/src/eq6/src/eqshel.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5982721Z copying aqequil/eq3_6_src/src/eq6/src/escalc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5984568Z copying aqequil/eq3_6_src/src/eq6/src/evratc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5986357Z copying aqequil/eq3_6_src/src/eq6/src/exivar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5988223Z copying aqequil/eq3_6_src/src/eq6/src/fcopyx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5989961Z copying aqequil/eq3_6_src/src/eq6/src/fpbdpp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5991715Z copying aqequil/eq3_6_src/src/eq6/src/fpbflo.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5993640Z copying aqequil/eq3_6_src/src/eq6/src/fpbnpp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5995640Z copying aqequil/eq3_6_src/src/eq6/src/fpexrc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5997413Z copying aqequil/eq3_6_src/src/eq6/src/gakmat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.5999166Z copying aqequil/eq3_6_src/src/eq6/src/garmat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6000994Z copying aqequil/eq3_6_src/src/eq6/src/gmmmat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6002884Z copying aqequil/eq3_6_src/src/eq6/src/gndacb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6004773Z copying aqequil/eq3_6_src/src/eq6/src/goback.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6006593Z copying aqequil/eq3_6_src/src/eq6/src/gpress.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6008341Z copying aqequil/eq3_6_src/src/eq6/src/gsmder.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6010082Z copying aqequil/eq3_6_src/src/eq6/src/gsmdez.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6011820Z copying aqequil/eq3_6_src/src/eq6/src/gtemp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6013608Z copying aqequil/eq3_6_src/src/eq6/src/gwhcfa.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6015533Z copying aqequil/eq3_6_src/src/eq6/src/iiemop.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6017289Z copying aqequil/eq3_6_src/src/eq6/src/intbs6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6019076Z copying aqequil/eq3_6_src/src/eq6/src/integr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6020790Z copying aqequil/eq3_6_src/src/eq6/src/intmat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6022646Z copying aqequil/eq3_6_src/src/eq6/src/intmtb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6024717Z copying aqequil/eq3_6_src/src/eq6/src/intrct.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6026454Z copying aqequil/eq3_6_src/src/eq6/src/jgibbs.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6028535Z copying aqequil/eq3_6_src/src/eq6/src/ldlxrc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6030377Z copying aqequil/eq3_6_src/src/eq6/src/ldlxrd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6031993Z copying aqequil/eq3_6_src/src/eq6/src/makrsr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6034036Z copying aqequil/eq3_6_src/src/eq6/src/miidxz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6035689Z copying aqequil/eq3_6_src/src/eq6/src/mincsp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6037971Z copying aqequil/eq3_6_src/src/eq6/src/mod6pt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6039380Z copying aqequil/eq3_6_src/src/eq6/src/mod6xf.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6040862Z copying aqequil/eq3_6_src/src/eq6/src/nlkffg.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6042439Z copying aqequil/eq3_6_src/src/eq6/src/optmzr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6044688Z copying aqequil/eq3_6_src/src/eq6/src/path.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6047854Z copying aqequil/eq3_6_src/src/eq6/src/pderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6049233Z copying aqequil/eq3_6_src/src/eq6/src/phsdrp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6050763Z copying aqequil/eq3_6_src/src/eq6/src/prrsr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6052241Z copying aqequil/eq3_6_src/src/eq6/src/prtrct.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6053821Z copying aqequil/eq3_6_src/src/eq6/src/pshfta.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6055555Z copying aqequil/eq3_6_src/src/eq6/src/ptaylr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6057060Z copying aqequil/eq3_6_src/src/eq6/src/raff.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6058622Z copying aqequil/eq3_6_src/src/eq6/src/rd6ind.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6062099Z copying aqequil/eq3_6_src/src/eq6/src/rd6inw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6064551Z copying aqequil/eq3_6_src/src/eq6/src/rderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6066028Z copying aqequil/eq3_6_src/src/eq6/src/reacts.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6067568Z copying aqequil/eq3_6_src/src/eq6/src/rsatch.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6069382Z copying aqequil/eq3_6_src/src/eq6/src/rsetup.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6070822Z copying aqequil/eq3_6_src/src/eq6/src/rtaylr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6072364Z copying aqequil/eq3_6_src/src/eq6/src/rtcalc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6073945Z copying aqequil/eq3_6_src/src/eq6/src/satchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6075907Z copying aqequil/eq3_6_src/src/eq6/src/scripz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6077789Z copying aqequil/eq3_6_src/src/eq6/src/sderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6079260Z copying aqequil/eq3_6_src/src/eq6/src/search.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6080958Z copying aqequil/eq3_6_src/src/eq6/src/setffg.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6082455Z copying aqequil/eq3_6_src/src/eq6/src/setpk6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6084187Z copying aqequil/eq3_6_src/src/eq6/src/setrcp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6086063Z copying aqequil/eq3_6_src/src/eq6/src/sfncge.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6087492Z copying aqequil/eq3_6_src/src/eq6/src/shftph.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6089073Z copying aqequil/eq3_6_src/src/eq6/src/sippdp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6090610Z copying aqequil/eq3_6_src/src/eq6/src/stepfd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6092309Z copying aqequil/eq3_6_src/src/eq6/src/stpkmd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6093831Z copying aqequil/eq3_6_src/src/eq6/src/suprdx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6095606Z copying aqequil/eq3_6_src/src/eq6/src/timeca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6097135Z copying aqequil/eq3_6_src/src/eq6/src/tivchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6098690Z copying aqequil/eq3_6_src/src/eq6/src/tpadv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6100418Z copying aqequil/eq3_6_src/src/eq6/src/tstari.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6101884Z copying aqequil/eq3_6_src/src/eq6/src/tstrdx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6103395Z copying aqequil/eq3_6_src/src/eq6/src/wrentu.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6105092Z copying aqequil/eq3_6_src/src/eq6/src/wrtabc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6107282Z copying aqequil/eq3_6_src/src/eq6/src/wrtabx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6108875Z copying aqequil/eq3_6_src/src/eq6/src/xderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6110420Z copying aqequil/eq3_6_src/src/eq6/src/zderiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6111961Z copying aqequil/eq3_6_src/src/eq6/src/ztaylr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eq6/src
+2026-01-05T01:06:27.6113409Z copying aqequil/eq3_6_src/src/eqlib/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib
+2026-01-05T01:06:27.6114951Z copying aqequil/eq3_6_src/src/eqlib/obj/aaaeql.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6116423Z copying aqequil/eq3_6_src/src/eqlib/obj/absswa.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6117857Z copying aqequil/eq3_6_src/src/eqlib/obj/abswpk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6119258Z copying aqequil/eq3_6_src/src/eqlib/obj/adgexj.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6120679Z copying aqequil/eq3_6_src/src/eqlib/obj/adgexp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6122179Z copying aqequil/eq3_6_src/src/eqlib/obj/afcalc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6123614Z copying aqequil/eq3_6_src/src/eqlib/obj/alters.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6125286Z copying aqequil/eq3_6_src/src/eqlib/obj/autosw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6126514Z copying aqequil/eq3_6_src/src/eqlib/obj/balcon.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6127746Z copying aqequil/eq3_6_src/src/eqlib/obj/betacf.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6128952Z copying aqequil/eq3_6_src/src/eqlib/obj/betas.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6130217Z copying aqequil/eq3_6_src/src/eqlib/obj/betgam.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6131413Z copying aqequil/eq3_6_src/src/eqlib/obj/bspchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6132615Z copying aqequil/eq3_6_src/src/eqlib/obj/bsplkp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6133983Z copying aqequil/eq3_6_src/src/eqlib/obj/calk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6135241Z copying aqequil/eq3_6_src/src/eqlib/obj/cdakey.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6136442Z copying aqequil/eq3_6_src/src/eqlib/obj/cdardx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6137636Z copying aqequil/eq3_6_src/src/eqlib/obj/cdrscx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6138852Z copying aqequil/eq3_6_src/src/eqlib/obj/cdrssd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6140096Z copying aqequil/eq3_6_src/src/eqlib/obj/cfracf.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6141264Z copying aqequil/eq3_6_src/src/eqlib/obj/chsgex.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6142469Z copying aqequil/eq3_6_src/src/eqlib/obj/clones.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6143737Z copying aqequil/eq3_6_src/src/eqlib/obj/cmpdat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6145271Z copying aqequil/eq3_6_src/src/eqlib/obj/cnvndx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6146507Z copying aqequil/eq3_6_src/src/eqlib/obj/coefdr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6147702Z copying aqequil/eq3_6_src/src/eqlib/obj/coefel.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6148920Z copying aqequil/eq3_6_src/src/eqlib/obj/coefst.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6150117Z copying aqequil/eq3_6_src/src/eqlib/obj/ctds.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6151312Z copying aqequil/eq3_6_src/src/eqlib/obj/dfbasp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6152522Z copying aqequil/eq3_6_src/src/eqlib/obj/echgex.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6153796Z copying aqequil/eq3_6_src/src/eqlib/obj/echolk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6155281Z copying aqequil/eq3_6_src/src/eqlib/obj/elim.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6156663Z copying aqequil/eq3_6_src/src/eqlib/obj/evdat2.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6157881Z copying aqequil/eq3_6_src/src/eqlib/obj/evdat3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6159085Z copying aqequil/eq3_6_src/src/eqlib/obj/evdat4.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6160298Z copying aqequil/eq3_6_src/src/eqlib/obj/evdata.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6161541Z copying aqequil/eq3_6_src/src/eqlib/obj/evdatr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6162745Z copying aqequil/eq3_6_src/src/eqlib/obj/fbassw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6164039Z copying aqequil/eq3_6_src/src/eqlib/obj/fdomsp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6165533Z copying aqequil/eq3_6_src/src/eqlib/obj/flgchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6166763Z copying aqequil/eq3_6_src/src/eqlib/obj/flgset.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6168047Z copying aqequil/eq3_6_src/src/eqlib/obj/gabswx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6169250Z copying aqequil/eq3_6_src/src/eqlib/obj/gaffsd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6170469Z copying aqequil/eq3_6_src/src/eqlib/obj/gafscl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6171703Z copying aqequil/eq3_6_src/src/eqlib/obj/gafsir.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6172919Z copying aqequil/eq3_6_src/src/eqlib/obj/gbfac.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6174494Z copying aqequil/eq3_6_src/src/eqlib/obj/gcdrtw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6175702Z copying aqequil/eq3_6_src/src/eqlib/obj/gcdrw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6176914Z copying aqequil/eq3_6_src/src/eqlib/obj/gcsts.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6178236Z copying aqequil/eq3_6_src/src/eqlib/obj/gdlgxw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6179455Z copying aqequil/eq3_6_src/src/eqlib/obj/gegexs.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6180694Z copying aqequil/eq3_6_src/src/eqlib/obj/gegexw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6181924Z copying aqequil/eq3_6_src/src/eqlib/obj/gibasp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6183130Z copying aqequil/eq3_6_src/src/eqlib/obj/gntpr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6184571Z copying aqequil/eq3_6_src/src/eqlib/obj/gpheh.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6186092Z copying aqequil/eq3_6_src/src/eqlib/obj/grdxsp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6187424Z copying aqequil/eq3_6_src/src/eqlib/obj/gspion.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6188703Z copying aqequil/eq3_6_src/src/eqlib/obj/gszm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6189916Z copying aqequil/eq3_6_src/src/eqlib/obj/gwdenp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6191229Z copying aqequil/eq3_6_src/src/eqlib/obj/hpsat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6192488Z copying aqequil/eq3_6_src/src/eqlib/obj/inbdot.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6193766Z copying aqequil/eq3_6_src/src/eqlib/obj/indata.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6195440Z copying aqequil/eq3_6_src/src/eqlib/obj/indatc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6196700Z copying aqequil/eq3_6_src/src/eqlib/obj/indatd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6197945Z copying aqequil/eq3_6_src/src/eqlib/obj/indath.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6199224Z copying aqequil/eq3_6_src/src/eqlib/obj/indatp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6200519Z copying aqequil/eq3_6_src/src/eqlib/obj/indats.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6201879Z copying aqequil/eq3_6_src/src/eqlib/obj/intbsw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6203136Z copying aqequil/eq3_6_src/src/eqlib/obj/intexi.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6204852Z copying aqequil/eq3_6_src/src/eqlib/obj/intsbs.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6206257Z copying aqequil/eq3_6_src/src/eqlib/obj/inttfx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6207570Z copying aqequil/eq3_6_src/src/eqlib/obj/inupt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6208865Z copying aqequil/eq3_6_src/src/eqlib/obj/jesite.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6210106Z copying aqequil/eq3_6_src/src/eqlib/obj/jflaux.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6211362Z copying aqequil/eq3_6_src/src/eqlib/obj/matrix.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6212776Z copying aqequil/eq3_6_src/src/eqlib/obj/mdrgex.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6214137Z copying aqequil/eq3_6_src/src/eqlib/obj/nbasis.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6215553Z copying aqequil/eq3_6_src/src/eqlib/obj/ncmpex.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6217090Z copying aqequil/eq3_6_src/src/eqlib/obj/ncmpve.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6218243Z copying aqequil/eq3_6_src/src/eqlib/obj/ncmpvh.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6219488Z copying aqequil/eq3_6_src/src/eqlib/obj/newton.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6220942Z copying aqequil/eq3_6_src/src/eqlib/obj/ngcadv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6222223Z copying aqequil/eq3_6_src/src/eqlib/obj/nphase.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6223446Z copying aqequil/eq3_6_src/src/eqlib/obj/nrstep.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6225037Z copying aqequil/eq3_6_src/src/eqlib/obj/pcorrm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6226309Z copying aqequil/eq3_6_src/src/eqlib/obj/pcorrx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6227671Z copying aqequil/eq3_6_src/src/eqlib/obj/prpheh.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6228986Z copying aqequil/eq3_6_src/src/eqlib/obj/prreac.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6230273Z copying aqequil/eq3_6_src/src/eqlib/obj/prtacr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6231546Z copying aqequil/eq3_6_src/src/eqlib/obj/prtalk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6232841Z copying aqequil/eq3_6_src/src/eqlib/obj/prtaqs.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6234165Z copying aqequil/eq3_6_src/src/eqlib/obj/prteca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6235774Z copying aqequil/eq3_6_src/src/eqlib/obj/prtfug.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6237061Z copying aqequil/eq3_6_src/src/eqlib/obj/prtgex.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6238386Z copying aqequil/eq3_6_src/src/eqlib/obj/prtmip.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6239700Z copying aqequil/eq3_6_src/src/eqlib/obj/prtnca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6240977Z copying aqequil/eq3_6_src/src/eqlib/obj/prtntt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6242234Z copying aqequil/eq3_6_src/src/eqlib/obj/prtpct.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6243532Z copying aqequil/eq3_6_src/src/eqlib/obj/prtrdx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6244892Z copying aqequil/eq3_6_src/src/eqlib/obj/prtsat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6246355Z copying aqequil/eq3_6_src/src/eqlib/obj/prtsca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6247683Z copying aqequil/eq3_6_src/src/eqlib/obj/prtsia.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6249024Z copying aqequil/eq3_6_src/src/eqlib/obj/prtsip.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6250313Z copying aqequil/eq3_6_src/src/eqlib/obj/prtsso.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6251632Z copying aqequil/eq3_6_src/src/eqlib/obj/prtvpa.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6252943Z copying aqequil/eq3_6_src/src/eqlib/obj/sortsp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6254342Z copying aqequil/eq3_6_src/src/eqlib/obj/srchn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6255705Z copying aqequil/eq3_6_src/src/eqlib/obj/srchne.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6256995Z copying aqequil/eq3_6_src/src/eqlib/obj/supprs.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6258338Z copying aqequil/eq3_6_src/src/eqlib/obj/switch.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6259846Z copying aqequil/eq3_6_src/src/eqlib/obj/swtchb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6261467Z copying aqequil/eq3_6_src/src/eqlib/obj/swtchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6262667Z copying aqequil/eq3_6_src/src/eqlib/obj/wr6pkd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6264841Z copying aqequil/eq3_6_src/src/eqlib/obj/wr6pkw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/obj
+2026-01-05T01:06:27.6266780Z copying aqequil/eq3_6_src/src/eqlib/src/aaaeql.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6268441Z copying aqequil/eq3_6_src/src/eqlib/src/absswa.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6270074Z copying aqequil/eq3_6_src/src/eqlib/src/abswpk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6271717Z copying aqequil/eq3_6_src/src/eqlib/src/adgexj.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6273319Z copying aqequil/eq3_6_src/src/eqlib/src/adgexp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6275252Z copying aqequil/eq3_6_src/src/eqlib/src/afcalc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6276618Z copying aqequil/eq3_6_src/src/eqlib/src/alters.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6278365Z copying aqequil/eq3_6_src/src/eqlib/src/autosw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6280030Z copying aqequil/eq3_6_src/src/eqlib/src/balcon.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6281694Z copying aqequil/eq3_6_src/src/eqlib/src/betacf.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6283270Z copying aqequil/eq3_6_src/src/eqlib/src/betas.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6285125Z copying aqequil/eq3_6_src/src/eqlib/src/betgam.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6286846Z copying aqequil/eq3_6_src/src/eqlib/src/bspchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6288170Z copying aqequil/eq3_6_src/src/eqlib/src/bsplkp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6289847Z copying aqequil/eq3_6_src/src/eqlib/src/calk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6291440Z copying aqequil/eq3_6_src/src/eqlib/src/cdakey.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6293025Z copying aqequil/eq3_6_src/src/eqlib/src/cdardx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6294650Z copying aqequil/eq3_6_src/src/eqlib/src/cdrscx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6296346Z copying aqequil/eq3_6_src/src/eqlib/src/cdrssd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6297955Z copying aqequil/eq3_6_src/src/eqlib/src/cfracf.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6317141Z copying aqequil/eq3_6_src/src/eqlib/src/chsgex.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6318129Z copying aqequil/eq3_6_src/src/eqlib/src/clones.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6319009Z copying aqequil/eq3_6_src/src/eqlib/src/cmpdat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6319630Z copying aqequil/eq3_6_src/src/eqlib/src/cnvndx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6320358Z copying aqequil/eq3_6_src/src/eqlib/src/coefdr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6320986Z copying aqequil/eq3_6_src/src/eqlib/src/coefel.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6321568Z copying aqequil/eq3_6_src/src/eqlib/src/coefst.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6322357Z copying aqequil/eq3_6_src/src/eqlib/src/ctds.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6322949Z copying aqequil/eq3_6_src/src/eqlib/src/dfbasp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6323883Z copying aqequil/eq3_6_src/src/eqlib/src/echgex.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6324621Z copying aqequil/eq3_6_src/src/eqlib/src/echolk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6325257Z copying aqequil/eq3_6_src/src/eqlib/src/elim.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6325951Z copying aqequil/eq3_6_src/src/eqlib/src/evdat2.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6326525Z copying aqequil/eq3_6_src/src/eqlib/src/evdat3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6327385Z copying aqequil/eq3_6_src/src/eqlib/src/evdat4.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6327968Z copying aqequil/eq3_6_src/src/eqlib/src/evdata.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6328647Z copying aqequil/eq3_6_src/src/eqlib/src/evdatr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6329331Z copying aqequil/eq3_6_src/src/eqlib/src/fbassw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6329903Z copying aqequil/eq3_6_src/src/eqlib/src/fdomsp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6330629Z copying aqequil/eq3_6_src/src/eqlib/src/flgchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6331228Z copying aqequil/eq3_6_src/src/eqlib/src/flgset.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6331993Z copying aqequil/eq3_6_src/src/eqlib/src/gabswx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6332646Z copying aqequil/eq3_6_src/src/eqlib/src/gaffsd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6333284Z copying aqequil/eq3_6_src/src/eqlib/src/gafscl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6334055Z copying aqequil/eq3_6_src/src/eqlib/src/gafsir.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6335551Z copying aqequil/eq3_6_src/src/eqlib/src/gbfac.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6337263Z copying aqequil/eq3_6_src/src/eqlib/src/gcdrtw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6338846Z copying aqequil/eq3_6_src/src/eqlib/src/gcdrw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6340439Z copying aqequil/eq3_6_src/src/eqlib/src/gcsts.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6342188Z copying aqequil/eq3_6_src/src/eqlib/src/gdlgxw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6343689Z copying aqequil/eq3_6_src/src/eqlib/src/gegexs.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6345571Z copying aqequil/eq3_6_src/src/eqlib/src/gegexw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6347239Z copying aqequil/eq3_6_src/src/eqlib/src/gibasp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6348914Z copying aqequil/eq3_6_src/src/eqlib/src/gntpr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6350568Z copying aqequil/eq3_6_src/src/eqlib/src/gpheh.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6352225Z copying aqequil/eq3_6_src/src/eqlib/src/grdxsp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6353856Z copying aqequil/eq3_6_src/src/eqlib/src/gspion.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6355689Z copying aqequil/eq3_6_src/src/eqlib/src/gszm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6357353Z copying aqequil/eq3_6_src/src/eqlib/src/gwdenp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6359011Z copying aqequil/eq3_6_src/src/eqlib/src/hpsat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6360656Z copying aqequil/eq3_6_src/src/eqlib/src/inbdot.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6362464Z copying aqequil/eq3_6_src/src/eqlib/src/indata.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6364448Z copying aqequil/eq3_6_src/src/eqlib/src/indatc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6366066Z copying aqequil/eq3_6_src/src/eqlib/src/indatd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6367712Z copying aqequil/eq3_6_src/src/eqlib/src/indath.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6369370Z copying aqequil/eq3_6_src/src/eqlib/src/indatp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6371015Z copying aqequil/eq3_6_src/src/eqlib/src/indats.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6372807Z copying aqequil/eq3_6_src/src/eqlib/src/intbsw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6374590Z copying aqequil/eq3_6_src/src/eqlib/src/intexi.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6376752Z copying aqequil/eq3_6_src/src/eqlib/src/intsbs.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6378387Z copying aqequil/eq3_6_src/src/eqlib/src/inttfx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6380047Z copying aqequil/eq3_6_src/src/eqlib/src/inupt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6381727Z copying aqequil/eq3_6_src/src/eqlib/src/jesite.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6383338Z copying aqequil/eq3_6_src/src/eqlib/src/jflaux.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6385163Z copying aqequil/eq3_6_src/src/eqlib/src/matrix.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6387070Z copying aqequil/eq3_6_src/src/eqlib/src/mdrgex.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6388739Z copying aqequil/eq3_6_src/src/eqlib/src/nbasis.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6390362Z copying aqequil/eq3_6_src/src/eqlib/src/ncmpex.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6392183Z copying aqequil/eq3_6_src/src/eqlib/src/ncmpve.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6393958Z copying aqequil/eq3_6_src/src/eqlib/src/ncmpvh.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6396023Z copying aqequil/eq3_6_src/src/eqlib/src/newton.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6397712Z copying aqequil/eq3_6_src/src/eqlib/src/ngcadv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6399521Z copying aqequil/eq3_6_src/src/eqlib/src/nphase.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6401154Z copying aqequil/eq3_6_src/src/eqlib/src/nrstep.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6402939Z copying aqequil/eq3_6_src/src/eqlib/src/pcorrm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6404667Z copying aqequil/eq3_6_src/src/eqlib/src/pcorrx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6406475Z copying aqequil/eq3_6_src/src/eqlib/src/prpheh.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6408123Z copying aqequil/eq3_6_src/src/eqlib/src/prreac.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6409803Z copying aqequil/eq3_6_src/src/eqlib/src/prtacr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6411527Z copying aqequil/eq3_6_src/src/eqlib/src/prtalk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6413126Z copying aqequil/eq3_6_src/src/eqlib/src/prtaqs.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6414851Z copying aqequil/eq3_6_src/src/eqlib/src/prteca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6416736Z copying aqequil/eq3_6_src/src/eqlib/src/prtfug.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6418373Z copying aqequil/eq3_6_src/src/eqlib/src/prtgex.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6420263Z copying aqequil/eq3_6_src/src/eqlib/src/prtmip.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6421863Z copying aqequil/eq3_6_src/src/eqlib/src/prtnca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6423468Z copying aqequil/eq3_6_src/src/eqlib/src/prtntt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6425300Z copying aqequil/eq3_6_src/src/eqlib/src/prtpct.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6427038Z copying aqequil/eq3_6_src/src/eqlib/src/prtrdx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6428719Z copying aqequil/eq3_6_src/src/eqlib/src/prtsat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6430440Z copying aqequil/eq3_6_src/src/eqlib/src/prtsca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6432090Z copying aqequil/eq3_6_src/src/eqlib/src/prtsia.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6433770Z copying aqequil/eq3_6_src/src/eqlib/src/prtsip.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6435598Z copying aqequil/eq3_6_src/src/eqlib/src/prtsso.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6437276Z copying aqequil/eq3_6_src/src/eqlib/src/prtvpa.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6439031Z copying aqequil/eq3_6_src/src/eqlib/src/sortsp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6440695Z copying aqequil/eq3_6_src/src/eqlib/src/srchn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6442379Z copying aqequil/eq3_6_src/src/eqlib/src/srchne.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6444040Z copying aqequil/eq3_6_src/src/eqlib/src/supprs.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6445960Z copying aqequil/eq3_6_src/src/eqlib/src/switch.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6447773Z copying aqequil/eq3_6_src/src/eqlib/src/swtchb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6449617Z copying aqequil/eq3_6_src/src/eqlib/src/swtchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6451308Z copying aqequil/eq3_6_src/src/eqlib/src/wr6pkd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6453395Z copying aqequil/eq3_6_src/src/eqlib/src/wr6pkw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlib/src
+2026-01-05T01:06:27.6455418Z copying aqequil/eq3_6_src/src/eqlibg/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg
+2026-01-05T01:06:27.6457040Z copying aqequil/eq3_6_src/src/eqlibg/obj/aaaelg.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6458539Z copying aqequil/eq3_6_src/src/eqlibg/obj/bdmlx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6460149Z copying aqequil/eq3_6_src/src/eqlibg/obj/bdslx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6461706Z copying aqequil/eq3_6_src/src/eqlibg/obj/ca3bar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6463261Z copying aqequil/eq3_6_src/src/eqlibg/obj/cabar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6464691Z copying aqequil/eq3_6_src/src/eqlibg/obj/cfje.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6466498Z copying aqequil/eq3_6_src/src/eqlibg/obj/cfjest.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6468147Z copying aqequil/eq3_6_src/src/eqlibg/obj/cfxi.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6469728Z copying aqequil/eq3_6_src/src/eqlibg/obj/cfxist.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6471216Z copying aqequil/eq3_6_src/src/eqlibg/obj/csigm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6472827Z copying aqequil/eq3_6_src/src/eqlibg/obj/cwrpjt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6474863Z copying aqequil/eq3_6_src/src/eqlibg/obj/elmdd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6476116Z copying aqequil/eq3_6_src/src/eqlibg/obj/evptzc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6477794Z copying aqequil/eq3_6_src/src/eqlibg/obj/gbdot.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6479396Z copying aqequil/eq3_6_src/src/eqlibg/obj/gcoeff.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6481124Z copying aqequil/eq3_6_src/src/eqlibg/obj/gcscal.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6482515Z copying aqequil/eq3_6_src/src/eqlibg/obj/gdavie.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6484361Z copying aqequil/eq3_6_src/src/eqlibg/obj/gdd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6485999Z copying aqequil/eq3_6_src/src/eqlibg/obj/gelam.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6487682Z copying aqequil/eq3_6_src/src/eqlibg/obj/gesum.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6489237Z copying aqequil/eq3_6_src/src/eqlibg/obj/gfdhc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6490820Z copying aqequil/eq3_6_src/src/eqlibg/obj/gfdho.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6492380Z copying aqequil/eq3_6_src/src/eqlibg/obj/ghj0.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6494004Z copying aqequil/eq3_6_src/src/eqlibg/obj/gmdsm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6495760Z copying aqequil/eq3_6_src/src/eqlibg/obj/gmsum.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6497324Z copying aqequil/eq3_6_src/src/eqlibg/obj/gpj0.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6498896Z copying aqequil/eq3_6_src/src/eqlibg/obj/gsdsm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6500510Z copying aqequil/eq3_6_src/src/eqlibg/obj/gselm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6502109Z copying aqequil/eq3_6_src/src/eqlibg/obj/gsgsm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6503685Z copying aqequil/eq3_6_src/src/eqlibg/obj/gslam.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6505440Z copying aqequil/eq3_6_src/src/eqlibg/obj/gssum.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6507156Z copying aqequil/eq3_6_src/src/eqlibg/obj/lambda.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6508625Z copying aqequil/eq3_6_src/src/eqlibg/obj/lamgex.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6510240Z copying aqequil/eq3_6_src/src/eqlibg/obj/nactop.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6511913Z copying aqequil/eq3_6_src/src/eqlibg/obj/nbsgam.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6513640Z copying aqequil/eq3_6_src/src/eqlibg/obj/ptzchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6515185Z copying aqequil/eq3_6_src/src/eqlibg/obj/ptztab.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6516987Z copying aqequil/eq3_6_src/src/eqlibg/obj/rc3ocf.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6518720Z copying aqequil/eq3_6_src/src/eqlibg/obj/wterm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6520354Z copying aqequil/eq3_6_src/src/eqlibg/obj/zsrt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/obj
+2026-01-05T01:06:27.6521968Z copying aqequil/eq3_6_src/src/eqlibg/src/aaaelg.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6523665Z copying aqequil/eq3_6_src/src/eqlibg/src/bdmlx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6525427Z copying aqequil/eq3_6_src/src/eqlibg/src/bdslx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6527198Z copying aqequil/eq3_6_src/src/eqlibg/src/ca3bar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6528526Z copying aqequil/eq3_6_src/src/eqlibg/src/cabar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6530250Z copying aqequil/eq3_6_src/src/eqlibg/src/cfje.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6531958Z copying aqequil/eq3_6_src/src/eqlibg/src/cfjest.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6539013Z copying aqequil/eq3_6_src/src/eqlibg/src/cfxi.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6548344Z copying aqequil/eq3_6_src/src/eqlibg/src/cfxist.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6549923Z copying aqequil/eq3_6_src/src/eqlibg/src/csigm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6551515Z copying aqequil/eq3_6_src/src/eqlibg/src/cwrpjt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6553182Z copying aqequil/eq3_6_src/src/eqlibg/src/elmdd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6555005Z copying aqequil/eq3_6_src/src/eqlibg/src/evptzc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6556630Z copying aqequil/eq3_6_src/src/eqlibg/src/gbdot.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6558266Z copying aqequil/eq3_6_src/src/eqlibg/src/gcoeff.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6560033Z copying aqequil/eq3_6_src/src/eqlibg/src/gcscal.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6561681Z copying aqequil/eq3_6_src/src/eqlibg/src/gdavie.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6563284Z copying aqequil/eq3_6_src/src/eqlibg/src/gdd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6565077Z copying aqequil/eq3_6_src/src/eqlibg/src/gelam.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6566906Z copying aqequil/eq3_6_src/src/eqlibg/src/gesum.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6568481Z copying aqequil/eq3_6_src/src/eqlibg/src/gfdhc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6570190Z copying aqequil/eq3_6_src/src/eqlibg/src/gfdho.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6571676Z copying aqequil/eq3_6_src/src/eqlibg/src/ghj0.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6573321Z copying aqequil/eq3_6_src/src/eqlibg/src/gmdsm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6575144Z copying aqequil/eq3_6_src/src/eqlibg/src/gmsum.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6576708Z copying aqequil/eq3_6_src/src/eqlibg/src/gpj0.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6578357Z copying aqequil/eq3_6_src/src/eqlibg/src/gsdsm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6579961Z copying aqequil/eq3_6_src/src/eqlibg/src/gselm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6581564Z copying aqequil/eq3_6_src/src/eqlibg/src/gsgsm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6583157Z copying aqequil/eq3_6_src/src/eqlibg/src/gslam.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6584758Z copying aqequil/eq3_6_src/src/eqlibg/src/gssum.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6586522Z copying aqequil/eq3_6_src/src/eqlibg/src/lambda.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6588258Z copying aqequil/eq3_6_src/src/eqlibg/src/lamgex.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6589925Z copying aqequil/eq3_6_src/src/eqlibg/src/nactop.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6591476Z copying aqequil/eq3_6_src/src/eqlibg/src/nbsgam.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6593258Z copying aqequil/eq3_6_src/src/eqlibg/src/ptzchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6594723Z copying aqequil/eq3_6_src/src/eqlibg/src/ptztab.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6596452Z copying aqequil/eq3_6_src/src/eqlibg/src/rc3ocf.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6598195Z copying aqequil/eq3_6_src/src/eqlibg/src/wterm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6599939Z copying aqequil/eq3_6_src/src/eqlibg/src/zsrt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibg/src
+2026-01-05T01:06:27.6601348Z copying aqequil/eq3_6_src/src/eqlibu/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu
+2026-01-05T01:06:27.6603003Z copying aqequil/eq3_6_src/src/eqlibu/obj/aaaelu.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6604713Z copying aqequil/eq3_6_src/src/eqlibu/obj/arrmxn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6606328Z copying aqequil/eq3_6_src/src/eqlibu/obj/cejust.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6607867Z copying aqequil/eq3_6_src/src/eqlibu/obj/chreal.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6609428Z copying aqequil/eq3_6_src/src/eqlibu/obj/chrint.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6610993Z copying aqequil/eq3_6_src/src/eqlibu/obj/chump.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6612552Z copying aqequil/eq3_6_src/src/eqlibu/obj/cliefu.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6614119Z copying aqequil/eq3_6_src/src/eqlibu/obj/copyaa.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6615933Z copying aqequil/eq3_6_src/src/eqlibu/obj/copyca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6617503Z copying aqequil/eq3_6_src/src/eqlibu/obj/copyia.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6619077Z copying aqequil/eq3_6_src/src/eqlibu/obj/copyla.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6620734Z copying aqequil/eq3_6_src/src/eqlibu/obj/daxpy.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6622303Z copying aqequil/eq3_6_src/src/eqlibu/obj/ddot.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6623867Z copying aqequil/eq3_6_src/src/eqlibu/obj/dgefa.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6625633Z copying aqequil/eq3_6_src/src/eqlibu/obj/dgesl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6627214Z copying aqequil/eq3_6_src/src/eqlibu/obj/dotpra.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6628780Z copying aqequil/eq3_6_src/src/eqlibu/obj/dscal.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6630347Z copying aqequil/eq3_6_src/src/eqlibu/obj/dscram.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6631914Z copying aqequil/eq3_6_src/src/eqlibu/obj/fcopya.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6633553Z copying aqequil/eq3_6_src/src/eqlibu/obj/fctrl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6635294Z copying aqequil/eq3_6_src/src/eqlibu/obj/flpars.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6636883Z copying aqequil/eq3_6_src/src/eqlibu/obj/fmspnm.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6638480Z copying aqequil/eq3_6_src/src/eqlibu/obj/fmspnx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6640095Z copying aqequil/eq3_6_src/src/eqlibu/obj/getbasename.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6641692Z copying aqequil/eq3_6_src/src/eqlibu/obj/getlu.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6643280Z copying aqequil/eq3_6_src/src/eqlibu/obj/ginvrt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6645156Z copying aqequil/eq3_6_src/src/eqlibu/obj/gmarko.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6646545Z copying aqequil/eq3_6_src/src/eqlibu/obj/iarmxn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6648205Z copying aqequil/eq3_6_src/src/eqlibu/obj/idamax.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6649806Z copying aqequil/eq3_6_src/src/eqlibu/obj/ifnobl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6651418Z copying aqequil/eq3_6_src/src/eqlibu/obj/ilnobl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6652888Z copying aqequil/eq3_6_src/src/eqlibu/obj/initav.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6654686Z copying aqequil/eq3_6_src/src/eqlibu/obj/initaz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6656315Z copying aqequil/eq3_6_src/src/eqlibu/obj/initcb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6657908Z copying aqequil/eq3_6_src/src/eqlibu/obj/initcv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6659500Z copying aqequil/eq3_6_src/src/eqlibu/obj/initii.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6661069Z copying aqequil/eq3_6_src/src/eqlibu/obj/initim.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6662797Z copying aqequil/eq3_6_src/src/eqlibu/obj/initiv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6664575Z copying aqequil/eq3_6_src/src/eqlibu/obj/initiz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6666204Z copying aqequil/eq3_6_src/src/eqlibu/obj/initlv.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6667844Z copying aqequil/eq3_6_src/src/eqlibu/obj/intchr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6669496Z copying aqequil/eq3_6_src/src/eqlibu/obj/jiarmn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6671059Z copying aqequil/eq3_6_src/src/eqlibu/obj/jiarmx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6672659Z copying aqequil/eq3_6_src/src/eqlibu/obj/lejust.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6674433Z copying aqequil/eq3_6_src/src/eqlibu/obj/lindep.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6676061Z copying aqequil/eq3_6_src/src/eqlibu/obj/locase.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6677753Z copying aqequil/eq3_6_src/src/eqlibu/obj/minvrt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6679380Z copying aqequil/eq3_6_src/src/eqlibu/obj/msolvr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6680965Z copying aqequil/eq3_6_src/src/eqlibu/obj/multav.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6682583Z copying aqequil/eq3_6_src/src/eqlibu/obj/openin.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6684189Z copying aqequil/eq3_6_src/src/eqlibu/obj/openou.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6685973Z copying aqequil/eq3_6_src/src/eqlibu/obj/parslj.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6687581Z copying aqequil/eq3_6_src/src/eqlibu/obj/parsln.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6689182Z copying aqequil/eq3_6_src/src/eqlibu/obj/platfd.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6690789Z copying aqequil/eq3_6_src/src/eqlibu/obj/polfit.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6692415Z copying aqequil/eq3_6_src/src/eqlibu/obj/prcndi.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6694057Z copying aqequil/eq3_6_src/src/eqlibu/obj/qsortw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6696033Z copying aqequil/eq3_6_src/src/eqlibu/obj/rdd1l.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6697428Z copying aqequil/eq3_6_src/src/eqlibu/obj/rdd1lh.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6699096Z copying aqequil/eq3_6_src/src/eqlibu/obj/rdd2l.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6700698Z copying aqequil/eq3_6_src/src/eqlibu/obj/rdd2lh.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6702346Z copying aqequil/eq3_6_src/src/eqlibu/obj/rddixc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6703988Z copying aqequil/eq3_6_src/src/eqlibu/obj/realch.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6705787Z copying aqequil/eq3_6_src/src/eqlibu/obj/rijust.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6707454Z copying aqequil/eq3_6_src/src/eqlibu/obj/rscaly.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6709078Z copying aqequil/eq3_6_src/src/eqlibu/obj/runtim.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6710781Z copying aqequil/eq3_6_src/src/eqlibu/obj/scalx1.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6712484Z copying aqequil/eq3_6_src/src/eqlibu/obj/ssortw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6714144Z copying aqequil/eq3_6_src/src/eqlibu/obj/stripl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6715959Z copying aqequil/eq3_6_src/src/eqlibu/obj/texp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6717688Z copying aqequil/eq3_6_src/src/eqlibu/obj/timdat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6719262Z copying aqequil/eq3_6_src/src/eqlibu/obj/tleapy.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6720959Z copying aqequil/eq3_6_src/src/eqlibu/obj/tlg.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6722673Z copying aqequil/eq3_6_src/src/eqlibu/obj/undflw.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6724434Z copying aqequil/eq3_6_src/src/eqlibu/obj/upcase.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/obj
+2026-01-05T01:06:27.6726044Z copying aqequil/eq3_6_src/src/eqlibu/src/aaaelu.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6727641Z copying aqequil/eq3_6_src/src/eqlibu/src/arrmxn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6729212Z copying aqequil/eq3_6_src/src/eqlibu/src/cejust.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6730792Z copying aqequil/eq3_6_src/src/eqlibu/src/chreal.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6732506Z copying aqequil/eq3_6_src/src/eqlibu/src/chrint.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6734126Z copying aqequil/eq3_6_src/src/eqlibu/src/chump.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6735930Z copying aqequil/eq3_6_src/src/eqlibu/src/cliefu.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6737506Z copying aqequil/eq3_6_src/src/eqlibu/src/copyaa.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6739059Z copying aqequil/eq3_6_src/src/eqlibu/src/copyca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6740623Z copying aqequil/eq3_6_src/src/eqlibu/src/copyia.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6742211Z copying aqequil/eq3_6_src/src/eqlibu/src/copyla.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6743776Z copying aqequil/eq3_6_src/src/eqlibu/src/daxpy.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6745591Z copying aqequil/eq3_6_src/src/eqlibu/src/ddot.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6747215Z copying aqequil/eq3_6_src/src/eqlibu/src/dgefa.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6748965Z copying aqequil/eq3_6_src/src/eqlibu/src/dgesl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6750240Z copying aqequil/eq3_6_src/src/eqlibu/src/dotpra.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6751904Z copying aqequil/eq3_6_src/src/eqlibu/src/dscal.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6753496Z copying aqequil/eq3_6_src/src/eqlibu/src/dscram.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6755352Z copying aqequil/eq3_6_src/src/eqlibu/src/fcopya.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6756775Z copying aqequil/eq3_6_src/src/eqlibu/src/fctrl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6758456Z copying aqequil/eq3_6_src/src/eqlibu/src/flpars.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6760035Z copying aqequil/eq3_6_src/src/eqlibu/src/fmspnm.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6761607Z copying aqequil/eq3_6_src/src/eqlibu/src/fmspnx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6763216Z copying aqequil/eq3_6_src/src/eqlibu/src/getbasename.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6764981Z copying aqequil/eq3_6_src/src/eqlibu/src/getlu.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6766696Z copying aqequil/eq3_6_src/src/eqlibu/src/ginvrt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6768089Z copying aqequil/eq3_6_src/src/eqlibu/src/gmarko.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6769793Z copying aqequil/eq3_6_src/src/eqlibu/src/iarmxn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6771410Z copying aqequil/eq3_6_src/src/eqlibu/src/idamax.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6773014Z copying aqequil/eq3_6_src/src/eqlibu/src/ifnobl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6774674Z copying aqequil/eq3_6_src/src/eqlibu/src/ilnobl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6776361Z copying aqequil/eq3_6_src/src/eqlibu/src/initav.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6778082Z copying aqequil/eq3_6_src/src/eqlibu/src/initaz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6779625Z copying aqequil/eq3_6_src/src/eqlibu/src/initcb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6781180Z copying aqequil/eq3_6_src/src/eqlibu/src/initcv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6782781Z copying aqequil/eq3_6_src/src/eqlibu/src/initii.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6784540Z copying aqequil/eq3_6_src/src/eqlibu/src/initim.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6786181Z copying aqequil/eq3_6_src/src/eqlibu/src/initiv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6787796Z copying aqequil/eq3_6_src/src/eqlibu/src/initiz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6789436Z copying aqequil/eq3_6_src/src/eqlibu/src/initlv.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6791064Z copying aqequil/eq3_6_src/src/eqlibu/src/intchr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6792666Z copying aqequil/eq3_6_src/src/eqlibu/src/jiarmn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6794454Z copying aqequil/eq3_6_src/src/eqlibu/src/jiarmx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6796072Z copying aqequil/eq3_6_src/src/eqlibu/src/lejust.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6797658Z copying aqequil/eq3_6_src/src/eqlibu/src/lindep.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6799406Z copying aqequil/eq3_6_src/src/eqlibu/src/locase.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6801147Z copying aqequil/eq3_6_src/src/eqlibu/src/minvrt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6802522Z copying aqequil/eq3_6_src/src/eqlibu/src/msolvr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6804378Z copying aqequil/eq3_6_src/src/eqlibu/src/multav.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6806035Z copying aqequil/eq3_6_src/src/eqlibu/src/openin.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6807649Z copying aqequil/eq3_6_src/src/eqlibu/src/openou.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6809180Z copying aqequil/eq3_6_src/src/eqlibu/src/parslj.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6810972Z copying aqequil/eq3_6_src/src/eqlibu/src/parsln.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6812554Z copying aqequil/eq3_6_src/src/eqlibu/src/platfd.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6814187Z copying aqequil/eq3_6_src/src/eqlibu/src/polfit.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6815980Z copying aqequil/eq3_6_src/src/eqlibu/src/prcndi.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6817611Z copying aqequil/eq3_6_src/src/eqlibu/src/qsortw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6820080Z copying aqequil/eq3_6_src/src/eqlibu/src/rdd1l.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6821685Z copying aqequil/eq3_6_src/src/eqlibu/src/rdd1lh.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6823304Z copying aqequil/eq3_6_src/src/eqlibu/src/rdd2l.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6825107Z copying aqequil/eq3_6_src/src/eqlibu/src/rdd2lh.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6826780Z copying aqequil/eq3_6_src/src/eqlibu/src/rddixc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6828419Z copying aqequil/eq3_6_src/src/eqlibu/src/realch.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6830117Z copying aqequil/eq3_6_src/src/eqlibu/src/rijust.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6831847Z copying aqequil/eq3_6_src/src/eqlibu/src/rscaly.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6833407Z copying aqequil/eq3_6_src/src/eqlibu/src/runtim.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6835231Z copying aqequil/eq3_6_src/src/eqlibu/src/scalx1.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6836951Z copying aqequil/eq3_6_src/src/eqlibu/src/ssortw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6838564Z copying aqequil/eq3_6_src/src/eqlibu/src/stripl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6840162Z copying aqequil/eq3_6_src/src/eqlibu/src/texp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6841787Z copying aqequil/eq3_6_src/src/eqlibu/src/timdat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6843403Z copying aqequil/eq3_6_src/src/eqlibu/src/tleapy.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6845242Z copying aqequil/eq3_6_src/src/eqlibu/src/tlg.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6846922Z copying aqequil/eq3_6_src/src/eqlibu/src/undflw.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6848526Z copying aqequil/eq3_6_src/src/eqlibu/src/upcase.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqlibu/src
+2026-01-05T01:06:27.6850126Z copying aqequil/eq3_6_src/src/eqpt/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt
+2026-01-05T01:06:27.6851701Z copying aqequil/eq3_6_src/src/eqpt/obj/aaaeqt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6853292Z copying aqequil/eq3_6_src/src/eqpt/obj/adalph.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6855207Z copying aqequil/eq3_6_src/src/eqpt/obj/artrip.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6856734Z copying aqequil/eq3_6_src/src/eqpt/obj/bkdeqp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6858354Z copying aqequil/eq3_6_src/src/eqpt/obj/bldspc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6859956Z copying aqequil/eq3_6_src/src/eqpt/obj/coasst.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6861540Z copying aqequil/eq3_6_src/src/eqpt/obj/cpcomb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6862974Z copying aqequil/eq3_6_src/src/eqpt/obj/elesck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6864813Z copying aqequil/eq3_6_src/src/eqpt/obj/eqpt.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6867037Z copying aqequil/eq3_6_src/src/eqpt/obj/etoo2.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6868616Z copying aqequil/eq3_6_src/src/eqpt/obj/g1dat.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6870245Z copying aqequil/eq3_6_src/src/eqpt/obj/gakey.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6871640Z copying aqequil/eq3_6_src/src/eqpt/obj/ggridp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6873363Z copying aqequil/eq3_6_src/src/eqpt/obj/gnenb.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6875324Z copying aqequil/eq3_6_src/src/eqpt/obj/gspidx.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6876911Z copying aqequil/eq3_6_src/src/eqpt/obj/hdrchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6878520Z copying aqequil/eq3_6_src/src/eqpt/obj/intrp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6880176Z copying aqequil/eq3_6_src/src/eqpt/obj/ldbar2.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6881779Z copying aqequil/eq3_6_src/src/eqpt/obj/ldbar3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6883468Z copying aqequil/eq3_6_src/src/eqpt/obj/ldbar4.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6885176Z copying aqequil/eq3_6_src/src/eqpt/obj/naqsck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6886796Z copying aqequil/eq3_6_src/src/eqpt/obj/nelcck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6888377Z copying aqequil/eq3_6_src/src/eqpt/obj/neleck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6889980Z copying aqequil/eq3_6_src/src/eqpt/obj/ngasck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6891557Z copying aqequil/eq3_6_src/src/eqpt/obj/nminck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6893151Z copying aqequil/eq3_6_src/src/eqpt/obj/nrxnck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6894834Z copying aqequil/eq3_6_src/src/eqpt/obj/nssock.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6896493Z copying aqequil/eq3_6_src/src/eqpt/obj/nxspck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6898226Z copying aqequil/eq3_6_src/src/eqpt/obj/pcraq.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6900108Z copying aqequil/eq3_6_src/src/eqpt/obj/pcrsg.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6902135Z copying aqequil/eq3_6_src/src/eqpt/obj/pcrss.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6903941Z copying aqequil/eq3_6_src/src/eqpt/obj/prrecy.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6905721Z copying aqequil/eq3_6_src/src/eqpt/obj/rdazp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6907406Z copying aqequil/eq3_6_src/src/eqpt/obj/rdgrid.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6909040Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6911006Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6912651Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpn2.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6914517Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpn2n.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6916296Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpni.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6917997Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpnn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6919781Z copying aqequil/eq3_6_src/src/eqpt/obj/rdppsi.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6921477Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpth.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6923165Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpz2.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6925120Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpz3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6926943Z copying aqequil/eq3_6_src/src/eqpt/obj/rdpzet.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6928681Z copying aqequil/eq3_6_src/src/eqpt/obj/rdwele.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6930360Z copying aqequil/eq3_6_src/src/eqpt/obj/rdwttl.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6932183Z copying aqequil/eq3_6_src/src/eqpt/obj/rxnchk.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6933886Z copying aqequil/eq3_6_src/src/eqpt/obj/rxnsck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6935720Z copying aqequil/eq3_6_src/src/eqpt/obj/srch22.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6937320Z copying aqequil/eq3_6_src/src/eqpt/obj/srch33.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6939017Z copying aqequil/eq3_6_src/src/eqpt/obj/tegrid.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6940569Z copying aqequil/eq3_6_src/src/eqpt/obj/thetck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6942154Z copying aqequil/eq3_6_src/src/eqpt/obj/tpraa.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6943804Z copying aqequil/eq3_6_src/src/eqpt/obj/tpraac.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6945648Z copying aqequil/eq3_6_src/src/eqpt/obj/tpraz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6947322Z copying aqequil/eq3_6_src/src/eqpt/obj/tprca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6949042Z copying aqequil/eq3_6_src/src/eqpt/obj/tprcc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6950731Z copying aqequil/eq3_6_src/src/eqpt/obj/tprcca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6952382Z copying aqequil/eq3_6_src/src/eqpt/obj/tprn2.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6954040Z copying aqequil/eq3_6_src/src/eqpt/obj/tprn2n.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6955892Z copying aqequil/eq3_6_src/src/eqpt/obj/tprna.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6957562Z copying aqequil/eq3_6_src/src/eqpt/obj/tprnc.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6959208Z copying aqequil/eq3_6_src/src/eqpt/obj/tprnca.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6960881Z copying aqequil/eq3_6_src/src/eqpt/obj/tprnn.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6962606Z copying aqequil/eq3_6_src/src/eqpt/obj/tripck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6964483Z copying aqequil/eq3_6_src/src/eqpt/obj/vazpck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6966141Z copying aqequil/eq3_6_src/src/eqpt/obj/vxspck.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6967939Z copying aqequil/eq3_6_src/src/eqpt/obj/wrazp.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6969553Z copying aqequil/eq3_6_src/src/eqpt/obj/wrhdr.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6971219Z copying aqequil/eq3_6_src/src/eqpt/obj/wrpar.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6973214Z copying aqequil/eq3_6_src/src/eqpt/obj/wrpz23.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/obj
+2026-01-05T01:06:27.6975393Z copying aqequil/eq3_6_src/src/eqpt/src/aaaeqt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6977072Z copying aqequil/eq3_6_src/src/eqpt/src/adalph.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6978693Z copying aqequil/eq3_6_src/src/eqpt/src/artrip.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6980280Z copying aqequil/eq3_6_src/src/eqpt/src/bkdeqp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6981853Z copying aqequil/eq3_6_src/src/eqpt/src/bldspc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6983501Z copying aqequil/eq3_6_src/src/eqpt/src/coasst.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6985284Z copying aqequil/eq3_6_src/src/eqpt/src/cpcomb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6986871Z copying aqequil/eq3_6_src/src/eqpt/src/elesck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6988489Z copying aqequil/eq3_6_src/src/eqpt/src/eqpt.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6990550Z copying aqequil/eq3_6_src/src/eqpt/src/etoo2.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6992252Z copying aqequil/eq3_6_src/src/eqpt/src/g1dat.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6993612Z copying aqequil/eq3_6_src/src/eqpt/src/gakey.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6995561Z copying aqequil/eq3_6_src/src/eqpt/src/ggridp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6997302Z copying aqequil/eq3_6_src/src/eqpt/src/gnenb.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.6999073Z copying aqequil/eq3_6_src/src/eqpt/src/gspidx.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7000649Z copying aqequil/eq3_6_src/src/eqpt/src/hdrchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7002218Z copying aqequil/eq3_6_src/src/eqpt/src/intrp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7003860Z copying aqequil/eq3_6_src/src/eqpt/src/ldbar2.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7005732Z copying aqequil/eq3_6_src/src/eqpt/src/ldbar3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7007174Z copying aqequil/eq3_6_src/src/eqpt/src/ldbar4.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7008829Z copying aqequil/eq3_6_src/src/eqpt/src/naqsck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7010395Z copying aqequil/eq3_6_src/src/eqpt/src/nelcck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7011953Z copying aqequil/eq3_6_src/src/eqpt/src/neleck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7013520Z copying aqequil/eq3_6_src/src/eqpt/src/ngasck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7015410Z copying aqequil/eq3_6_src/src/eqpt/src/nminck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7017061Z copying aqequil/eq3_6_src/src/eqpt/src/nrxnck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7018651Z copying aqequil/eq3_6_src/src/eqpt/src/nssock.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7020230Z copying aqequil/eq3_6_src/src/eqpt/src/nxspck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7021975Z copying aqequil/eq3_6_src/src/eqpt/src/pcraq.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7023763Z copying aqequil/eq3_6_src/src/eqpt/src/pcrsg.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7025903Z copying aqequil/eq3_6_src/src/eqpt/src/pcrss.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7027619Z copying aqequil/eq3_6_src/src/eqpt/src/prrecy.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7029281Z copying aqequil/eq3_6_src/src/eqpt/src/rdazp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7030862Z copying aqequil/eq3_6_src/src/eqpt/src/rdgrid.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7032516Z copying aqequil/eq3_6_src/src/eqpt/src/rdpar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7034886Z copying aqequil/eq3_6_src/src/eqpt/src/rdpca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7036681Z copying aqequil/eq3_6_src/src/eqpt/src/rdpn2.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7038492Z copying aqequil/eq3_6_src/src/eqpt/src/rdpn2n.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7040247Z copying aqequil/eq3_6_src/src/eqpt/src/rdpni.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7042158Z copying aqequil/eq3_6_src/src/eqpt/src/rdpnn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7043886Z copying aqequil/eq3_6_src/src/eqpt/src/rdppsi.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7045985Z copying aqequil/eq3_6_src/src/eqpt/src/rdpth.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7047731Z copying aqequil/eq3_6_src/src/eqpt/src/rdpz2.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7049586Z copying aqequil/eq3_6_src/src/eqpt/src/rdpz3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7051299Z copying aqequil/eq3_6_src/src/eqpt/src/rdpzet.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7053041Z copying aqequil/eq3_6_src/src/eqpt/src/rdwele.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7054972Z copying aqequil/eq3_6_src/src/eqpt/src/rdwttl.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7056731Z copying aqequil/eq3_6_src/src/eqpt/src/rxnchk.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7058414Z copying aqequil/eq3_6_src/src/eqpt/src/rxnsck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7060098Z copying aqequil/eq3_6_src/src/eqpt/src/srch22.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7061794Z copying aqequil/eq3_6_src/src/eqpt/src/srch33.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7063533Z copying aqequil/eq3_6_src/src/eqpt/src/tegrid.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7065437Z copying aqequil/eq3_6_src/src/eqpt/src/thetck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7067143Z copying aqequil/eq3_6_src/src/eqpt/src/tpraa.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7068803Z copying aqequil/eq3_6_src/src/eqpt/src/tpraac.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7070616Z copying aqequil/eq3_6_src/src/eqpt/src/tpraz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7072378Z copying aqequil/eq3_6_src/src/eqpt/src/tprca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7074096Z copying aqequil/eq3_6_src/src/eqpt/src/tprcc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7076045Z copying aqequil/eq3_6_src/src/eqpt/src/tprcca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7077857Z copying aqequil/eq3_6_src/src/eqpt/src/tprn2.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7079554Z copying aqequil/eq3_6_src/src/eqpt/src/tprn2n.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7081593Z copying aqequil/eq3_6_src/src/eqpt/src/tprna.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7082958Z copying aqequil/eq3_6_src/src/eqpt/src/tprnc.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7084831Z copying aqequil/eq3_6_src/src/eqpt/src/tprnca.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7086626Z copying aqequil/eq3_6_src/src/eqpt/src/tprnn.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7088532Z copying aqequil/eq3_6_src/src/eqpt/src/tripck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7090042Z copying aqequil/eq3_6_src/src/eqpt/src/vazpck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7091529Z copying aqequil/eq3_6_src/src/eqpt/src/vxspck.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7092964Z copying aqequil/eq3_6_src/src/eqpt/src/wrazp.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7094565Z copying aqequil/eq3_6_src/src/eqpt/src/wrhdr.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7096138Z copying aqequil/eq3_6_src/src/eqpt/src/wrpar.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7098005Z copying aqequil/eq3_6_src/src/eqpt/src/wrpz23.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/eqpt/src
+2026-01-05T01:06:27.7099609Z copying aqequil/eq3_6_src/src/xcon3/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3
+2026-01-05T01:06:27.7101149Z copying aqequil/eq3_6_src/src/xcon3/obj/aaaxc3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7102571Z copying aqequil/eq3_6_src/src/xcon3/obj/bkdxc3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7104616Z copying aqequil/eq3_6_src/src/xcon3/obj/rd3d7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7106208Z copying aqequil/eq3_6_src/src/xcon3/obj/rd3d8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7108615Z copying aqequil/eq3_6_src/src/xcon3/obj/rd3d8b.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7110915Z copying aqequil/eq3_6_src/src/xcon3/obj/rd3w6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7112277Z copying aqequil/eq3_6_src/src/xcon3/obj/rd3w7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7113754Z copying aqequil/eq3_6_src/src/xcon3/obj/rd3w8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7115644Z copying aqequil/eq3_6_src/src/xcon3/obj/wr3d7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7117146Z copying aqequil/eq3_6_src/src/xcon3/obj/wr3d72.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7118720Z copying aqequil/eq3_6_src/src/xcon3/obj/wr3d8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7120630Z copying aqequil/eq3_6_src/src/xcon3/obj/wr3w6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7121978Z copying aqequil/eq3_6_src/src/xcon3/obj/wr3w7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7123424Z copying aqequil/eq3_6_src/src/xcon3/obj/wr3w8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7125150Z copying aqequil/eq3_6_src/src/xcon3/obj/xcon3.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/obj
+2026-01-05T01:06:27.7127239Z copying aqequil/eq3_6_src/src/xcon3/src/aaaxc3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7128622Z copying aqequil/eq3_6_src/src/xcon3/src/bkdxc3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7130022Z copying aqequil/eq3_6_src/src/xcon3/src/rd3d7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7131601Z copying aqequil/eq3_6_src/src/xcon3/src/rd3d8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7134082Z copying aqequil/eq3_6_src/src/xcon3/src/rd3d8b.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7136879Z copying aqequil/eq3_6_src/src/xcon3/src/rd3w6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7138486Z copying aqequil/eq3_6_src/src/xcon3/src/rd3w7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7139845Z copying aqequil/eq3_6_src/src/xcon3/src/rd3w8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7141361Z copying aqequil/eq3_6_src/src/xcon3/src/wr3d7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7142884Z copying aqequil/eq3_6_src/src/xcon3/src/wr3d72.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7144501Z copying aqequil/eq3_6_src/src/xcon3/src/wr3d8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7146288Z copying aqequil/eq3_6_src/src/xcon3/src/wr3w6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7147720Z copying aqequil/eq3_6_src/src/xcon3/src/wr3w7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7149184Z copying aqequil/eq3_6_src/src/xcon3/src/wr3w8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7150717Z copying aqequil/eq3_6_src/src/xcon3/src/xcon3.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon3/src
+2026-01-05T01:06:27.7152647Z copying aqequil/eq3_6_src/src/xcon6/Makefile -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6
+2026-01-05T01:06:27.7153985Z copying aqequil/eq3_6_src/src/xcon6/obj/aaaxc6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7155660Z copying aqequil/eq3_6_src/src/xcon6/obj/bkdxc6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7157654Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6d7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7159599Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6d8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7162662Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6d8b.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7165697Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6dvz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7167037Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6w6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7168674Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6w7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7170421Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6w72.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7171973Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6w8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7173877Z copying aqequil/eq3_6_src/src/xcon6/obj/rd6wvz.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7175452Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6d7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7177443Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6d72.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7179363Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6d8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7181558Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6w6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7183037Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6w7.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7185006Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6w72.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7186641Z copying aqequil/eq3_6_src/src/xcon6/obj/wr6w8.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7188381Z copying aqequil/eq3_6_src/src/xcon6/obj/xcon6.o -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/obj
+2026-01-05T01:06:27.7190746Z copying aqequil/eq3_6_src/src/xcon6/src/aaaxc6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7192096Z copying aqequil/eq3_6_src/src/xcon6/src/bkdxc6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7193477Z copying aqequil/eq3_6_src/src/xcon6/src/rd6d7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7195927Z copying aqequil/eq3_6_src/src/xcon6/src/rd6d8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7198871Z copying aqequil/eq3_6_src/src/xcon6/src/rd6d8b.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7201733Z copying aqequil/eq3_6_src/src/xcon6/src/rd6dvz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7203083Z copying aqequil/eq3_6_src/src/xcon6/src/rd6w6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7204852Z copying aqequil/eq3_6_src/src/xcon6/src/rd6w7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7206473Z copying aqequil/eq3_6_src/src/xcon6/src/rd6w72.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7208087Z copying aqequil/eq3_6_src/src/xcon6/src/rd6w8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7210001Z copying aqequil/eq3_6_src/src/xcon6/src/rd6wvz.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7211289Z copying aqequil/eq3_6_src/src/xcon6/src/wr6d7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7213048Z copying aqequil/eq3_6_src/src/xcon6/src/wr6d72.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7214739Z copying aqequil/eq3_6_src/src/xcon6/src/wr6d8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7216803Z copying aqequil/eq3_6_src/src/xcon6/src/wr6w6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7218254Z copying aqequil/eq3_6_src/src/xcon6/src/wr6w7.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7219832Z copying aqequil/eq3_6_src/src/xcon6/src/wr6w72.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7221367Z copying aqequil/eq3_6_src/src/xcon6/src/wr6w8.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7222943Z copying aqequil/eq3_6_src/src/xcon6/src/xcon6.f -> aqequil-1.0.1/aqequil/eq3_6_src/src/xcon6/src
+2026-01-05T01:06:27.7225362Z copying aqequil/test_data/__init__.py -> aqequil-1.0.1/aqequil/test_data
+2026-01-05T01:06:27.7226690Z copying aqequil/test_data/data0.wrm -> aqequil-1.0.1/aqequil/test_data
+2026-01-05T01:06:27.7232924Z copying aqequil/test_data/input_example_wrm.csv -> aqequil-1.0.1/aqequil/test_data
+2026-01-05T01:06:27.7234202Z copying html/aqequil/AqSpeciation.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7241227Z copying html/aqequil/MassTransfer.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7245978Z copying html/aqequil/check_TP_grid.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7247501Z copying html/aqequil/create_data0.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7249385Z copying html/aqequil/dissrxn_balancer.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7250766Z copying html/aqequil/dissrxn_generator.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7252645Z copying html/aqequil/fill_data0_header.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7254081Z copying html/aqequil/formula_parser.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7256063Z copying html/aqequil/index.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7257566Z copying html/aqequil/output_3o_mine.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7259475Z copying html/aqequil/preprocess_for_EQ3.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7261526Z copying html/aqequil/process_dissrxns.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7263325Z copying html/aqequil/redox_suppression.html -> aqequil-1.0.1/html/aqequil
+2026-01-05T01:06:27.7265269Z copying aqequil.egg-info/SOURCES.txt -> aqequil-1.0.1/aqequil.egg-info
+2026-01-05T01:06:27.7271764Z Writing aqequil-1.0.1/setup.cfg
+2026-01-05T01:06:27.7273594Z Creating tar archive
+2026-01-05T01:06:29.6380803Z removing 'aqequil-1.0.1' (and everything under it)
+2026-01-05T01:06:29.7103537Z Successfully built aqequil-1.0.1.tar.gz
+2026-01-05T01:06:29.7282811Z ##[group]Run actions/upload-artifact@v4
+2026-01-05T01:06:29.7283079Z with:
+2026-01-05T01:06:29.7283244Z   name: sdist
+2026-01-05T01:06:29.7283413Z   path: dist/*.tar.gz
+2026-01-05T01:06:29.7283620Z   if-no-files-found: error
+2026-01-05T01:06:29.7283826Z   compression-level: 6
+2026-01-05T01:06:29.7284017Z   overwrite: false
+2026-01-05T01:06:29.7284396Z   include-hidden-files: false
+2026-01-05T01:06:29.7284626Z env:
+2026-01-05T01:06:29.7284857Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:29.7285249Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2026-01-05T01:06:29.7285635Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:29.7285979Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:29.7286519Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2026-01-05T01:06:29.7286874Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2026-01-05T01:06:29.7287192Z ##[endgroup]
+2026-01-05T01:06:29.9397848Z With the provided path, there will be 1 file uploaded
+2026-01-05T01:06:29.9402870Z Artifact name is valid!
+2026-01-05T01:06:29.9404165Z Root directory input is valid!
+2026-01-05T01:06:30.1958931Z Beginning upload of artifact content to blob storage
+2026-01-05T01:06:31.0830970Z Uploaded bytes 3147389
+2026-01-05T01:06:31.1605645Z Finished uploading artifact content to blob storage!
+2026-01-05T01:06:31.1608691Z SHA256 digest of uploaded artifact zip is 659be1f652956bef5441040fa715c6957801dbb524317b33fa7f90be29feb60b
+2026-01-05T01:06:31.1610046Z Finalizing artifact upload
+2026-01-05T01:06:31.3076918Z Artifact sdist.zip successfully finalized. Artifact ID 5019870152
+2026-01-05T01:06:31.3077889Z Artifact sdist has been successfully uploaded! Final size is 3147389 bytes. Artifact ID is 5019870152
+2026-01-05T01:06:31.3081947Z Artifact download URL: https://github.com/worm-portal/aqequil/actions/runs/20702070857/artifacts/5019870152
+2026-01-05T01:06:31.3256296Z Post job cleanup.
+2026-01-05T01:06:31.4841504Z Post job cleanup.
+2026-01-05T01:06:31.5769293Z [command]/usr/bin/git version
+2026-01-05T01:06:31.5804862Z git version 2.52.0
+2026-01-05T01:06:31.5848018Z Temporarily overriding HOME='/home/runner/work/_temp/522e5c2d-205d-4e78-bd73-ed06c3539f3d' before making global git config changes
+2026-01-05T01:06:31.5849325Z Adding repository directory to the temporary git global config as a safe directory
+2026-01-05T01:06:31.5860128Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/aqequil/aqequil
+2026-01-05T01:06:31.5894562Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-01-05T01:06:31.5926982Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-01-05T01:06:31.6158328Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-01-05T01:06:31.6181261Z http.https://github.com/.extraheader
+2026-01-05T01:06:31.6194126Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-01-05T01:06:31.6227029Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-01-05T01:06:31.6467122Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-01-05T01:06:31.6499424Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-01-05T01:06:31.6855877Z Cleaning up orphan processes

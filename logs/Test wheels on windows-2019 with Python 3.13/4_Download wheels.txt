@@ -1,0 +1,25 @@
+﻿2026-01-05T01:33:15.8680148Z ##[group]Run actions/download-artifact@v4
+2026-01-05T01:33:15.8680754Z with:
+2026-01-05T01:33:15.8681042Z   name: wheels-windows-2019
+2026-01-05T01:33:15.8681310Z   path: wheelhouse
+2026-01-05T01:33:15.8681515Z   merge-multiple: false
+2026-01-05T01:33:15.8681789Z   repository: worm-portal/aqequil
+2026-01-05T01:33:15.8682046Z   run-id: 20702070857
+2026-01-05T01:33:15.8682254Z env:
+2026-01-05T01:33:15.8682534Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2026-01-05T01:33:15.8683034Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.13.5\x64/lib/pkgconfig
+2026-01-05T01:33:15.8683484Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2026-01-05T01:33:15.8683920Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2026-01-05T01:33:15.8684379Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.13.5\x64
+2026-01-05T01:33:15.8684697Z ##[endgroup]
+2026-01-05T01:33:16.1249639Z Downloading single artifact
+2026-01-05T01:33:16.3152545Z Preparing to download the following artifacts:
+2026-01-05T01:33:16.3154302Z - wheels-windows-2019 (ID: 5019935684, Size: 23024769, Expected Digest: sha256:b79d51ee2f30d1247dff1e95897f46290a31dfe3822f377c914f152c5233a68a)
+2026-01-05T01:33:16.4229834Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-dc62d33d-f61e-5c66-b8b0-b0fb4e2697e9/artifacts/2d74564dac50ace46aa55f3b0736466cb259cb536408fda096bfbd335df3bf65.zip
+2026-01-05T01:33:16.4232236Z Starting download of artifact to: D:\a\aqequil\aqequil\wheelhouse
+2026-01-05T01:33:16.6460110Z (node:5356) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-01-05T01:33:16.6461770Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-01-05T01:33:17.6772048Z SHA256 digest of downloaded artifact is b79d51ee2f30d1247dff1e95897f46290a31dfe3822f377c914f152c5233a68a
+2026-01-05T01:33:17.6773387Z Artifact download completed successfully.
+2026-01-05T01:33:17.6773952Z Total of 1 artifact(s) downloaded
+2026-01-05T01:33:17.6782707Z Download artifact has finished successfully

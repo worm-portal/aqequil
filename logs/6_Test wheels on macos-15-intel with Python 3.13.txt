@@ -1,0 +1,519 @@
+﻿2026-01-05T01:34:11.2425180Z Current runner version: '2.330.0'
+2026-01-05T01:34:11.2454410Z ##[group]Runner Image Provisioner
+2026-01-05T01:34:11.2455320Z Hosted Compute Agent
+2026-01-05T01:34:11.2455960Z Version: 20251211.462
+2026-01-05T01:34:11.2456660Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2026-01-05T01:34:11.2457540Z Build Date: 2025-12-11T16:28:49Z
+2026-01-05T01:34:11.2458350Z Worker ID: {31b5ed64-f2fe-4b43-b471-49ae9bcf14af}
+2026-01-05T01:34:11.2459190Z ##[endgroup]
+2026-01-05T01:34:11.2459790Z ##[group]Operating System
+2026-01-05T01:34:11.2460450Z macOS
+2026-01-05T01:34:11.2460960Z 15.7.3
+2026-01-05T01:34:11.2461470Z 24G419
+2026-01-05T01:34:11.2461990Z ##[endgroup]
+2026-01-05T01:34:11.2462540Z ##[group]Runner Image
+2026-01-05T01:34:11.2463160Z Image: macos-15
+2026-01-05T01:34:11.2463710Z Version: 20251216.0081.1
+2026-01-05T01:34:11.2465130Z Included Software: https://github.com/actions/runner-images/blob/macos-15/20251216.0081/images/macos/macos-15-Readme.md
+2026-01-05T01:34:11.2467330Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15%2F20251216.0081
+2026-01-05T01:34:11.2468630Z ##[endgroup]
+2026-01-05T01:34:11.2472810Z ##[group]GITHUB_TOKEN Permissions
+2026-01-05T01:34:11.2474980Z Actions: write
+2026-01-05T01:34:11.2475610Z ArtifactMetadata: write
+2026-01-05T01:34:11.2476260Z Attestations: write
+2026-01-05T01:34:11.2476850Z Checks: write
+2026-01-05T01:34:11.2477400Z Contents: write
+2026-01-05T01:34:11.2477980Z Deployments: write
+2026-01-05T01:34:11.2478570Z Discussions: write
+2026-01-05T01:34:11.2479160Z Issues: write
+2026-01-05T01:34:11.2479730Z Metadata: read
+2026-01-05T01:34:11.2480300Z Models: read
+2026-01-05T01:34:11.2480860Z Packages: write
+2026-01-05T01:34:11.2481430Z Pages: write
+2026-01-05T01:34:11.2482000Z PullRequests: write
+2026-01-05T01:34:11.2482750Z RepositoryProjects: write
+2026-01-05T01:34:11.2483450Z SecurityEvents: write
+2026-01-05T01:34:11.2484080Z Statuses: write
+2026-01-05T01:34:11.2484650Z ##[endgroup]
+2026-01-05T01:34:11.2487480Z Secret source: Actions
+2026-01-05T01:34:11.2488270Z Prepare workflow directory
+2026-01-05T01:34:11.2934630Z Prepare all required actions
+2026-01-05T01:34:11.2992130Z Getting action download info
+2026-01-05T01:34:11.7983860Z Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+2026-01-05T01:34:11.9917050Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-01-05T01:34:12.0960470Z Download action repository 'actions/download-artifact@v4' (SHA:d3f86a106a0bac45b974a628896c90dbdf5c8093)
+2026-01-05T01:34:13.0155110Z Complete job name: Test wheels on macos-15-intel with Python 3.13
+2026-01-05T01:34:13.0853890Z ##[group]Run actions/checkout@v4
+2026-01-05T01:34:13.0855460Z with:
+2026-01-05T01:34:13.0856090Z   repository: worm-portal/aqequil
+2026-01-05T01:34:13.0857120Z   token: ***
+2026-01-05T01:34:13.0857700Z   ssh-strict: true
+2026-01-05T01:34:13.0858300Z   ssh-user: git
+2026-01-05T01:34:13.0858910Z   persist-credentials: true
+2026-01-05T01:34:13.0859580Z   clean: true
+2026-01-05T01:34:13.0860300Z   sparse-checkout-cone-mode: true
+2026-01-05T01:34:13.0861030Z   fetch-depth: 1
+2026-01-05T01:34:13.0861620Z   fetch-tags: false
+2026-01-05T01:34:13.0862230Z   show-progress: true
+2026-01-05T01:34:13.0862850Z   lfs: false
+2026-01-05T01:34:13.0863440Z   submodules: false
+2026-01-05T01:34:13.0864110Z   set-safe-directory: true
+2026-01-05T01:34:13.0865270Z ##[endgroup]
+2026-01-05T01:34:13.4404480Z Syncing repository: worm-portal/aqequil
+2026-01-05T01:34:13.4407060Z ##[group]Getting Git version info
+2026-01-05T01:34:13.4408170Z Working directory is '/Users/runner/work/aqequil/aqequil'
+2026-01-05T01:34:13.4409940Z [command]/usr/local/bin/git version
+2026-01-05T01:34:13.4802800Z git version 2.50.1
+2026-01-05T01:34:13.4834950Z ##[endgroup]
+2026-01-05T01:34:13.4858750Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/0d7c72c0-bad2-4e76-a10d-56b109ae5e6d/.gitconfig'
+2026-01-05T01:34:13.4876980Z Temporarily overriding HOME='/Users/runner/work/_temp/0d7c72c0-bad2-4e76-a10d-56b109ae5e6d' before making global git config changes
+2026-01-05T01:34:13.4881020Z Adding repository directory to the temporary git global config as a safe directory
+2026-01-05T01:34:13.4883080Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/aqequil/aqequil
+2026-01-05T01:34:13.5037750Z Deleting the contents of '/Users/runner/work/aqequil/aqequil'
+2026-01-05T01:34:13.5043540Z ##[group]Initializing the repository
+2026-01-05T01:34:13.5049230Z [command]/usr/local/bin/git init /Users/runner/work/aqequil/aqequil
+2026-01-05T01:34:13.5378940Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-01-05T01:34:13.5385850Z hint: is subject to change. To configure the initial branch name to use in all
+2026-01-05T01:34:13.5387940Z hint: of your new repositories, which will suppress this warning, call:
+2026-01-05T01:34:13.5389630Z hint:
+2026-01-05T01:34:13.5392040Z hint: 	git config --global init.defaultBranch <name>
+2026-01-05T01:34:13.5393610Z hint:
+2026-01-05T01:34:13.5395120Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-01-05T01:34:13.5397020Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-01-05T01:34:13.5398940Z hint:
+2026-01-05T01:34:13.5400490Z hint: 	git branch -m <name>
+2026-01-05T01:34:13.5401840Z hint:
+2026-01-05T01:34:13.5403450Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-01-05T01:34:13.5405800Z Initialized empty Git repository in /Users/runner/work/aqequil/aqequil/.git/
+2026-01-05T01:34:13.5489570Z [command]/usr/local/bin/git remote add origin https://github.com/worm-portal/aqequil
+2026-01-05T01:34:13.5548320Z ##[endgroup]
+2026-01-05T01:34:13.5550760Z ##[group]Disabling automatic garbage collection
+2026-01-05T01:34:13.5557960Z [command]/usr/local/bin/git config --local gc.auto 0
+2026-01-05T01:34:13.5677030Z ##[endgroup]
+2026-01-05T01:34:13.5678910Z ##[group]Setting up auth
+2026-01-05T01:34:13.5685080Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-01-05T01:34:13.5806470Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-01-05T01:34:13.7555500Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-01-05T01:34:13.7669670Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-01-05T01:34:13.9355240Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-01-05T01:34:13.9483820Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-01-05T01:34:14.8618010Z [command]/usr/local/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-01-05T01:34:14.8696720Z ##[endgroup]
+2026-01-05T01:34:14.8709840Z ##[group]Fetching the repository
+2026-01-05T01:34:14.8718550Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0fba8641708a9a29f5cf75d5e1aa5af56402a902:refs/tags/v1.0.1
+2026-01-05T01:34:16.2570740Z From https://github.com/worm-portal/aqequil
+2026-01-05T01:34:16.2572410Z  * [new ref]         0fba8641708a9a29f5cf75d5e1aa5af56402a902 -> v1.0.1
+2026-01-05T01:34:16.4279500Z ##[endgroup]
+2026-01-05T01:34:16.4286480Z ##[group]Determining the checkout info
+2026-01-05T01:34:16.4289730Z ##[endgroup]
+2026-01-05T01:34:16.4292500Z [command]/usr/local/bin/git sparse-checkout disable
+2026-01-05T01:34:16.4302140Z [command]/usr/local/bin/git config --local --unset-all extensions.worktreeConfig
+2026-01-05T01:34:16.4312950Z ##[group]Checking out the ref
+2026-01-05T01:34:16.4324150Z [command]/usr/local/bin/git checkout --progress --force refs/tags/v1.0.1
+2026-01-05T01:34:17.1130230Z HEAD is now at 0fba864 Add automatic versioning from git tags using setuptools_scm
+2026-01-05T01:34:17.1147180Z ##[endgroup]
+2026-01-05T01:34:17.1304810Z [command]/usr/local/bin/git log -1 --format=%H
+2026-01-05T01:34:17.1419340Z 0fba8641708a9a29f5cf75d5e1aa5af56402a902
+2026-01-05T01:34:17.1911630Z ##[group]Run actions/setup-python@v5
+2026-01-05T01:34:17.1913960Z with:
+2026-01-05T01:34:17.1915270Z   python-version: 3.13
+2026-01-05T01:34:17.1916830Z   check-latest: false
+2026-01-05T01:34:17.1918840Z   token: ***
+2026-01-05T01:34:17.1920290Z   update-environment: true
+2026-01-05T01:34:17.1922010Z   allow-prereleases: false
+2026-01-05T01:34:17.1923610Z   freethreaded: false
+2026-01-05T01:34:17.1925060Z ##[endgroup]
+2026-01-05T01:34:17.5138800Z ##[group]Installed versions
+2026-01-05T01:34:17.5210040Z Successfully set up CPython (3.13.11)
+2026-01-05T01:34:17.5212880Z ##[endgroup]
+2026-01-05T01:34:17.5463180Z ##[group]Run actions/download-artifact@v4
+2026-01-05T01:34:17.5465220Z with:
+2026-01-05T01:34:17.5466490Z   name: wheels-macos-15-intel
+2026-01-05T01:34:17.5468140Z   path: wheelhouse
+2026-01-05T01:34:17.5469620Z   merge-multiple: false
+2026-01-05T01:34:17.5471550Z   repository: worm-portal/aqequil
+2026-01-05T01:34:17.5473620Z   run-id: 20702070857
+2026-01-05T01:34:17.5475170Z env:
+2026-01-05T01:34:17.5477110Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:17.5480680Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2026-01-05T01:34:17.5484510Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:17.5487700Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:17.5491180Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:17.5493790Z ##[endgroup]
+2026-01-05T01:34:17.8700790Z Downloading single artifact
+2026-01-05T01:34:18.1961710Z Preparing to download the following artifacts:
+2026-01-05T01:34:18.1967810Z - wheels-macos-15-intel (ID: 5019973661, Size: 26148667, Expected Digest: sha256:40ecc783ea82ded74149a05ecf5b655670ce481fd76ab07eaf1d605ad84d28cb)
+2026-01-05T01:34:18.7507090Z Redirecting to blob download url: https://productionresultssa18.blob.core.windows.net/actions-results/26a74c06-72e1-4403-8f14-91bf0d49fcbc/workflow-job-run-6f850a1f-ea41-5e26-a818-bfd80f2283be/artifacts/4eca8f0ccca97b165c4a1ab157d96140287a95618c1d8fd484d0f307b4615528.zip
+2026-01-05T01:34:18.7841120Z Starting download of artifact to: /Users/runner/work/aqequil/aqequil/wheelhouse
+2026-01-05T01:34:18.8078730Z (node:38041) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-01-05T01:34:18.8118460Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-01-05T01:34:21.8559390Z SHA256 digest of downloaded artifact is 40ecc783ea82ded74149a05ecf5b655670ce481fd76ab07eaf1d605ad84d28cb
+2026-01-05T01:34:21.8562910Z Artifact download completed successfully.
+2026-01-05T01:34:21.8564830Z Total of 1 artifact(s) downloaded
+2026-01-05T01:34:21.8572600Z Download artifact has finished successfully
+2026-01-05T01:34:21.8847660Z ##[group]Run PYVER=$(echo "3.13" | tr -d '.')
+2026-01-05T01:34:21.8848340Z [36;1mPYVER=$(echo "3.13" | tr -d '.')[0m
+2026-01-05T01:34:21.8848960Z [36;1mpython -m pip install wheelhouse/aqequil-*-cp${PYVER}-*.whl[0m
+2026-01-05T01:34:21.8941230Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-01-05T01:34:21.8941900Z env:
+2026-01-05T01:34:21.8942520Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:21.8943620Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2026-01-05T01:34:21.8944550Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:21.8945390Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:21.8946240Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:21.8947920Z ##[endgroup]
+2026-01-05T01:34:24.4147240Z Processing ./wheelhouse/aqequil-1.0.2.dev0+g0fba86417.d20260105-cp313-cp313-macosx_15_0_x86_64.whl
+2026-01-05T01:34:25.0511000Z Collecting pandas (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:25.1244830Z   Downloading pandas-2.3.3-cp313-cp313-macosx_10_13_x86_64.whl.metadata (91 kB)
+2026-01-05T01:34:25.7719300Z Collecting numpy (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:25.7833060Z   Downloading numpy-2.4.0-cp313-cp313-macosx_14_0_x86_64.whl.metadata (6.6 kB)
+2026-01-05T01:34:26.0094480Z Collecting matplotlib (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.0143690Z   Downloading matplotlib-3.10.8-cp313-cp313-macosx_10_13_x86_64.whl.metadata (52 kB)
+2026-01-05T01:34:26.0964280Z Collecting plotly (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.1008470Z   Downloading plotly-6.5.0-py3-none-any.whl.metadata (8.5 kB)
+2026-01-05T01:34:26.1690140Z Collecting ipython (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.1734190Z   Downloading ipython-9.8.0-py3-none-any.whl.metadata (4.5 kB)
+2026-01-05T01:34:26.2056640Z Collecting chemparse (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.2111810Z   Downloading chemparse-0.3.2-py3-none-any.whl.metadata (1.7 kB)
+2026-01-05T01:34:26.2354330Z Collecting dill (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.2400360Z   Downloading dill-0.4.0-py3-none-any.whl.metadata (10 kB)
+2026-01-05T01:34:26.2647070Z Collecting periodictable (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.2708370Z   Downloading periodictable-2.0.2-py3-none-any.whl.metadata (5.4 kB)
+2026-01-05T01:34:26.3088090Z Collecting natsort (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.3407040Z   Downloading natsort-8.4.0-py3-none-any.whl.metadata (21 kB)
+2026-01-05T01:34:26.3657130Z Collecting roman (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.3715570Z   Downloading roman-5.2-py3-none-any.whl.metadata (4.3 kB)
+2026-01-05T01:34:26.4187510Z Collecting ipywidgets (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.4252420Z   Downloading ipywidgets-8.1.8-py3-none-any.whl.metadata (2.4 kB)
+2026-01-05T01:34:26.4522860Z Collecting wormutils (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.4575780Z   Downloading wormutils-0.2.0-py3-none-any.whl.metadata (723 bytes)
+2026-01-05T01:34:26.5028430Z Collecting pychnosz (from aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.5889270Z   Downloading pychnosz-1.1.12-cp313-cp313-macosx_15_0_x86_64.whl.metadata (8.2 kB)
+2026-01-05T01:34:26.6893150Z Collecting decorator>=4.3.2 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.7307730Z   Downloading decorator-5.2.1-py3-none-any.whl.metadata (3.9 kB)
+2026-01-05T01:34:26.7342050Z Collecting ipython-pygments-lexers>=1.0.0 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.7725580Z   Downloading ipython_pygments_lexers-1.1.1-py3-none-any.whl.metadata (1.1 kB)
+2026-01-05T01:34:26.7798290Z Collecting jedi>=0.18.1 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.7799710Z   Downloading jedi-0.19.2-py2.py3-none-any.whl.metadata (22 kB)
+2026-01-05T01:34:26.7839580Z Collecting matplotlib-inline>=0.1.5 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.7850330Z   Downloading matplotlib_inline-0.2.1-py3-none-any.whl.metadata (2.3 kB)
+2026-01-05T01:34:26.7936260Z Collecting pexpect>4.3 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.7942470Z   Downloading pexpect-4.9.0-py2.py3-none-any.whl.metadata (2.5 kB)
+2026-01-05T01:34:26.8432790Z Collecting prompt_toolkit<3.1.0,>=3.0.41 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.8478660Z   Downloading prompt_toolkit-3.0.52-py3-none-any.whl.metadata (6.4 kB)
+2026-01-05T01:34:26.8873660Z Collecting pygments>=2.11.0 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.8970810Z   Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+2026-01-05T01:34:26.9160540Z Collecting stack_data>=0.6.0 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.9209120Z   Downloading stack_data-0.6.3-py3-none-any.whl.metadata (18 kB)
+2026-01-05T01:34:26.9530140Z Collecting traitlets>=5.13.0 (from ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.9575870Z   Downloading traitlets-5.14.3-py3-none-any.whl.metadata (10 kB)
+2026-01-05T01:34:26.9871200Z Collecting wcwidth (from prompt_toolkit<3.1.0,>=3.0.41->ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:26.9909640Z   Downloading wcwidth-0.2.14-py2.py3-none-any.whl.metadata (15 kB)
+2026-01-05T01:34:27.0220830Z Collecting parso<0.9.0,>=0.8.4 (from jedi>=0.18.1->ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.0286360Z   Downloading parso-0.8.5-py2.py3-none-any.whl.metadata (8.3 kB)
+2026-01-05T01:34:27.0540260Z Collecting ptyprocess>=0.5 (from pexpect>4.3->ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.0594710Z   Downloading ptyprocess-0.7.0-py2.py3-none-any.whl.metadata (1.3 kB)
+2026-01-05T01:34:27.0931810Z Collecting executing>=1.2.0 (from stack_data>=0.6.0->ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.0970600Z   Downloading executing-2.2.1-py2.py3-none-any.whl.metadata (8.9 kB)
+2026-01-05T01:34:27.2167770Z Collecting asttokens>=2.1.0 (from stack_data>=0.6.0->ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.2490360Z   Downloading asttokens-3.0.1-py3-none-any.whl.metadata (4.9 kB)
+2026-01-05T01:34:27.2679640Z Collecting pure-eval (from stack_data>=0.6.0->ipython->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.2701230Z   Downloading pure_eval-0.2.3-py3-none-any.whl.metadata (6.3 kB)
+2026-01-05T01:34:27.2707610Z Collecting comm>=0.1.3 (from ipywidgets->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.2711360Z   Downloading comm-0.2.3-py3-none-any.whl.metadata (3.7 kB)
+2026-01-05T01:34:27.2730020Z Collecting widgetsnbextension~=4.0.14 (from ipywidgets->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.2783520Z   Downloading widgetsnbextension-4.0.15-py3-none-any.whl.metadata (1.6 kB)
+2026-01-05T01:34:27.3209590Z Collecting jupyterlab_widgets~=3.0.15 (from ipywidgets->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.3262090Z   Downloading jupyterlab_widgets-3.0.16-py3-none-any.whl.metadata (20 kB)
+2026-01-05T01:34:27.4321850Z Collecting contourpy>=1.0.1 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.4376540Z   Downloading contourpy-1.3.3-cp313-cp313-macosx_10_13_x86_64.whl.metadata (5.5 kB)
+2026-01-05T01:34:27.4627230Z Collecting cycler>=0.10 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.4677170Z   Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+2026-01-05T01:34:27.6900290Z Collecting fonttools>=4.22.0 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.6958620Z   Downloading fonttools-4.61.1-cp313-cp313-macosx_10_13_x86_64.whl.metadata (114 kB)
+2026-01-05T01:34:27.8016340Z Collecting kiwisolver>=1.3.1 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.8214430Z   Downloading kiwisolver-1.4.9-cp313-cp313-macosx_10_13_x86_64.whl.metadata (6.3 kB)
+2026-01-05T01:34:27.8705210Z Collecting packaging>=20.0 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:27.8849220Z   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2026-01-05T01:34:28.1487380Z Collecting pillow>=8 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.2194900Z   Downloading pillow-12.1.0-cp313-cp313-macosx_10_13_x86_64.whl.metadata (8.8 kB)
+2026-01-05T01:34:28.2197560Z Collecting pyparsing>=3 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.2259650Z   Downloading pyparsing-3.3.1-py3-none-any.whl.metadata (5.6 kB)
+2026-01-05T01:34:28.2426220Z Collecting python-dateutil>=2.7 (from matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.2475010Z   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+2026-01-05T01:34:28.3039460Z Collecting six>=1.5 (from python-dateutil>=2.7->matplotlib->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.3091090Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-01-05T01:34:28.3951210Z Collecting pytz>=2020.1 (from pandas->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.4022960Z   Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+2026-01-05T01:34:28.4351670Z Collecting tzdata>=2022.7 (from pandas->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.4395970Z   Downloading tzdata-2025.3-py2.py3-none-any.whl.metadata (1.4 kB)
+2026-01-05T01:34:28.5659500Z Collecting narwhals>=1.15.1 (from plotly->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.5719220Z   Downloading narwhals-2.14.0-py3-none-any.whl.metadata (13 kB)
+2026-01-05T01:34:28.7824210Z Collecting scipy>=1.7.0 (from pychnosz->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.7892270Z   Downloading scipy-1.16.3-cp313-cp313-macosx_14_0_x86_64.whl.metadata (62 kB)
+2026-01-05T01:34:28.8962110Z Collecting requests (from wormutils->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.9006550Z   Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+2026-01-05T01:34:28.9414680Z Collecting importlib_resources (from wormutils->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:28.9454430Z   Downloading importlib_resources-6.5.2-py3-none-any.whl.metadata (3.9 kB)
+2026-01-05T01:34:29.0724900Z Collecting charset_normalizer<4,>=2 (from requests->wormutils->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:29.0806850Z   Downloading charset_normalizer-3.4.4-cp313-cp313-macosx_10_13_universal2.whl.metadata (37 kB)
+2026-01-05T01:34:29.1143950Z Collecting idna<4,>=2.5 (from requests->wormutils->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:29.1191710Z   Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+2026-01-05T01:34:29.1722850Z Collecting urllib3<3,>=1.21.1 (from requests->wormutils->aqequil==1.0.2.dev0+g0fba86417.d20260105)
+2026-01-05T01:34:29.1767380Z   Downloading urllib3-2.6.2-py3-none-any.whl.metadata (6.6 kB)
+2026-01-05T01:34:29.1872710Z Requirement already satisfied: certifi>=2017.4.17 in /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages (from requests->wormutils->aqequil==1.0.2.dev0+g0fba86417.d20260105) (2025.11.12)
+2026-01-05T01:34:29.2014270Z Downloading chemparse-0.3.2-py3-none-any.whl (5.9 kB)
+2026-01-05T01:34:29.2122470Z Downloading dill-0.4.0-py3-none-any.whl (119 kB)
+2026-01-05T01:34:29.2237530Z Downloading ipython-9.8.0-py3-none-any.whl (621 kB)
+2026-01-05T01:34:29.2387650Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 621.4/621.4 kB 32.1 MB/s  0:00:00
+2026-01-05T01:34:29.2438990Z Downloading prompt_toolkit-3.0.52-py3-none-any.whl (391 kB)
+2026-01-05T01:34:29.2628640Z Downloading decorator-5.2.1-py3-none-any.whl (9.2 kB)
+2026-01-05T01:34:29.2788230Z Downloading ipython_pygments_lexers-1.1.1-py3-none-any.whl (8.1 kB)
+2026-01-05T01:34:29.2913700Z Downloading jedi-0.19.2-py2.py3-none-any.whl (1.6 MB)
+2026-01-05T01:34:29.3148580Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 64.2 MB/s  0:00:00
+2026-01-05T01:34:29.3202600Z Downloading parso-0.8.5-py2.py3-none-any.whl (106 kB)
+2026-01-05T01:34:29.3401660Z Downloading matplotlib_inline-0.2.1-py3-none-any.whl (9.5 kB)
+2026-01-05T01:34:29.3551780Z Downloading pexpect-4.9.0-py2.py3-none-any.whl (63 kB)
+2026-01-05T01:34:29.3698280Z Downloading ptyprocess-0.7.0-py2.py3-none-any.whl (13 kB)
+2026-01-05T01:34:29.3823920Z Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+2026-01-05T01:34:29.4035430Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 52.8 MB/s  0:00:00
+2026-01-05T01:34:29.4090490Z Downloading stack_data-0.6.3-py3-none-any.whl (24 kB)
+2026-01-05T01:34:29.4251030Z Downloading asttokens-3.0.1-py3-none-any.whl (27 kB)
+2026-01-05T01:34:29.4404720Z Downloading executing-2.2.1-py2.py3-none-any.whl (28 kB)
+2026-01-05T01:34:29.4534120Z Downloading traitlets-5.14.3-py3-none-any.whl (85 kB)
+2026-01-05T01:34:29.4646120Z Downloading ipywidgets-8.1.8-py3-none-any.whl (139 kB)
+2026-01-05T01:34:29.4790060Z Downloading jupyterlab_widgets-3.0.16-py3-none-any.whl (914 kB)
+2026-01-05T01:34:29.5018000Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 914.9/914.9 kB 34.9 MB/s  0:00:00
+2026-01-05T01:34:29.5160210Z Downloading widgetsnbextension-4.0.15-py3-none-any.whl (2.2 MB)
+2026-01-05T01:34:29.5451560Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 59.7 MB/s  0:00:00
+2026-01-05T01:34:29.5508490Z Downloading comm-0.2.3-py3-none-any.whl (7.3 kB)
+2026-01-05T01:34:29.5735070Z Downloading matplotlib-3.10.8-cp313-cp313-macosx_10_13_x86_64.whl (8.3 MB)
+2026-01-05T01:34:29.6572170Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 101.8 MB/s  0:00:00
+2026-01-05T01:34:29.6647150Z Downloading contourpy-1.3.3-cp313-cp313-macosx_10_13_x86_64.whl (293 kB)
+2026-01-05T01:34:29.7028980Z Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+2026-01-05T01:34:29.7172480Z Downloading fonttools-4.61.1-cp313-cp313-macosx_10_13_x86_64.whl (2.4 MB)
+2026-01-05T01:34:29.7491350Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.4/2.4 MB 76.2 MB/s  0:00:00
+2026-01-05T01:34:29.7552550Z Downloading kiwisolver-1.4.9-cp313-cp313-macosx_10_13_x86_64.whl (66 kB)
+2026-01-05T01:34:29.7787720Z Downloading numpy-2.4.0-cp313-cp313-macosx_14_0_x86_64.whl (6.5 MB)
+2026-01-05T01:34:29.8393870Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.5/6.5 MB 108.9 MB/s  0:00:00
+2026-01-05T01:34:29.8442690Z Downloading packaging-25.0-py3-none-any.whl (66 kB)
+2026-01-05T01:34:29.8786720Z Downloading pillow-12.1.0-cp313-cp313-macosx_10_13_x86_64.whl (5.3 MB)
+2026-01-05T01:34:29.9325770Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.3/5.3 MB 98.9 MB/s  0:00:00
+2026-01-05T01:34:29.9379080Z Downloading pyparsing-3.3.1-py3-none-any.whl (121 kB)
+2026-01-05T01:34:29.9631890Z Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+2026-01-05T01:34:29.9780770Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-01-05T01:34:29.9895750Z Downloading natsort-8.4.0-py3-none-any.whl (38 kB)
+2026-01-05T01:34:30.0037140Z Downloading pandas-2.3.3-cp313-cp313-macosx_10_13_x86_64.whl (11.5 MB)
+2026-01-05T01:34:30.1393630Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.5/11.5 MB 87.9 MB/s  0:00:00
+2026-01-05T01:34:30.1454960Z Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+2026-01-05T01:34:30.1886070Z Downloading tzdata-2025.3-py2.py3-none-any.whl (348 kB)
+2026-01-05T01:34:30.2038610Z Downloading periodictable-2.0.2-py3-none-any.whl (811 kB)
+2026-01-05T01:34:30.2217040Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 811.1/811.1 kB 40.8 MB/s  0:00:00
+2026-01-05T01:34:30.2258790Z Downloading plotly-6.5.0-py3-none-any.whl (9.9 MB)
+2026-01-05T01:34:30.3873980Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.9/9.9 MB 68.1 MB/s  0:00:00
+2026-01-05T01:34:30.3876580Z Downloading narwhals-2.14.0-py3-none-any.whl (430 kB)
+2026-01-05T01:34:30.4355110Z Downloading pure_eval-0.2.3-py3-none-any.whl (11 kB)
+2026-01-05T01:34:30.5238230Z Downloading pychnosz-1.1.12-cp313-cp313-macosx_15_0_x86_64.whl (2.1 MB)
+2026-01-05T01:34:30.6265910Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 18.3 MB/s  0:00:00
+2026-01-05T01:34:30.6362190Z Downloading scipy-1.16.3-cp313-cp313-macosx_14_0_x86_64.whl (23.5 MB)
+2026-01-05T01:34:30.9840280Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.5/23.5 MB 67.8 MB/s  0:00:00
+2026-01-05T01:34:30.9913410Z Downloading roman-5.2-py3-none-any.whl (6.0 kB)
+2026-01-05T01:34:31.0399820Z Downloading wcwidth-0.2.14-py2.py3-none-any.whl (37 kB)
+2026-01-05T01:34:31.0549580Z Downloading wormutils-0.2.0-py3-none-any.whl (18 kB)
+2026-01-05T01:34:31.0697330Z Downloading importlib_resources-6.5.2-py3-none-any.whl (37 kB)
+2026-01-05T01:34:31.0840490Z Downloading requests-2.32.5-py3-none-any.whl (64 kB)
+2026-01-05T01:34:31.1416110Z Downloading charset_normalizer-3.4.4-cp313-cp313-macosx_10_13_universal2.whl (208 kB)
+2026-01-05T01:34:31.1581370Z Downloading idna-3.11-py3-none-any.whl (71 kB)
+2026-01-05T01:34:31.2319440Z Downloading urllib3-2.6.2-py3-none-any.whl (131 kB)
+2026-01-05T01:34:31.8031370Z Installing collected packages: pytz, pure-eval, ptyprocess, widgetsnbextension, wcwidth, urllib3, tzdata, traitlets, six, roman, pyparsing, pygments, pillow, pexpect, parso, packaging, numpy, natsort, narwhals, kiwisolver, jupyterlab_widgets, importlib_resources, idna, fonttools, executing, dill, decorator, cycler, comm, chemparse, charset_normalizer, asttokens, stack_data, scipy, requests, python-dateutil, prompt_toolkit, plotly, periodictable, matplotlib-inline, jedi, ipython-pygments-lexers, contourpy, pandas, matplotlib, ipython, wormutils, pychnosz, ipywidgets, aqequil
+2026-01-05T01:34:57.3679530Z 
+2026-01-05T01:34:57.3758580Z Successfully installed aqequil-1.0.2.dev0+g0fba86417.d20260105 asttokens-3.0.1 charset_normalizer-3.4.4 chemparse-0.3.2 comm-0.2.3 contourpy-1.3.3 cycler-0.12.1 decorator-5.2.1 dill-0.4.0 executing-2.2.1 fonttools-4.61.1 idna-3.11 importlib_resources-6.5.2 ipython-9.8.0 ipython-pygments-lexers-1.1.1 ipywidgets-8.1.8 jedi-0.19.2 jupyterlab_widgets-3.0.16 kiwisolver-1.4.9 matplotlib-3.10.8 matplotlib-inline-0.2.1 narwhals-2.14.0 natsort-8.4.0 numpy-2.4.0 packaging-25.0 pandas-2.3.3 parso-0.8.5 periodictable-2.0.2 pexpect-4.9.0 pillow-12.1.0 plotly-6.5.0 prompt_toolkit-3.0.52 ptyprocess-0.7.0 pure-eval-0.2.3 pychnosz-1.1.12 pygments-2.19.2 pyparsing-3.3.1 python-dateutil-2.9.0.post0 pytz-2025.2 requests-2.32.5 roman-5.2 scipy-1.16.3 six-1.17.0 stack_data-0.6.3 traitlets-5.14.3 tzdata-2025.3 urllib3-2.6.2 wcwidth-0.2.14 widgetsnbextension-4.0.15 wormutils-0.2.0
+2026-01-05T01:34:57.7972290Z ##[group]Run cd "$RUNNER_TEMP"
+2026-01-05T01:34:57.7972770Z [36;1mcd "$RUNNER_TEMP"[0m
+2026-01-05T01:34:57.7973320Z [36;1mecho "Checking architecture of bundled executables..."[0m
+2026-01-05T01:34:57.7975580Z [36;1mpython -c "import aqequil; from aqequil.AqSpeciation import _get_bundled_exe_path; import os; bin_path = _get_bundled_exe_path(); print(f'Binary path: {bin_path}'); import subprocess; result = subprocess.run(['file', os.path.join(bin_path, 'eqpt')], capture_output=True, text=True); print(result.stdout)"[0m
+2026-01-05T01:34:57.8042430Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-01-05T01:34:57.8043120Z env:
+2026-01-05T01:34:57.8043760Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:57.8045100Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2026-01-05T01:34:57.8046240Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:57.8047560Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:57.8048310Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:34:57.8048870Z ##[endgroup]
+2026-01-05T01:34:57.8270950Z Checking architecture of bundled executables...
+2026-01-05T01:35:04.6836530Z Matplotlib is building the font cache; this may take a moment.
+2026-01-05T01:35:18.9447270Z Binary path: /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aqequil/bin
+2026-01-05T01:35:18.9449240Z /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aqequil/bin/eqpt: Mach-O 64-bit executable x86_64
+2026-01-05T01:35:18.9450180Z 
+2026-01-05T01:35:19.2712550Z ##[group]Run cp "$GITHUB_WORKSPACE/test_integration.py" "$RUNNER_TEMP/"
+2026-01-05T01:35:19.2713530Z [36;1mcp "$GITHUB_WORKSPACE/test_integration.py" "$RUNNER_TEMP/"[0m
+2026-01-05T01:35:19.2714390Z [36;1mcd "$RUNNER_TEMP"[0m
+2026-01-05T01:35:19.2714940Z [36;1mpython test_integration.py[0m
+2026-01-05T01:35:19.2782760Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-01-05T01:35:19.2783510Z env:
+2026-01-05T01:35:19.2784150Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:35:19.2785250Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2026-01-05T01:35:19.2786220Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:35:19.2787090Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:35:19.2787970Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:35:19.2788670Z ##[endgroup]
+2026-01-05T01:36:02.4324960Z 
+2026-01-05T01:36:02.4763220Z ============================================================
+2026-01-05T01:36:02.4906350Z AQEQUIL INTEGRATION TEST SUITE
+2026-01-05T01:36:02.5183730Z ============================================================
+2026-01-05T01:36:02.5396600Z Python: 3.13.11
+2026-01-05T01:36:02.5411850Z Platform: darwin
+2026-01-05T01:36:02.5470110Z Architecture: x86_64
+2026-01-05T01:36:02.5986090Z ============================================================
+2026-01-05T01:36:02.5998210Z ============================================================
+2026-01-05T01:36:02.6190970Z Test 1: Checking for bundled EQ3/6 executables
+2026-01-05T01:36:02.6203960Z ============================================================
+2026-01-05T01:36:02.6411690Z [OK] Found bundled executables at: /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aqequil/bin
+2026-01-05T01:36:02.6423440Z   [OK] eq3nr (1.08 MB)
+2026-01-05T01:36:02.6587050Z   [OK] eq6 (1.88 MB)
+2026-01-05T01:36:02.6617680Z   [OK] eqpt (0.64 MB)
+2026-01-05T01:36:02.6629220Z 
+2026-01-05T01:36:02.7456510Z ============================================================
+2026-01-05T01:36:02.7659030Z Test 2: Testing aqequil import and basic usage
+2026-01-05T01:36:02.7669540Z ============================================================
+2026-01-05T01:36:02.7670180Z [OK] Successfully imported aqequil
+2026-01-05T01:36:02.7680390Z [OK] Found test data at: /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aqequil/test_data/input_example_wrm.csv
+2026-01-05T01:36:02.7694400Z 
+2026-01-05T01:36:02.7695520Z ============================================================
+2026-01-05T01:36:02.7699240Z Test 3: Downloading latest data0.wrm from WORM-db
+2026-01-05T01:36:02.7700580Z ============================================================
+2026-01-05T01:36:02.7719560Z Downloading data0.wrm from https://raw.githubusercontent.com/worm-portal/WORM-db/master/data0.wrm...
+2026-01-05T01:36:02.7720690Z [OK] Downloaded data0.wrm (573.8 KB)
+2026-01-05T01:36:02.7730810Z [OK] Copied data0.wrm to test_data (replaced existing)
+2026-01-05T01:36:02.7732510Z [OK] Copied data0.wrm to databases (replaced existing)
+2026-01-05T01:36:02.7741580Z 
+2026-01-05T01:36:02.7754610Z ============================================================
+2026-01-05T01:36:02.7756330Z Test 4: Testing runeqpt (data0 to data1 conversion)
+2026-01-05T01:36:02.7760030Z ============================================================
+2026-01-05T01:36:02.7763630Z [INFO] Working directory: /var/folders/6k/3_2ylbdd4rl8w3kbs55s3kk80000gn/T/tmp9xm693k8
+2026-01-05T01:36:02.7766260Z [OK] Copied data0.wrm to working directory
+2026-01-05T01:36:02.7767690Z Running EQPT on data0.wrm...
+2026-01-05T01:36:02.7775770Z [OK] EQPT completed
+2026-01-05T01:36:02.7776210Z [OK] data1.wrm created (0.36 MB)
+2026-01-05T01:36:02.7776810Z [OK] Copied data1.wrm to bundled databases (replaced existing)
+2026-01-05T01:36:02.7777290Z 
+2026-01-05T01:36:02.7777470Z ============================================================
+2026-01-05T01:36:02.7779060Z Test 5: Testing simple speciation (wrm database)
+2026-01-05T01:36:02.7779670Z ============================================================
+2026-01-05T01:36:02.7780890Z Running speciation on /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aqequil/test_data/input_example_wrm.csv...
+2026-01-05T01:36:02.7782400Z [INFO] Working directory: /var/folders/6k/3_2ylbdd4rl8w3kbs55s3kk80000gn/T/tmphci3ijlj
+2026-01-05T01:36:02.7783220Z [OK] Copied data0.wrm to working directory
+2026-01-05T01:36:02.7783960Z Running EQPT to create data1.wrm...
+2026-01-05T01:36:02.7784490Z [OK] EQPT completed, data1.wrm created
+2026-01-05T01:36:02.7785060Z [OK] AqEquil instance created with wrm database
+2026-01-05T01:36:02.7786330Z The input file column 'logfO2' will be used to set sample redox state. If a another column is desired, set it manually using the redox_flag parameter.
+2026-01-05T01:36:02.7787960Z No 'charge_balance_on' column found in input file. Defaulting to no charge balancing for all samples.
+2026-01-05T01:36:02.7789500Z Warning: no 'logfO2' column found. Attempting to find a column for aqueous O2 to estimate logfO2 at sample temperature and pressure...
+2026-01-05T01:36:02.7790680Z Using wrm to speciate Bison Pool
+2026-01-05T01:36:02.7791220Z Using wrm to speciate Spray Geyser Source
+2026-01-05T01:36:02.7792290Z Warning: non-numeric aqueous O2 value in sample Crater Hills Geyser. Resorting to using Log fO2 (log bars) with a value of -6
+2026-01-05T01:36:02.7793450Z Using wrm to speciate Crater Hills Geyser
+2026-01-05T01:36:02.7794190Z Using wrm to speciate Ambergris
+2026-01-05T01:36:02.7794710Z Using wrm to speciate MLS Source
+2026-01-05T01:36:02.7795190Z Using wrm to speciate Gas Crack
+2026-01-05T01:36:02.7795670Z Using wrm to speciate Snail
+2026-01-05T01:36:02.7796150Z Finished!
+2026-01-05T01:36:02.7796490Z [OK] Speciation completed
+2026-01-05T01:36:02.7797000Z [OK] aq_distribution is a DataFrame with 81 rows
+2026-01-05T01:36:02.7797410Z 
+2026-01-05T01:36:02.7797610Z ============================================================
+2026-01-05T01:36:02.7798130Z Test 6: Testing water-rock reaction
+2026-01-05T01:36:02.7798650Z ============================================================
+2026-01-05T01:36:02.7799970Z Running speciation on /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aqequil/test_data/input_example_wrm.csv...
+2026-01-05T01:36:02.7801500Z [INFO] Working directory: /var/folders/6k/3_2ylbdd4rl8w3kbs55s3kk80000gn/T/tmpyvorreoy
+2026-01-05T01:36:02.7802520Z [OK] Copied wrm_data_latest.csv to bundled databases (replaced existing)
+2026-01-05T01:36:02.7803400Z [OK] Copied elements.csv to bundled databases (replaced existing)
+2026-01-05T01:36:02.7804550Z [OK] Copied solid_solutions.csv to bundled databases (replaced existing)
+2026-01-05T01:36:02.7805520Z [OK] Copied wrm_data_logk.csv to bundled databases (replaced existing)
+2026-01-05T01:36:02.7806510Z [OK] Copied wrm_data_logk_s.csv to bundled databases (replaced existing)
+2026-01-05T01:36:02.7807890Z The input file column 'logfO2' will be used to set sample redox state. If a another column is desired, set it manually using the redox_flag parameter.
+2026-01-05T01:36:02.7809190Z Getting wrm_data_latest.csv ready. This will take a moment...
+2026-01-05T01:36:02.7810210Z No 'charge_balance_on' column found in input file. Defaulting to no charge balancing for all samples.
+2026-01-05T01:36:02.7811560Z Warning: a column for Pressure was not found in the sample input file. Defaulting to water saturation pressure...
+2026-01-05T01:36:02.7813080Z Warning: no 'logfO2' column found. Attempting to find a column for aqueous O2 to estimate logfO2 at sample temperature and pressure...
+2026-01-05T01:36:02.7814990Z Using wrm_data_latest.csv to speciate Bison Pool
+2026-01-05T01:36:02.7815620Z Using wrm_data_latest.csv to speciate Spray Geyser Source
+2026-01-05T01:36:02.7816740Z Warning: non-numeric aqueous O2 value in sample Crater Hills Geyser. Resorting to using Log fO2 (log bars) with a value of -6
+2026-01-05T01:36:02.7818180Z Using wrm_data_latest.csv to speciate Crater Hills Geyser
+2026-01-05T01:36:02.7818840Z Using wrm_data_latest.csv to speciate Ambergris
+2026-01-05T01:36:02.7819450Z Using wrm_data_latest.csv to speciate MLS Source
+2026-01-05T01:36:02.7820030Z Using wrm_data_latest.csv to speciate Gas Crack
+2026-01-05T01:36:02.7820620Z Using wrm_data_latest.csv to speciate Snail
+2026-01-05T01:36:02.7821110Z Finished!
+2026-01-05T01:36:02.7821450Z [OK] Initial speciation completed
+2026-01-05T01:36:02.7821890Z [OK] Reaction prepared
+2026-01-05T01:36:02.7822320Z Running water-rock reaction...
+2026-01-05T01:36:02.7822840Z Using wrm_data_latest.csv to react Bison.Pool
+2026-01-05T01:36:02.7823180Z 
+2026-01-05T01:36:02.7823460Z The sample 'Bison Pool' experienced errors during the reaction:
+2026-01-05T01:36:02.7824370Z  * Error - (EQ6/intmtb) A mass balance is defined on the input
+2026-01-05T01:36:02.7825110Z        file for NH4+ (Aqueous solution), but this species isn't in the
+2026-01-05T01:36:02.7825920Z        currently active basis set. Either it isn't on the current data file
+2026-01-05T01:36:02.7826690Z        or it has been suppressed as by an nxmod or iopt(15) option.
+2026-01-05T01:36:02.7827270Z 
+2026-01-05T01:36:02.7827950Z Mass transfer results for sample 'Bison Pool' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:36:02.7828780Z 
+2026-01-05T01:36:02.7829050Z Using wrm_data_latest.csv to react Spray.Geyser.Source
+2026-01-05T01:36:02.7829460Z 
+2026-01-05T01:36:02.7829820Z The sample 'Spray Geyser Source' experienced errors during the reaction:
+2026-01-05T01:36:02.7830590Z  * Error - (EQ6/intrct) The reactant antigorite isn't among
+2026-01-05T01:36:02.7831170Z        the loaded minerals.
+2026-01-05T01:36:02.7831430Z 
+2026-01-05T01:36:02.7832130Z Mass transfer results for sample 'Spray Geyser Source' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:36:02.7833000Z 
+2026-01-05T01:36:02.7833270Z Using wrm_data_latest.csv to react Crater.Hills.Geyser
+2026-01-05T01:36:02.7833860Z Using wrm_data_latest.csv to react Ambergris
+2026-01-05T01:36:02.7834420Z Using wrm_data_latest.csv to react MLS.Source
+2026-01-05T01:36:02.7834970Z Using wrm_data_latest.csv to react Gas.Crack
+2026-01-05T01:36:02.7835310Z 
+2026-01-05T01:36:02.7835600Z The sample 'Gas Crack' experienced errors during the reaction:
+2026-01-05T01:36:02.7836400Z  * Error - (EQ6/path) The equilibrium calculation failed at the initial value
+2026-01-05T01:36:02.7837090Z        of reaction progress.
+2026-01-05T01:36:02.7837350Z 
+2026-01-05T01:36:02.7837980Z Mass transfer results for sample 'Gas Crack' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:36:02.7838770Z 
+2026-01-05T01:36:02.7838940Z Using wrm_data_latest.csv to react Snail
+2026-01-05T01:36:02.7839280Z 
+2026-01-05T01:36:02.7839540Z The sample 'Snail' experienced errors during the reaction:
+2026-01-05T01:36:02.7840330Z  * Error - (EQ6/path) The equilibrium calculation failed at the initial value
+2026-01-05T01:36:02.7841030Z        of reaction progress.
+2026-01-05T01:36:02.7841280Z 
+2026-01-05T01:36:02.7841850Z Mass transfer results for sample 'Snail' could not be saved because the calculation did not finish due to error(s).
+2026-01-05T01:36:02.7842650Z 
+2026-01-05T01:36:02.7842800Z [OK] Reaction completed
+2026-01-05T01:36:02.7843250Z [OK] misc_params is a DataFrame with 12 rows
+2026-01-05T01:36:02.7843590Z 
+2026-01-05T01:36:02.7843780Z ============================================================
+2026-01-05T01:36:02.7844240Z TEST SUMMARY
+2026-01-05T01:36:02.7844620Z ============================================================
+2026-01-05T01:36:02.7845680Z [PASS] Bundled Executables
+2026-01-05T01:36:02.7846080Z [PASS] Import and Basic Usage
+2026-01-05T01:36:02.7846540Z [PASS] Download Latest data0.wrm
+2026-01-05T01:36:02.7847000Z [PASS] EQPT Data0 to Data1 Conversion
+2026-01-05T01:36:02.7847500Z [PASS] Simple Speciation (wrm database)
+2026-01-05T01:36:02.7847980Z [PASS] Water-Rock Reaction
+2026-01-05T01:36:02.7848750Z ============================================================
+2026-01-05T01:36:02.7849110Z 
+2026-01-05T01:36:02.7849260Z [PASS] All tests passed!
+2026-01-05T01:36:02.8669980Z Post job cleanup.
+2026-01-05T01:36:03.2239950Z Post job cleanup.
+2026-01-05T01:36:03.4084880Z [command]/usr/local/bin/git version
+2026-01-05T01:36:03.4199610Z git version 2.50.1
+2026-01-05T01:36:03.4241010Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/18dadbf9-67a1-4688-ba75-ec9b0c5ab52d/.gitconfig'
+2026-01-05T01:36:03.4258750Z Temporarily overriding HOME='/Users/runner/work/_temp/18dadbf9-67a1-4688-ba75-ec9b0c5ab52d' before making global git config changes
+2026-01-05T01:36:03.4260270Z Adding repository directory to the temporary git global config as a safe directory
+2026-01-05T01:36:03.4264370Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/aqequil/aqequil
+2026-01-05T01:36:03.4378150Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-01-05T01:36:03.4620570Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-01-05T01:36:03.6137440Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-01-05T01:36:03.6289970Z http.https://github.com/.extraheader
+2026-01-05T01:36:03.6557250Z [command]/usr/local/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-01-05T01:36:03.7512550Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-01-05T01:36:03.8524810Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-01-05T01:36:03.8588870Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-01-05T01:36:04.0388750Z Cleaning up orphan processes

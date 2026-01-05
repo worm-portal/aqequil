@@ -1,0 +1,31 @@
+﻿2026-01-05T01:32:58.7617270Z ##[group]Run actions/upload-artifact@v4
+2026-01-05T01:32:58.7617820Z with:
+2026-01-05T01:32:58.7618150Z   name: wheels-macos-15-intel
+2026-01-05T01:32:58.7618590Z   path: ./wheelhouse/*.whl
+2026-01-05T01:32:58.7618990Z   if-no-files-found: error
+2026-01-05T01:32:58.7619410Z   compression-level: 6
+2026-01-05T01:32:58.7619780Z   overwrite: false
+2026-01-05T01:32:58.7620150Z   include-hidden-files: false
+2026-01-05T01:32:58.7620560Z env:
+2026-01-05T01:32:58.7621060Z   pythonLocation: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:32:58.7622040Z   PKG_CONFIG_PATH: /Users/runner/hostedtoolcache/Python/3.13.11/x64/lib/pkgconfig
+2026-01-05T01:32:58.7623010Z   Python_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:32:58.7623900Z   Python2_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:32:58.7624770Z   Python3_ROOT_DIR: /Users/runner/hostedtoolcache/Python/3.13.11/x64
+2026-01-05T01:32:58.7625510Z   X86_GFORTRAN: /usr/local/opt/gcc/bin/gfortran
+2026-01-05T01:32:58.7626360Z   X86_GCC_PREFIX: /usr/local/opt/gcc
+2026-01-05T01:32:58.7626810Z ##[endgroup]
+2026-01-05T01:32:59.0936690Z With the provided path, there will be 4 files uploaded
+2026-01-05T01:32:59.0943340Z Artifact name is valid!
+2026-01-05T01:32:59.0944890Z Root directory input is valid!
+2026-01-05T01:32:59.3783040Z Beginning upload of artifact content to blob storage
+2026-01-05T01:33:00.5372090Z Uploaded bytes 8388608
+2026-01-05T01:33:01.1126590Z Uploaded bytes 16777216
+2026-01-05T01:33:01.2009980Z Uploaded bytes 25165824
+2026-01-05T01:33:01.2745930Z Uploaded bytes 26148667
+2026-01-05T01:33:01.3168280Z Finished uploading artifact content to blob storage!
+2026-01-05T01:33:01.3172650Z SHA256 digest of uploaded artifact zip is 40ecc783ea82ded74149a05ecf5b655670ce481fd76ab07eaf1d605ad84d28cb
+2026-01-05T01:33:01.3173940Z Finalizing artifact upload
+2026-01-05T01:33:01.4385180Z Artifact wheels-macos-15-intel.zip successfully finalized. Artifact ID 5019973661
+2026-01-05T01:33:01.4387410Z Artifact wheels-macos-15-intel has been successfully uploaded! Final size is 26148667 bytes. Artifact ID is 5019973661
+2026-01-05T01:33:01.4399640Z Artifact download URL: https://github.com/worm-portal/aqequil/actions/runs/20702070857/artifacts/5019973661

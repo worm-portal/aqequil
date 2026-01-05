@@ -1,0 +1,75 @@
+﻿2026-01-05T01:33:10.2329458Z ##[group]Run actions/checkout@v4
+2026-01-05T01:33:10.2331266Z with:
+2026-01-05T01:33:10.2332165Z   repository: worm-portal/aqequil
+2026-01-05T01:33:10.2333650Z   token: ***
+2026-01-05T01:33:10.2334427Z   ssh-strict: true
+2026-01-05T01:33:10.2335130Z   ssh-user: git
+2026-01-05T01:33:10.2335901Z   persist-credentials: true
+2026-01-05T01:33:10.2336712Z   clean: true
+2026-01-05T01:33:10.2337448Z   sparse-checkout-cone-mode: true
+2026-01-05T01:33:10.2338345Z   fetch-depth: 1
+2026-01-05T01:33:10.2339645Z   fetch-tags: false
+2026-01-05T01:33:10.2340734Z   show-progress: true
+2026-01-05T01:33:10.2341700Z   lfs: false
+2026-01-05T01:33:10.2342739Z   submodules: false
+2026-01-05T01:33:10.2343517Z   set-safe-directory: true
+2026-01-05T01:33:10.2344768Z ##[endgroup]
+2026-01-05T01:33:10.3987636Z Syncing repository: worm-portal/aqequil
+2026-01-05T01:33:10.3990632Z ##[group]Getting Git version info
+2026-01-05T01:33:10.3991721Z Working directory is 'D:\a\aqequil\aqequil'
+2026-01-05T01:33:10.4949417Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-01-05T01:33:10.9178105Z git version 2.50.0.windows.1
+2026-01-05T01:33:10.9233983Z ##[endgroup]
+2026-01-05T01:33:10.9253818Z Temporarily overriding HOME='D:\a\_temp\af655168-dd60-4bf9-8723-23ca88b4810f' before making global git config changes
+2026-01-05T01:33:10.9257452Z Adding repository directory to the temporary git global config as a safe directory
+2026-01-05T01:33:10.9269224Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\aqequil\aqequil
+2026-01-05T01:33:10.9836882Z Deleting the contents of 'D:\a\aqequil\aqequil'
+2026-01-05T01:33:10.9842849Z ##[group]Initializing the repository
+2026-01-05T01:33:10.9856289Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\aqequil\aqequil
+2026-01-05T01:33:11.0739361Z Initialized empty Git repository in D:/a/aqequil/aqequil/.git/
+2026-01-05T01:33:11.0789678Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/worm-portal/aqequil
+2026-01-05T01:33:11.1372777Z ##[endgroup]
+2026-01-05T01:33:11.1373507Z ##[group]Disabling automatic garbage collection
+2026-01-05T01:33:11.1390447Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-01-05T01:33:11.1641332Z ##[endgroup]
+2026-01-05T01:33:11.1641982Z ##[group]Setting up auth
+2026-01-05T01:33:11.1659329Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-01-05T01:33:11.1918451Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-01-05T01:33:12.7753587Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-01-05T01:33:12.8018828Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-01-05T01:33:13.2590384Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-01-05T01:33:13.2856270Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-01-05T01:33:13.6963474Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-01-05T01:33:13.7223131Z ##[endgroup]
+2026-01-05T01:33:13.7239675Z ##[group]Fetching the repository
+2026-01-05T01:33:13.7242014Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0fba8641708a9a29f5cf75d5e1aa5af56402a902:refs/tags/v1.0.1
+2026-01-05T01:33:14.9861264Z From https://github.com/worm-portal/aqequil
+2026-01-05T01:33:14.9862101Z  * [new ref]         0fba8641708a9a29f5cf75d5e1aa5af56402a902 -> v1.0.1
+2026-01-05T01:33:15.0178753Z ##[endgroup]
+2026-01-05T01:33:15.0179519Z ##[group]Determining the checkout info
+2026-01-05T01:33:15.0180587Z ##[endgroup]
+2026-01-05T01:33:15.0195495Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-01-05T01:33:15.0602574Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-01-05T01:33:15.0876739Z ##[group]Checking out the ref
+2026-01-05T01:33:15.0901322Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/tags/v1.0.1
+2026-01-05T01:33:15.3753975Z Note: switching to 'refs/tags/v1.0.1'.
+2026-01-05T01:33:15.3754824Z 
+2026-01-05T01:33:15.3755284Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-01-05T01:33:15.3756674Z changes and commit them, and you can discard any commits you make in this
+2026-01-05T01:33:15.3758285Z state without impacting any branches by switching back to a branch.
+2026-01-05T01:33:15.3758930Z 
+2026-01-05T01:33:15.3759337Z If you want to create a new branch to retain commits you create, you may
+2026-01-05T01:33:15.3760307Z do so (now or later) by using -c with the switch command. Example:
+2026-01-05T01:33:15.3760793Z 
+2026-01-05T01:33:15.3761003Z   git switch -c <new-branch-name>
+2026-01-05T01:33:15.3762331Z 
+2026-01-05T01:33:15.3762513Z Or undo this operation with:
+2026-01-05T01:33:15.3762829Z 
+2026-01-05T01:33:15.3762966Z   git switch -
+2026-01-05T01:33:15.3763148Z 
+2026-01-05T01:33:15.3763489Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-01-05T01:33:15.3764051Z 
+2026-01-05T01:33:15.3764444Z HEAD is now at 0fba864 Add automatic versioning from git tags using setuptools_scm
+2026-01-05T01:33:15.3798547Z ##[endgroup]
+2026-01-05T01:33:15.4209682Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-01-05T01:33:15.4425229Z 0fba8641708a9a29f5cf75d5e1aa5af56402a902
