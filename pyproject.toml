@@ -88,3 +88,4 @@ archs = "AMD64"
 
 [tool.setuptools_scm]
 version_file = "aqequil/_version.py"
+local_scheme = "no-local-version"  # Prevent local versions (PyPI rejects them)
