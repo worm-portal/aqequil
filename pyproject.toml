@@ -65,8 +65,9 @@ build-verbosity = 1
 before-build = "python compile_eq3_6.py"
 
 # Test the wheel after building with integration test
-# Note: All aqequil dependencies should already be installed since we're testing the wheel
-test-command = "python {project}/test_integration.py"
+# Copy test script to temp directory and run from there to ensure we test
+# the installed wheel, not the local source directory
+test-command = "cp {project}/test_integration.py {tmp}/ && cd {tmp} && python test_integration.py"
 
 # Platform-specific settings
 [tool.cibuildwheel.linux]
@@ -85,6 +86,8 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 # Only build for 64-bit Windows
 archs = "AMD64"
 # MinGW installation is handled via CIBW_BEFORE_ALL_WINDOWS in GitHub Actions
+# Windows-specific test command using copy instead of cp
+test-command = "copy {project}\\test_integration.py {tmp}\\ && cd /d {tmp} && python test_integration.py"
 
 [tool.setuptools_scm]
 version_file = "aqequil/_version.py"

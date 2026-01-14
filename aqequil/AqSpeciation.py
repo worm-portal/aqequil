@@ -1130,6 +1130,23 @@ class AqEquil(object):
         cwd : str, optional
             Working directory to run the command in
         """
+        # Check that eq36co is set
+        if self.eq36co is None:
+            err_msg = (
+                "EQ3/6 executables not found. This can happen when:\n"
+                "  1. Installing from source distribution without gfortran installed\n"
+                "  2. The EQ36CO environment variable is not set\n\n"
+                "To fix this:\n"
+                "  - Install gfortran:\n"
+                "      Ubuntu/Debian: sudo apt-get install gfortran make\n"
+                "      macOS: brew install gcc\n"
+                "      Windows: Install MinGW-w64 with gfortran\n"
+                "  - Then reinstall aqequil: pip install --force-reinstall aqequil\n\n"
+                "Or set the EQ36CO environment variable to point to a directory\n"
+                "containing the EQ3/6 executables (eq3nr, eq6, eqpt)."
+            )
+            self.err_handler.raise_exception(err_msg)
+
         if sys.platform == "win32":
             # On Windows, run the MinGW executables directly
             exe_path = os.path.join(self.eq36co, f"{exe_name}.exe")
