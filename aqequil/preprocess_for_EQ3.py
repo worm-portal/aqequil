@@ -733,7 +733,9 @@ def write_3i_file(df,
             col_val = np.nan
 
         if suppress_missing and pd.isna(col_val):
-            df.loc[df.index[row], column] = 0
+            # Use string "0" if column has string dtype, otherwise use numeric 0
+            zero_val = "0" if pd.api.types.is_string_dtype(df[column]) else 0
+            df.loc[df.index[row], column] = zero_val
             col_val = 0
 
         if not pd.isna(col_val):
