@@ -14,6 +14,11 @@ authors = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
@@ -52,8 +57,8 @@ zip-safe = false
 "aqequil.test_data" = ["*.csv", "*.wrm"]
 
 [tool.cibuildwheel]
-# Build for Python 3.10, 3.11, 3.12, and 3.13
-build = "cp310-* cp311-* cp312-* cp313-*"
+# Build for Python 3.10, 3.11, 3.12, 3.13, and 3.14
+build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
 
 # Skip 32-bit builds, PyPy, and musllinux (focus on manylinux)
 skip = "*-win32 *-manylinux_i686 *-musllinux* pp*"
