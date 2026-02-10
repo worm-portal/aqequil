@@ -107,7 +107,7 @@ def load(filename, messages=True, hide_traceback=True):
     
     if os.path.getsize(filename) > 0:
         with open(filename, 'rb') as handle:
-            speciation = pd.compat.pickle_compat.load(handle) 
+            speciation = dill.load(handle)
             if messages:
                 print("Loaded '{}'".format(filename))
             return speciation
@@ -6546,8 +6546,9 @@ class Speciation(object):
             yi_previous = copy.deepcopy(yi)
             unit_type_previous = copy.deepcopy(unit_type)
             subheader_previous = copy.deepcopy(subheader)
-            
-            df.loc[:, yi] = y_plot
+
+            # Use pd.Series to avoid pandas 2.x string dtype assignment errors
+            df[yi] = pd.Series(y_plot, index=df.index)
 
 
         if len(y) > 1:
