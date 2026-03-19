@@ -50,7 +50,7 @@ zip-safe = false
 # Include compiled EQ3/6 executables in wheels
 "aqequil.bin" = ["__init__.py", "*"]
 # Include bundled thermodynamic databases (data1 files and WORM CSV databases)
-"aqequil.databases" = ["__init__.py", "*.wrm", "*.csv"]
+"aqequil.databases" = ["__init__.py", "*.wrm", "*.csv", "*.txt"]
 # Include EQ3/6 source code for source distribution (exclude bin/ and lib/ directories)
 "aqequil.eq3_6_src" = ["src/**/*", "include/**/*", "Makefile"]
 # Include test data
@@ -66,8 +66,8 @@ skip = "*-win32 *-manylinux_i686 *-musllinux* pp*"
 # Build verbosity
 build-verbosity = 1
 
-# Before building the wheel, compile the EQ3/6 executables
-before-build = "python compile_eq3_6.py"
+# Before building the wheel, compile EQ3/6 executables and prepare databases
+before-build = "python compile_eq3_6.py && python prepare_databases.py"
 
 # Skip cibuildwheel's built-in test - we use the separate test_wheels job in
 # GitHub Actions which properly tests installed wheels in isolation

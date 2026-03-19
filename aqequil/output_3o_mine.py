@@ -25,6 +25,21 @@ def isolate_block(string, begin_str, end_str):
     return result
 
 
+def safe_float(value):
+    """
+    Convert a string to float, returning NaN for overflow indicators.
+
+    EQ3/6 uses '**********' to indicate overflow or undefined values.
+    This function handles such cases by returning NaN.
+    """
+    if '*' in str(value):
+        return np.nan
+    try:
+        return float(value)
+    except (ValueError, TypeError):
+        return np.nan
+
+
 ### Main functions
 
 def mine_3o(this_file,
@@ -108,8 +123,9 @@ def mine_3o(this_file,
     sample_3o["pressure"] = this_pressure
     sample_3o["logact_H2O"] = isolate_block(extractme, begin_str=r'^.*Log activity of water=\s+', end_str=r'\s+.*$')
     sample_3o["H2O_density"] = isolate_block(extractme, begin_str=r'^.*Solution density =\s+', end_str=r'\s+.*$')
-    sample_3o["H2O_molality"] = 55.348 / float(sample_3o["H2O_density"])
-    sample_3o["H2O_log_molality"] = np.log10(sample_3o["H2O_molality"])
+    h2o_density_float = safe_float(sample_3o["H2O_density"])
+    sample_3o["H2O_molality"] = 55.348 / h2o_density_float if not pd.isna(h2o_density_float) else np.nan
+    sample_3o["H2O_log_molality"] = np.log10(sample_3o["H2O_molality"]) if not pd.isna(sample_3o["H2O_molality"]) else np.nan
     sample_3o["ionic_strength"] = isolate_block(extractme, begin_str=r'^.*Ionic strength \(I\)=\s+', end_str=r'\s+.*$')
 
     ### Begin extracting 'Distribution of Aqueous Solute Species'
@@ -298,18 +314,21 @@ def mine_3o(this_file,
                                         try:
                                             x_val = parts[1]
                                             # Try to convert x_val to float to check if it's a data line
-                                            try:
-                                                x_val = float(x_val)
-                                            except:
-                                                x_val = 0
+                                            x_val = safe_float(x_val)
+                                            if pd.isna(x_val) and '*' not in parts[1]:
+                                                # This is a header line, not an overflow value
+                                                continue
                                             # Verify parts[2] is also numeric (not "Log x" header)
-                                            log_x = float(parts[2])
+                                            log_x = safe_float(parts[2])
+                                            if pd.isna(log_x) and '*' not in parts[2]:
+                                                # This is a header line, not an overflow value
+                                                continue
                                             ideal_data.append({
                                                 'component': parts[0],
-                                                'x': x_val,
+                                                'x': x_val if not pd.isna(x_val) else 0,
                                                 'Log x': log_x,
-                                                'Log lambda': float(parts[3]),
-                                                'Log activity': float(parts[4])
+                                                'Log lambda': safe_float(parts[3]),
+                                                'Log activity': safe_float(parts[4])
                                             })
                                         except (ValueError, IndexError):
                                             # Skip header or invalid lines
@@ -326,8 +345,11 @@ def mine_3o(this_file,
                                     if len(parts) >= 3:
                                         try:
                                             # Try to convert to float to verify it's a data line, not header
-                                            log_qk = float(parts[1])
-                                            aff_kcal = float(parts[2])
+                                            log_qk = safe_float(parts[1])
+                                            aff_kcal = safe_float(parts[2])
+                                            # Skip header lines (non-numeric that aren't overflow indicators)
+                                            if pd.isna(log_qk) and '*' not in parts[1]:
+                                                continue
                                             state = parts[3] if len(parts) >= 4 else ""
                                             mineral_data.append({
                                                 'mineral': parts[0],
@@ -470,7 +492,7 @@ def mine_3o(this_file,
                 cleaned = log.replace("Log ( a(", "").replace(" )", "")
                 parts = re.split(r'\)xx ', cleaned)
                 if len(parts) > 1:
-                    hydrogen_exponents.append(float(parts[1]))
+                    hydrogen_exponents.append(safe_float(parts[1]))
                 else:
                     hydrogen_exponents.append(np.nan)
 
@@ -505,7 +527,7 @@ def mine_3o(this_file,
             if len(parts) >= 2:
                 df_data.append({
                     'gas': parts[0],
-                    'log_fugacity': float(parts[1])
+                    'log_fugacity': safe_float(parts[1])
                 })
 
         if len(df_data) > 0:
@@ -531,10 +553,10 @@ def mine_3o(this_file,
             if len(parts) >= 5:
                 df_data.append({
                     'species': parts[0] + "_total",
-                    'mg/L': float(parts[1]),
-                    'mg/kg.sol': float(parts[2]),
-                    'molarity': float(parts[3]),
-                    'molality': float(parts[4])
+                    'mg/L': safe_float(parts[1]),
+                    'mg/kg.sol': safe_float(parts[2]),
+                    'molarity': safe_float(parts[3]),
+                    'molality': safe_float(parts[4])
                 })
 
         if len(df_data) > 0:

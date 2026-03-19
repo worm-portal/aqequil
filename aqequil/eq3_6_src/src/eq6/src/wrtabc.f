@@ -179,10 +179,8 @@ c
         ALLOCATE(ubasqx(nbtmax))
         ALLOCATE(ctbaqx(nbtmax),ppmwbx(nbtmax))
 c
-        if (qrho) then
-          ALLOCATE(molrex(nctmax),ppmvex(nctmax))
-          ALLOCATE(molrbx(nbtmax),ppmvbx(nbtmax))
-        endif
+        ALLOCATE(molrex(nctmax),ppmvex(nctmax))
+        ALLOCATE(molrbx(nbtmax),ppmvbx(nbtmax))
 c
         ALLOCATE(ubaspx(nbtmax))
         ALLOCATE(acflbx(nbtmax),actlbx(nbtmax),conlbx(nbtmax))
@@ -211,16 +209,14 @@ c
           ppmwbx(n) = 0.
         enddo
 c
-        if (qrho) then
-          do n = 1,nctmax
-            molrex(n) = 0.
-            ppmvex(n) = 0.
-          enddo
-          do n = 1,nbtmax
-            molrbx(n) = 0.
-            ppmvbx(n) = 0.
-          enddo
-        endif
+        do n = 1,nctmax
+          molrex(n) = 0.
+          ppmvex(n) = 0.
+        enddo
+        do n = 1,nbtmax
+          molrbx(n) = 0.
+          ppmvbx(n) = 0.
+        enddo
 c
         do n = 1,nbtmax
           ubaspx(n) = ' '

@@ -473,8 +473,55 @@ class AqEquil(object):
             self.input_template = input_template
             
             self.thermo = AqEquil.Thermodata(AqEquil_instance=self) # outer instance passed to inner instance
-        
+
             self.data1 = self.thermo.data1
+
+        elif download_csv_files:
+            # Download database files without loading them into memory
+            self._download_database_files(verbose=verbose)
+
+
+    def _download_database_files(self, verbose=1):
+        """
+        Download WORM database files to the current working directory.
+
+        This method downloads the database files without loading them into memory,
+        useful for setting up a local copy of the databases.
+        """
+        from urllib.request import urlopen
+
+        WORM_DB_BASE_URL = "https://raw.githubusercontent.com/worm-portal/WORM-db/master"
+
+        files_to_download = {
+            "wrm_data_latest.csv": f"{WORM_DB_BASE_URL}/wrm_data_latest.csv",
+            "elements.csv": f"{WORM_DB_BASE_URL}/elements.csv",
+            "solid_solutions.csv": f"{WORM_DB_BASE_URL}/solid_solutions.csv",
+            "wrm_data_logK.csv": f"{WORM_DB_BASE_URL}/wrm_data_logK.csv",
+            "wrm_data_logK_S.csv": f"{WORM_DB_BASE_URL}/wrm_data_logK_S.csv",
+            "speciation_groups_WORM.txt": f"{WORM_DB_BASE_URL}/speciation_groups_WORM.txt",
+            "data0.wrm": f"{WORM_DB_BASE_URL}/data0.wrm",
+        }
+
+        if verbose > 0:
+            print("Downloading WORM database files to current working directory...")
+
+        for filename, url in files_to_download.items():
+            try:
+                if verbose > 0:
+                    print(f"Downloading {filename}...")
+                with urlopen(url) as response:
+                    content = response.read()
+                with open(filename, 'wb') as f:
+                    f.write(content)
+                if verbose > 0:
+                    size_kb = len(content) / 1024
+                    print(f"  [OK] {filename} ({size_kb:.1f} KB)")
+            except Exception as e:
+                if verbose > 0:
+                    print(f"  [ERROR] Failed to download {filename}: {e}")
+
+        if verbose > 0:
+            print("Database file download complete.")
 
 
     def _report_3o_6o_errors(self, lines, samplename):
@@ -3316,6 +3363,8 @@ class AqEquil(object):
                         self._load_logK("https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data_logK.csv", source="URL", download_csv_files=download_csv_files)
                     if logK_S == None:
                         self._load_logK_S("https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data_logK_S.csv", source="URL", download_csv_files=download_csv_files)
+                    if download_csv_files:
+                        self._download_txt_file("https://raw.githubusercontent.com/worm-portal/WORM-db/master/speciation_groups_WORM.txt")
                 else:
                     if self.verbose > 0:
                         print("Loading a user-supplied thermodynamic database...")
@@ -3602,35 +3651,40 @@ class AqEquil(object):
             Get a filename and dataframe from a URL pointing to a CSV file.
             Falls back to bundled databases if the URL cannot be reached.
             """
-            filename = url.split("/")[-1].lower()
+            filename = url.split("/")[-1]
 
             try:
                 # Download from URL and decode as UTF-8 text.
+                if download_csv_files and self.verbose > 0:
+                    print(f"Downloading {filename}...")
+
                 with urlopen(url) as webpage:
-                    content = webpage.read().decode()
+                    content = webpage.read().decode('utf-8')
 
                 if download_csv_files:
-                    if self.verbose > 0:
-                        print("Downloading", filename, "from", url)
-                    with open(filename, 'w') as output:
+                    with open(filename, 'w', encoding='utf-8') as output:
                         output.write(content)
+                    if self.verbose > 0:
+                        size_kb = len(content.encode('utf-8')) / 1024
+                        print(f"  [OK] {filename} ({size_kb:.1f} KB)")
 
                 return filename, pd.read_csv(StringIO(content), sep=",")
 
-            except Exception:
+            except Exception as e:
                 # Fallback to bundled databases if URL cannot be reached
                 bundled_path = _get_bundled_data_path()
                 if bundled_path is not None:
                     bundled_file = os.path.join(bundled_path, filename)
                     if os.path.isfile(bundled_file):
                         if self.verbose > 0:
-                            print(f"Cannot reach {url}, using bundled database: {filename}")
+                            print(f"  [FALLBACK] Cannot reach URL ({e}), using bundled database: {filename}")
 
                         # If download_csv_files is True, copy bundled file to cwd
                         if download_csv_files:
                             shutil.copy(bundled_file, filename)
                             if self.verbose > 0:
-                                print(f"Copied bundled {filename} to current working directory")
+                                size_kb = os.path.getsize(bundled_file) / 1024
+                                print(f"  [OK] Copied bundled {filename} ({size_kb:.1f} KB)")
 
                         return filename, pd.read_csv(bundled_file, sep=",")
 
@@ -3644,22 +3698,52 @@ class AqEquil(object):
             Get a filename and contents from a URL pointing to a txt file.
             """
 
-            filename = url.split("/")[-1].lower()
+            filename = url.split("/")[-1]
+
+            if self.verbose > 0:
+                print(f"Downloading {filename}...")
 
             try:
                 # Download from URL and decode as UTF-8 text.
                 with urlopen(url) as webpage:
-                    txt_content = webpage.read().decode()
+                    txt_content = webpage.read().decode('utf-8')
             except:
                 self.err_handler.raise_exception("The webpage "+str(url)+" cannot"
                         " be reached at this time.")
 
-            if self.verbose > 0:
-                print("Downloading", filename, "from", url)
-            with open(filename, 'w') as output:
+            with open(filename, 'w', encoding='utf-8') as output:
                 output.write(txt_content)
 
+            if self.verbose > 0:
+                size_kb = len(txt_content.encode('utf-8')) / 1024
+                print(f"  [OK] {filename} ({size_kb:.1f} KB)")
+
             return filename, txt_content
+
+
+        def _download_txt_file(self, url):
+            """
+            Download a text file from a URL to the current working directory.
+            """
+            filename = url.split("/")[-1]
+
+            if self.verbose > 0:
+                print(f"Downloading {filename}...")
+
+            try:
+                with urlopen(url) as webpage:
+                    content = webpage.read().decode('utf-8')
+
+                with open(filename, 'w', encoding='utf-8') as output:
+                    output.write(content)
+
+                if self.verbose > 0:
+                    size_kb = len(content.encode('utf-8')) / 1024
+                    print(f"  [OK] {filename} ({size_kb:.1f} KB)")
+
+            except Exception as e:
+                if self.verbose > 0:
+                    print(f"  [ERROR] Failed to download {filename}: {e}")
 
 
         def _load_elements(self, db, source="url", download_csv_files=False):
@@ -4410,7 +4494,7 @@ class Speciation(object):
             with open(self.custom_grouping_filepath) as file:
                 lines = [line.rstrip() for line in file]
         else:
-            content = import_package_file(__name__, 'speciation_groups_WORM.txt')
+            content = import_package_file('aqequil.databases', 'speciation_groups_WORM.txt')
             content = content.split("\n")
             lines = [line.rstrip() for line in content]
 
