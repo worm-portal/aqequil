@@ -2416,11 +2416,16 @@ class AqEquil(object):
 
                     ss_df_list = []
                     for ss_name, ss_data in sample_solid_solutions.items():
-                        df_ss_ideal = ss_data["ideal solution"]
-                        df_ss_mineral = ss_data["mineral"]
-                        df_merged = pd.merge(df_ss_mineral, df_ss_ideal, left_on='mineral', right_on='component', how='left')
+                        df_ss_ideal = ss_data.get("ideal solution", pd.DataFrame())
+                        df_ss_mineral = ss_data.get("mineral", pd.DataFrame())
+                        if df_ss_mineral.empty:
+                            continue
+                        if not df_ss_ideal.empty and 'component' in df_ss_ideal.columns:
+                            df_merged = pd.merge(df_ss_mineral, df_ss_ideal, left_on='mineral', right_on='component', how='left')
+                            del df_merged['component']
+                        else:
+                            df_merged = df_ss_mineral.copy()
                         df_merged.insert(0, 'solid solution', ss_name)
-                        del df_merged['component']
                         ss_df_list.append(df_merged)
 
                     dict_sample_data.update(
