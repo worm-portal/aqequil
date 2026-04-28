@@ -292,7 +292,11 @@ c
         jfl = jflgi(nbi)
         nb1 = ndecsp(nbi)
         if (nb1 .gt. 0) then
-          j2 = ilnobl(ujflls(jfl))
+          if (jfl .ge. 0) then
+            j2 = ilnobl(ujflls(jfl))
+          else
+            j2 = 0
+          endif
 c
           if (jfl.eq.17 .or. jfl.eq.18) then
             write (noutpt,1310) uspeci(nbi),covali(nbi),jfl,

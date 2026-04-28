@@ -2790,7 +2790,11 @@ c
         ns1 = nbasp(nb)
         if (jsflag(ns1) .le. 0) then
           jfl = jflag(ns1)
-          j2 = ilnobl(ujflls(jfl))
+          if (jfl .ge. 0) then
+            j2 = ilnobl(ujflls(jfl))
+          else
+            j2 = 0
+          endif
 c
           if (jfl.eq.17 .or. jfl.eq.18) then
             nse = ncosp(nb)
