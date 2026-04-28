@@ -780,12 +780,18 @@ def compile_report(data, csv_filename, aq_dist_type, mineral_sat_type,
 
     if get_fugacity:
         fugacities = create_report_df(data=data, category='fugacity', out_type=0)
+        overlap = set(fugacities.columns) & set(report.columns) - {'sample'}
+        if overlap:
+            fugacities = fugacities.drop(columns=list(overlap))
         report = report.merge(fugacities, left_on='Sample', right_on='sample', how='inner', suffixes=('', ''))
         report = report.drop('sample', axis=1)
         report_list["divs"]["fugacity"] = list(fugacities.columns[1:])
 
     if get_basis_totals:
-        sc = create_report_df(data=data, category='basis_totals', out_type=3)  # 3 is the molality column
+        sc = create_report_df(data=data, category='basis_totals', out_type='molality')
+        overlap = set(sc.columns) & set(report.columns) - {'sample'}
+        if overlap:
+            sc = sc.drop(columns=list(overlap))
         report = report.merge(sc, left_on='Sample', right_on='sample', how='inner', suffixes=('', ''))
         report = report.drop('sample', axis=1)
         report_list["divs"]["basis_totals"] = list(sc.columns[1:])

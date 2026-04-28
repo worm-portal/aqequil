@@ -124,8 +124,9 @@ def compile_eq3_6():
             print(f"Building for macOS {arch} (detected)")
     elif sys.platform == "win32":
         # Windows: static linking to avoid runtime dependencies
-        env['FFLAGS'] = '-O3 -static'
-        print("Building for Windows with static linking")
+        # Add -fcheck=bounds -fbacktrace for debugging array out-of-bounds
+        env['FFLAGS'] = '-O0 -g -static -fcheck=bounds -fbacktrace'
+        print("Building for Windows with static linking and bounds checking")
     else:
         # Linux
         env['FFLAGS'] = '-O3'

@@ -191,11 +191,22 @@ def react(speciation,
             shutil.rmtree(path)
             os.makedirs(path)
             
-    for sample_name in list(speciation.sample_data.keys()):
+    mix_with = getattr(reaction_setup, 'mix_with', None)
+    mixing_sample_name = getattr(reaction_setup, 'mixing_sample_name', None)
+    if mix_with is not None:
+        samples_to_run = [s for s in speciation.sample_data.keys()
+                          if s in mix_with]
+    elif mixing_sample_name is not None:
+        samples_to_run = [s for s in speciation.sample_data.keys()
+                          if s != mixing_sample_name]
+    else:
+        samples_to_run = list(speciation.sample_data.keys())
+
+    for sample_name in samples_to_run:
         filename_6i = speciation.sample_data[sample_name]["filename"][:-3]+".6i"
         filename_6o = filename_6i[:-3]+".6o"
         filename_6p = filename_6i[:-3]+".6p"
-        
+
         if data1_override != None:
             with open("data1."+data1_override, mode='rb') as data1:
                 speciation.data1["all_samples"] = data1.read()
@@ -802,7 +813,7 @@ class Mass_Transfer:
                     # start collecting
                     collect_values = True
                     got_value = False
-                if collect_values:
+                if collect_values and not got_value:
                     if len(i.strip().split(' ')) > 2 and i.strip().split(' ')[0] == s:
                         split_i = i.strip().split(' ')
                         split_i_clean = [v for v in split_i if v != '']
@@ -820,7 +831,7 @@ class Mass_Transfer:
                                 val = "".join([val_list[0], "E", val_list[1]])
                                 val = float(val)
                             elif "SATD" in val:
-                                pass
+                                val = np.nan
                             else:
                                 self.err_handler.raise_exception(("Error: "
                                     "Encountered a non-numeric value when mining "
@@ -3826,6 +3837,7 @@ class Mixing_Fluid:
     def __init__(self,
                  speciation,
                  sample_name,
+                 mix_with=None,
                  amount_remaining=1,
                  amount_destroyed=0,
                  molar_volume=1,
@@ -3846,6 +3858,11 @@ class Mixing_Fluid:
             The name of the fluid sample that will be mixed with all other
             speciated fluids.
 
+        mix_with : str or list of str, optional
+            Name(s) of specific fluid sample(s) to mix with. If ``None``
+            (the default), ``sample_name`` will be mixed with every other
+            sample in the speciation object.
+
         amount_remaining : float, default 1
             Number of moles of the fluid to be mixed with all others.
 
@@ -3862,22 +3879,34 @@ class Mixing_Fluid:
             Hide traceback message when encountering errors handled by this
             class? When True, error messages handled by this class will be short
             and to the point.
-            
+
         """
-        
+
         self.err_handler = Error_Handler(clean=hide_traceback)
 
         # Prepare a special reactant to be used in a mixing calculation.
         if isinstance(speciation, Speciation):
-            
+
             self.sample_name = sample_name
 
             if not sample_name in speciation.sample_data.keys():
-                
+
                 self.err_handler.raise_exception(("The sample '"+str(sample_name)+"'"
                         " was not found amongst the samples in this speciation"
                         " calculation: "+str(list(speciation.sample_data.keys()))))
-                
+
+            if mix_with is not None:
+                if isinstance(mix_with, str):
+                    mix_with = [mix_with]
+                all_samples = list(speciation.sample_data.keys())
+                bad = [s for s in mix_with if s not in all_samples]
+                if bad:
+                    self.err_handler.raise_exception(
+                        "The following sample(s) given to mix_with were not "
+                        "found in the speciation: {}. Available samples: "
+                        "{}".format(bad, all_samples))
+            self.mix_with = mix_with
+
             self.speciation_sample_data = speciation.sample_data[sample_name]
             self.T = self.speciation_sample_data["temperature"]
             self.mass_ratio = mass_ratio
@@ -4644,10 +4673,14 @@ class Prepare_Reaction:
         pval_var_to_format = None
         
         # set t_option and t_value defaults when there is a mixing calculation
+        self.mixing_sample_name = None
+        self.mix_with = None
         n_mixing_fluid_reactants=0
         for reactant in reactants:
             if isinstance(reactant, Mixing_Fluid):
                 n_mixing_fluid_reactants += 1
+                self.mixing_sample_name = reactant.sample_name
+                self.mix_with = reactant.mix_with
                 if t_option == None:
                     t_option = 3
                     self.t_option=t_option

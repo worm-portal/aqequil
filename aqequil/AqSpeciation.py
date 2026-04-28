@@ -64,6 +64,7 @@ from wormutils import Error_Handler, chemlabel, format_equation, check_balance, 
 
 # Import new Python modules for dissociation reaction processing
 from .process_dissrxns import process_dissrxns
+from .redox_suppression import parse_pseudoelement_name
 
 def load(filename, messages=True, hide_traceback=True):
     
@@ -683,6 +684,17 @@ class AqEquil(object):
                 "{}".format(str(dupe_rows)))
             err_list.append(err_dupe_rows)
         
+        # does the first column contain non-string values?
+        non_string_names = [n for n in list(df_in.iloc[1:, 0])
+                            if not isinstance(n, str)]
+        if len(non_string_names) > 0:
+            self.err_handler.raise_exception(
+                "The first column of the input file should contain sample "
+                "names (text), but non-text values were found: "
+                "{}. This can happen when a CSV file is saved with a "
+                "numeric index column. Remove the extra index column and "
+                "try again.".format(non_string_names))
+
         # are there any leading or trailing spaces in sample names?
         invalid_sample_names = [n for n in list(df_in.iloc[1:, 0])
                                 if str(n[0])==" " or str(n[-1])==" "]
@@ -726,6 +738,28 @@ class AqEquil(object):
                     start_index = i+1
                     recording_species=True
             db_species = [i.split()[0] for i in data0_lines[start_index:end_index]]
+
+            # Also extract species from basis and gas sections of data0,
+            # since gas basis species (e.g., S2(g)) appear there but not
+            # in the bdot parameters section.
+            section_headers = {"basis species", "auxiliary basis species",
+                               "aqueous species", "gases"}
+            current_section = None
+            for i, s in enumerate(data0_lines):
+                stripped = s.strip()
+                if stripped.startswith("+---"):
+                    if i + 1 < len(data0_lines):
+                        next_line = data0_lines[i + 1].strip()
+                        if next_line in section_headers:
+                            current_section = next_line
+                        elif next_line.startswith("+---") or next_line in {
+                            "elements", "solids", "liquids",
+                            "solid solutions", "references"}:
+                            current_section = None
+                        elif current_section is not None:
+                            species_name = next_line.split()[0]
+                            if species_name not in db_species:
+                                db_species.append(species_name)
         elif self.thermo.thermo_db_type == "CSV":
             df_OBIGT = self.thermo.thermo_db
             db_species = list(df_OBIGT["name"])
@@ -1022,6 +1056,11 @@ class AqEquil(object):
 
         work_dir = os.path.join(cwd, path_3i)
 
+        input_file_path = os.path.join(work_dir, filename_3i)
+        if not os.path.exists(input_file_path):
+            self.err_handler.raise_exception(
+                "Could not find EQ3 input file '{}'.".format(input_file_path))
+
         # Run EQ3NR with cross-platform execution method
         # Pass just the filename (not full path) since we're setting cwd to work_dir
         self.__run_eq_executable('eq3nr', [data1_file, filename_3i], cwd=work_dir)
@@ -1039,8 +1078,8 @@ class AqEquil(object):
         files_3p = [file for file in os.listdir(input_dir) if ".3p" in file]
 
         if len(files_3o) == 0:
-            if self.verbose > 0:
-                print('Error: EQ3 failed to produce output for ' + filename_3i)
+            self.err_handler.raise_exception(
+                "EQ3 failed to produce .3o output for '{}'.".format(filename_3i))
         elif len(files_3o) == 1:
             file_3o = files_3o[0]
             try:
@@ -1054,8 +1093,8 @@ class AqEquil(object):
             pass
 
         if len(files_3p) == 0:
-            if self.verbose > 0:
-                print('Error: EQ3 failed to produce output for ' + filename_3i)
+            self.err_handler.raise_exception(
+                "EQ3 failed to produce .3p pickup file for '{}'.".format(filename_3i))
         elif len(files_3p) == 1:
             file_3p = files_3p[0]
             try:
@@ -1131,6 +1170,11 @@ class AqEquil(object):
                 data1_file = cwd_data1_file
 
         work_dir = os.path.join(cwd, path_6i)
+
+        input_file_path = os.path.join(work_dir, filename_6i)
+        if not os.path.exists(input_file_path):
+            self.err_handler.raise_exception(
+                "Could not find EQ6 input file '{}'.".format(input_file_path))
 
         # Run EQ6 with cross-platform execution method
         # Pass just the filename (not full path) since we're setting cwd to work_dir
@@ -1210,15 +1254,21 @@ class AqEquil(object):
             cmd = [exe_path] + args
             env = None  # Use parent environment
 
-        subprocess.run(
+        result = subprocess.run(
             cmd,
             cwd=cwd,
             env=env,
             stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            check=False
         )
+
+        if result.returncode != 0:
+            stderr_text = result.stdout.decode(errors="replace").strip()
+            msg = "{} failed with return code {}.".format(exe_name, result.returncode)
+            if stderr_text:
+                msg += "\nOutput:\n" + stderr_text
+            self.err_handler.raise_exception(msg)
 
             
     def _delete_rxn_folders(self):
@@ -2493,6 +2543,7 @@ class AqEquil(object):
         speciation.raw_6_input_dict = {}
         speciation.raw_6_output_dict = {}
         speciation.raw_6_pickup_dict = {}
+        speciation.raw_6_pickup_dict_top = {}
         speciation.thermo = self.thermo
         speciation.data1 = self.data1
         speciation.verbose = self.verbose
@@ -4333,6 +4384,2594 @@ class AqEquil(object):
 
             # convert E units and calculate missing GHS values
             self.thermo_db = OBIGT2eos(thermo_df, fixGHS=True, tocal=True)
+
+
+    def append_pickup(self, input_file, pickup_file, output_file=None,
+                       strip_minerals=False):
+        """
+        Update a .3i or .6i input file by replacing its bottom half with the
+        bottom half of a .3p or .6p pickup file. The bottom half begins at the
+        line containing "Start of the bottom half of the input file".
+
+        Parameters
+        ----------
+        input_file : str
+            Path to a .3i or .6i input file.
+
+        pickup_file : str
+            Path to a .3p or .6p pickup file whose bottom half will replace the
+            bottom half of ``input_file``.
+
+        output_file : str, optional
+            Path to write the merged result. If not specified, ``input_file`` is
+            overwritten in place.
+
+        strip_minerals : bool, default False
+            If True, remove all mineral (pure and solid solution) entries from
+            the pickup file's bottom half before merging, and update the matrix
+            index limits accordingly.
+        """
+
+        marker = "Start of the bottom half of the input file"
+
+        with open(input_file, "r") as f:
+            input_lines = f.readlines()
+
+        with open(pickup_file, "r") as f:
+            pickup_lines = f.readlines()
+
+        # Keep everything before the marker in the input file.
+        top_half = []
+        found_marker_in_input = False
+        for line in input_lines:
+            if marker in line:
+                found_marker_in_input = True
+                break
+            top_half.append(line)
+
+        if not found_marker_in_input:
+            self.err_handler.raise_exception(
+                "Could not find '{}' in '{}'.".format(marker, input_file))
+
+        # Keep everything from the marker onward in the pickup file.
+        bottom_half = []
+        found_marker_in_pickup = False
+        for line in pickup_lines:
+            if marker in line:
+                found_marker_in_pickup = True
+            if found_marker_in_pickup:
+                bottom_half.append(line)
+
+        if not found_marker_in_pickup:
+            self.err_handler.raise_exception(
+                "Could not find '{}' in '{}'.".format(marker, pickup_file))
+
+        if strip_minerals:
+            bottom_half = _strip_minerals_from_bottom_half(bottom_half)
+
+        merged = top_half + bottom_half
+
+        if output_file is None:
+            output_file = input_file
+
+        with open(output_file, "w") as f:
+            f.writelines(merged)
+
+
+    def prepare_6i_for_mixing(self, input_file, data0_file,
+                               T_fluid1, T_fluid2,
+                               mass_ratio_factor=0.0,
+                               output_file=None,
+                               eq_output_file=None):
+        """
+        Prepare a .6i input file for cross-database fluid mixing.
+
+        After using ``append_pickup`` to combine a top half (from one database)
+        with a bottom half (from another database), this method adjusts the .6i
+        file so that it is compatible with the target thermodynamic database.
+        Specifically, it:
+
+        1. Sets the temperature option to fluid mixing tracking (jtemp=3).
+        2. Adds any basis species that are referenced in the top half's reactant
+           but missing from the bottom half.
+        3. Adds basis species needed to cover every pseudo-element in the target
+           data0 file, so that minerals using those pseudo-elements can be found
+           by EQ6's data compression routine (cmpdat).
+        4. Updates the matrix index limits to account for added species.
+        5. When ``eq_output_file`` is given, uses the speciation results to
+           compute physically meaningful mass balance totals for newly added
+           pseudo-element species (e.g. splitting total Fe into Fe+2/Fe+3).
+
+        Parameters
+        ----------
+        input_file : str
+            Path to the .6i input file to modify.
+
+        data0_file : str
+            Path to the target data0 thermodynamic database file.
+
+        T_fluid1 : float
+            Temperature of fluid 1 in degrees Celsius.
+
+        T_fluid2 : float
+            Temperature of fluid 2 in degrees Celsius.
+
+        mass_ratio_factor : float, default 0.0
+            Starting mass ratio factor for fluid mixing.
+
+        output_file : str, optional
+            Path to write the modified file. If not specified, ``input_file``
+            is overwritten in place.
+
+        eq_output_file : str, optional
+            Path to a .3o or .6o output file from the EQ3/6 run that produced
+            the bottom half of the input. Used to compute the oxidation-state
+            distribution when the target database uses pseudo-elements (e.g.
+            splitting nrp's total Fe into vnt's Fejiip and Fejiiip based on
+            the actual Fe+2/Fe+3 ratio from the speciation).
+        """
+
+        # --- read files ---------------------------------------------------- #
+        with open(input_file, "r") as f:
+            lines = f.readlines()
+        with open(data0_file, "r") as f:
+            data0_text = f.read()
+
+        eq_output_text = None
+        if eq_output_file is not None:
+            with open(eq_output_file, "r") as f:
+                eq_output_text = f.read()
+
+        # --- split 6i into top and bottom ---------------------------------- #
+        marker = "Start of the bottom half of the input file"
+        split_idx = None
+        for i, line in enumerate(lines):
+            if marker in line:
+                split_idx = i
+                break
+        if split_idx is None:
+            self.err_handler.raise_exception(
+                "Could not find '{}' in '{}'.".format(marker, input_file))
+
+        top_lines = lines[:split_idx]
+        bottom_lines = lines[split_idx:]
+
+        # --- reconcile cross-database species ------------------------------ #
+        top_lines, bottom_lines, _ = _reconcile_cross_database_mixing(
+            top_lines, bottom_lines, data0_text, eq_output_text)
+
+        # --- replace temperature block in top half ------------------------- #
+        top_lines = self._replace_temperature_block(
+            top_lines, T_fluid1, T_fluid2, mass_ratio_factor)
+
+        # --- write output -------------------------------------------------- #
+        merged = top_lines + bottom_lines
+        if output_file is None:
+            output_file = input_file
+        with open(output_file, "w") as f:
+            f.writelines(merged)
+
+
+    @staticmethod
+    def _parse_data0_species_elements(data0_text):
+        """
+        Parse a data0 file and return a dict mapping each basis species and
+        auxiliary basis species to its list of element names.
+        """
+        lines = data0_text.split("\n")
+        sep = "+--"  # section separator prefix
+
+        species_elements = {}
+
+        # Find section boundaries
+        elem_start = None
+        basis_start = None
+        aux_start = None
+        aq_start = None
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "elements":
+                elem_start = i
+            elif stripped == "basis species":
+                basis_start = i
+            elif stripped == "auxiliary basis species":
+                aux_start = i
+            elif stripped == "aqueous species":
+                aq_start = i
+                break
+
+        # Parse basis species section
+        if basis_start is not None:
+            end = aux_start if aux_start is not None else (aq_start or len(lines))
+            species_elements.update(
+                _parse_species_section(lines, basis_start + 2, end))
+
+        # Parse auxiliary basis species section
+        if aux_start is not None:
+            end = aq_start if aq_start is not None else len(lines)
+            species_elements.update(
+                _parse_species_section(lines, aux_start + 2, end))
+
+        return species_elements
+
+
+    @staticmethod
+    def _parse_data0_all_species_stoichiometry(data0_text):
+        """
+        Parse basis, auxiliary basis, AND aqueous species sections from a
+        data0 file, retaining stoichiometric coefficients.
+        Returns dict: species_name -> {element_name: stoich_coefficient}.
+        """
+        lines = data0_text.split("\n")
+
+        basis_start = None
+        aux_start = None
+        aq_start = None
+        solids_start = None
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "basis species":
+                basis_start = i
+            elif stripped == "auxiliary basis species":
+                aux_start = i
+            elif stripped == "aqueous species":
+                aq_start = i
+            elif stripped in ("solids", "solid solutions"):
+                solids_start = i
+                break
+
+        species_stoich = {}
+
+        if basis_start is not None:
+            end = aux_start if aux_start is not None else (
+                aq_start or solids_start or len(lines))
+            species_stoich.update(
+                _parse_species_section_with_stoich(lines, basis_start + 2, end))
+
+        if aux_start is not None:
+            end = aq_start if aq_start is not None else (
+                solids_start or len(lines))
+            species_stoich.update(
+                _parse_species_section_with_stoich(lines, aux_start + 2, end))
+
+        if aq_start is not None:
+            end = solids_start if solids_start is not None else len(lines)
+            species_stoich.update(
+                _parse_species_section_with_stoich(lines, aq_start + 2, end))
+
+        return species_stoich
+
+
+    @staticmethod
+    def _parse_data0_dissociation_reactions(data0_text):
+        """
+        Parse dissociation reactions from auxiliary basis and aqueous species
+        sections of a data0 file.
+
+        Returns dict: species_name → {basis_species_name: coefficient}.
+        Basis species themselves are included with {self: 1.0}.
+        """
+        import re
+        lines = data0_text.split("\n")
+
+        basis_start = None
+        aux_start = None
+        aq_start = None
+        solids_start = None
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "basis species":
+                basis_start = i
+            elif stripped == "auxiliary basis species":
+                aux_start = i
+            elif stripped == "aqueous species":
+                aq_start = i
+            elif stripped in ("solids", "solid solutions"):
+                solids_start = i
+                break
+
+        dissoc = {}
+
+        # Basis species: trivial identity reactions
+        if basis_start is not None:
+            end = aux_start if aux_start is not None else (
+                aq_start or solids_start or len(lines))
+            i = basis_start + 2
+            while i < end:
+                line = lines[i].strip()
+                if not line or line.startswith("+--"):
+                    i += 1
+                    continue
+                sp_name = line
+                dissoc[sp_name] = {sp_name: 1.0}
+                i += 1
+                while i < end and not lines[i].strip().startswith("+--"):
+                    i += 1
+                if i < end:
+                    i += 1
+
+        # Parse auxiliary basis and aqueous species sections
+        for section_start, section_end in [
+            (aux_start, aq_start or solids_start or len(lines)),
+            (aq_start, solids_start or len(lines)),
+        ]:
+            if section_start is None:
+                continue
+            i = section_start + 2
+            while i < section_end:
+                line = lines[i].strip()
+                if not line or line.startswith("+--"):
+                    i += 1
+                    continue
+                sp_name = line
+                i += 1
+                rxn = {}
+                while i < section_end:
+                    mline = lines[i].strip()
+                    if mline.startswith("+--"):
+                        i += 1
+                        break
+                    m = re.match(
+                        r"(\d+)\s+species in aqueous dissociation reaction:",
+                        mline)
+                    if m:
+                        n_species = int(m.group(1))
+                        i += 1
+                        while i < section_end and len(rxn) < n_species:
+                            rline = lines[i].strip()
+                            if rline.startswith("+--") or rline.startswith(
+                                    "****"):
+                                break
+                            tokens = rline.split()
+                            j = 0
+                            while j < len(tokens) - 1:
+                                try:
+                                    coeff = float(tokens[j])
+                                    rxn[tokens[j + 1]] = coeff
+                                    j += 2
+                                except ValueError:
+                                    j += 1
+                            i += 1
+                        while i < section_end:
+                            if lines[i].strip().startswith("+--"):
+                                i += 1
+                                break
+                            i += 1
+                        break
+                    i += 1
+                dissoc[sp_name] = rxn
+
+        return dissoc
+
+
+    @staticmethod
+    def _parse_data0_pseudo_elements(data0_text):
+        """
+        Parse the elements section of a data0 file and return a list of
+        element names that are pseudo-elements (i.e. redox-suppression
+        fake elements like Fejiiip, Sjiin, Cjivp, etc.), preserving the
+        order they appear in the data0 file.
+        """
+        lines = data0_text.split("\n")
+        pseudo = []
+
+        # Find elements section boundaries
+        elem_start = None
+        elem_end = None
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped == "elements":
+                elem_start = i
+            elif stripped == "basis species":
+                elem_end = i
+                break
+
+        if elem_start is None or elem_end is None:
+            return pseudo
+
+        for i in range(elem_start + 2, elem_end):
+            line = lines[i].strip()
+            if not line or line.startswith("+--"):
+                continue
+            elem_name = line.split()[0]
+            _, ox = parse_pseudoelement_name(elem_name)
+            if ox is not None:
+                pseudo.append(elem_name)
+
+        return pseudo
+
+
+    @staticmethod
+    def _parse_reactant_species(top_lines):
+        """
+        Extract species names from Reaction tables in the top half of a .6i
+        file. Returns a list of unique species names (excluding reactant names
+        like 'Fluid 2').
+        """
+        species = []
+        in_reaction = False
+        reactant_name = None
+
+        # First pass: find all reactant names
+        reactant_names = set()
+        for line in top_lines:
+            if "|Reactant" in line and "(ureac(n))" in line:
+                parts = line.split("|")
+                for p in parts:
+                    p = p.strip()
+                    if p and p != "Reactant" and "(ureac(n))" not in p:
+                        reactant_names.add(p)
+
+        for line in top_lines:
+            text = line.rstrip("\n")
+
+            if "|->|Reaction" in text:
+                in_reaction = True
+                continue
+
+            if in_reaction:
+                if text.startswith("|--->|") and "(ubsri(i,n)" in text:
+                    # Extract species name from: |--->|Name  |coeff| ...
+                    parts = text.split("|")
+                    # parts[0] = '', parts[1] = '--->', parts[2] = species name
+                    if len(parts) >= 3:
+                        sp_name = parts[2].strip()
+                        if sp_name and sp_name not in reactant_names:
+                            if sp_name not in species:
+                                species.append(sp_name)
+                elif text.startswith("|---") and "table header" in text:
+                    continue
+                elif text.startswith("|---"):
+                    # Separator line — could be end of reaction table
+                    # Check if next relevant line is still reaction data
+                    pass
+                elif not text.startswith("|--->"):
+                    in_reaction = False
+
+        return species
+
+
+    @staticmethod
+    def _parse_bottom_basis_species(bottom_lines):
+        """
+        Extract current basis species names from the bottom half of a .6i file.
+        Returns a list of species names.
+        """
+        species = []
+        in_mass_balance = False
+
+        for line in bottom_lines:
+            text = line.rstrip("\n")
+
+            if "Mass Balance Species (Matrix Row Variables)" in text:
+                in_mass_balance = True
+                continue
+
+            if in_mass_balance:
+                if text.startswith("* Valid jflag"):
+                    break
+                # Species lines look like:
+                # |H2O                     Aqueous solution        |Moles   ...
+                if (text.startswith("|") and "Aqueous solution" in text
+                        and ("Moles" in text or "Make non-basis" in text)):
+                    sp_name = text[1:25].strip()
+                    if sp_name:
+                        species.append(sp_name)
+
+        return species
+
+
+    @staticmethod
+    def _parse_bottom_mass_balance_totals(bottom_lines, column="equilibrium"):
+        """
+        Parse the Mass Balance Totals table from the bottom half of a .6i
+        file. Returns a dict mapping species name to its total in moles.
+
+        Parameters
+        ----------
+        column : str
+            "equilibrium" for the Equilibrium System column (mtbi(n)),
+            "aqueous" for the Aqueous Solution column (mtbaqi(n)).
+        """
+        col_idx = 2 if column == "equilibrium" else 3
+        totals = {}
+        in_totals = False
+        for line in bottom_lines:
+            text = line.rstrip("\n")
+            if "Mass Balance Totals (moles)" in text:
+                in_totals = True
+                continue
+            if in_totals:
+                if "Electrical imbalance" in text:
+                    break
+                if text.startswith("|") and "Aqueous" in text:
+                    sp_name = text[1:25].strip()
+                    parts = text.split("|")
+                    if len(parts) >= (col_idx + 1):
+                        val_str = parts[col_idx].strip()
+                        try:
+                            totals[sp_name] = float(val_str)
+                        except ValueError:
+                            pass
+        return totals
+
+    @staticmethod
+    def _parse_output_numerical_composition(output_text):
+        """
+        Parse the "Numerical Composition of the Aqueous Solution" table
+        from a .3o or .6o output file.  Returns a dict mapping species
+        name to its molality (the last numeric column).
+
+        For .6o files with multiple time steps, the *last* occurrence of
+        the table is used (representing the final equilibrium state).
+        """
+        lines = output_text.split("\n")
+        composition = {}
+        i = 0
+        while i < len(lines):
+            if "Numerical Composition of the Aqueous Solution" in lines[i]:
+                composition.clear()
+                i += 1
+                # Skip header lines until we hit species data
+                while i < len(lines):
+                    line = lines[i].strip()
+                    if not line:
+                        i += 1
+                        continue
+                    if line.startswith("Species") or line.startswith("---"):
+                        i += 1
+                        continue
+                    if "physical significance" in line:
+                        break
+                    # Parse species line. Formats:
+                    # .3o: " H2O    9.89E+05  9.66E+05  5.49E-02  5.55E+01"
+                    # .6o: " H2O    9.66E+05  5.55E+01"
+                    tokens = line.split()
+                    if len(tokens) >= 2:
+                        sp_name = tokens[0]
+                        try:
+                            molality = float(tokens[-1])
+                            composition[sp_name] = molality
+                        except ValueError:
+                            pass
+                    i += 1
+                continue
+            i += 1
+        return composition
+
+    @staticmethod
+    def _parse_output_species_distribution(output_text):
+        """
+        Parse the "Distribution of Aqueous Solute Species" table from a
+        .3o or .6o output file. Returns a dict mapping species name to its
+        molality. For .6o files with multiple time steps, the last
+        occurrence is used.
+        """
+        lines = output_text.split("\n")
+        distribution = {}
+        i = 0
+        while i < len(lines):
+            if "Distribution of Aqueous Solute Species" in lines[i]:
+                distribution.clear()
+                i += 1
+                while i < len(lines):
+                    line = lines[i].strip()
+                    if not line:
+                        if distribution:
+                            break
+                        i += 1
+                        continue
+                    if line.startswith("Species") or line.startswith("---"):
+                        i += 1
+                        continue
+                    tokens = line.split()
+                    if len(tokens) >= 2:
+                        sp_name = tokens[0]
+                        try:
+                            molality = float(tokens[1])
+                            distribution[sp_name] = molality
+                        except ValueError:
+                            pass
+                    i += 1
+                continue
+            i += 1
+        return distribution
+
+    @staticmethod
+    def _compute_missing_totals(missing, current_basis, all_species_elems,
+                                existing_totals, output_composition,
+                                species_distribution=None,
+                                species_stoich=None,
+                                h2o_aq_moles=None,
+                                comp_moles=None):
+        """
+        Compute mass balance totals for species being added to the bottom
+        half when switching databases (e.g. nrp → vnt).
+
+        When ``species_distribution`` and ``species_stoich`` are provided,
+        pseudo-element totals are computed from the full aqueous species
+        distribution table cross-referenced against data0 element
+        compositions.  Each missing species' pseudo-element total
+        (molality summed over all aqueous species containing that
+        pseudo-element) is converted to moles using the H2O mass from
+        the pickup file.  The donor species (an existing basis species
+        sharing the same real element) is reduced by the same amount to
+        conserve total elemental mass.
+
+        Falls back to ``output_composition`` ratio method, then to a
+        small fraction (1E-10) of the donor total.
+
+        Returns a tuple (missing_totals, donor_adjustments, allocation_log)
+        where donor_adjustments maps existing species names to the amount
+        that should be subtracted from their mass balance total to conserve
+        the real-element mass.
+        """
+        missing_totals = {}
+        donor_adjustments = {}
+        allocation_log = {}
+        fallback_fraction = 1e-10
+
+        pe_totals = None
+        pe_contributions = {}
+        if species_distribution and species_stoich:
+            pe_totals, pe_contributions = _compute_pseudo_element_totals(
+                species_distribution, species_stoich)
+
+        h2o_kg = None
+        if h2o_aq_moles is not None and h2o_aq_moles > 0:
+            h2o_kg = h2o_aq_moles * 18.01528 / 1000.0
+
+        for sp in missing:
+            sp_elems = all_species_elems.get(sp, [])
+            computed_total = None
+            donor_sp = None
+            log_entry = {"method": None, "pseudo_element": None,
+                         "molality_total": None, "h2o_kg": h2o_kg,
+                         "moles": None, "contributors": []}
+
+            for elem in sp_elems:
+                real_elem, ox = parse_pseudoelement_name(elem)
+                if ox is None:
+                    continue
+
+                if pe_totals is not None and h2o_kg is not None:
+                    sp_pe_molality = pe_totals.get(elem, 0.0)
+                    if sp_pe_molality > 0:
+                        computed_total = sp_pe_molality * h2o_kg
+                        log_entry["method"] = "species_distribution"
+                    else:
+                        pe_comp = (abs(comp_moles.get(elem, 0.0))
+                                   if comp_moles else 0.0)
+                        computed_total = pe_comp if pe_comp > 0 else 1e-30
+                        log_entry["method"] = "pe_zero_floor"
+                    log_entry["pseudo_element"] = elem
+                    log_entry["molality_total"] = sp_pe_molality
+                    log_entry["moles"] = computed_total
+                    contribs = pe_contributions.get(elem, [])
+                    contribs_sorted = sorted(
+                        contribs, key=lambda x: x[3], reverse=True)
+                    log_entry["contributors"] = [
+                        {"species": c[0], "molality": c[1],
+                         "stoich_coeff": c[2], "contribution": c[3]}
+                        for c in contribs_sorted]
+                    for existing_sp in current_basis:
+                        for ex_elem in all_species_elems.get(
+                                existing_sp, []):
+                            ex_real, ex_ox = parse_pseudoelement_name(
+                                ex_elem)
+                            if (ex_ox is not None
+                                    and ex_real == real_elem):
+                                donor_sp = existing_sp
+                                break
+                        if donor_sp is not None:
+                            break
+                    break
+
+                for existing_sp in current_basis:
+                    for ex_elem in all_species_elems.get(existing_sp, []):
+                        ex_real, ex_ox = parse_pseudoelement_name(ex_elem)
+                        if ex_ox is not None and ex_real == real_elem:
+                            donor_total = existing_totals.get(existing_sp)
+                            if donor_total is None or abs(donor_total) <= 1e-30:
+                                continue
+
+                            sp_molal = output_composition.get(sp)
+                            donor_molal = output_composition.get(existing_sp)
+                            if (sp_molal is not None
+                                    and donor_molal is not None
+                                    and abs(donor_molal) > 0):
+                                ratio = abs(sp_molal) / abs(donor_molal)
+                                ratio = min(ratio, 0.5)
+                                computed_total = abs(donor_total) * ratio
+                                log_entry["method"] = "numerical_composition"
+                            else:
+                                computed_total = (abs(donor_total)
+                                                  * fallback_fraction)
+                                log_entry["method"] = "fallback_1e-10"
+                            log_entry["moles"] = computed_total
+                            donor_sp = existing_sp
+                            break
+                    if computed_total is not None:
+                        break
+                if computed_total is not None:
+                    break
+
+            if log_entry["method"] is None:
+                log_entry["method"] = "no_pseudo_element"
+            missing_totals[sp] = computed_total
+            allocation_log[sp] = log_entry
+            if computed_total is not None and donor_sp is not None:
+                donor_adjustments[donor_sp] = (
+                    donor_adjustments.get(donor_sp, 0.0) + computed_total)
+
+        return missing_totals, donor_adjustments, allocation_log
+
+    @staticmethod
+    def _insert_missing_basis_species(bottom_lines, missing, flags,
+                                      totals=None, donor_adjustments=None):
+        """
+        Insert missing basis species into the three relevant tables in the
+        bottom half: Mass Balance Species, Mass Balance Totals, and Matrix
+        Column Variables. Also updates the matrix index limits and adjusts
+        donor species mass balance totals when donor_adjustments is given.
+        """
+        import math
+        if donor_adjustments is None:
+            donor_adjustments = {}
+        n_add = len(missing)
+        new_lines = []
+        i = 0
+        inserted_column_vars = False
+
+        # Track which section we're in to avoid mismatched insertions
+        SECTION_NONE = 0
+        SECTION_MASS_BAL_SPECIES = 1
+        SECTION_MASS_BAL_TOTALS = 2
+        SECTION_COLUMN_VARS = 3
+        current_section = SECTION_NONE
+
+        while i < len(bottom_lines):
+            text = bottom_lines[i].rstrip("\n")
+
+            # --- Track current section ------------------------------------- #
+            if "Mass Balance Species (Matrix Row Variables)" in text:
+                current_section = SECTION_MASS_BAL_SPECIES
+            elif "Mass Balance Totals (moles)" in text:
+                current_section = SECTION_MASS_BAL_TOTALS
+            elif "Matrix Column Variables and Values" in text:
+                current_section = SECTION_COLUMN_VARS
+            elif "Phases and Species in the PRS" in text:
+                current_section = SECTION_NONE
+
+            # --- Update matrix index limits -------------------------------- #
+            if "(kbt)" in text:
+                new_lines.append(_update_matrix_index(text, n_add))
+                i += 1
+                continue
+            if "(kmt)" in text:
+                new_lines.append(_update_matrix_index(text, n_add))
+                i += 1
+                continue
+            if "(kxt)" in text:
+                new_lines.append(_update_matrix_index(text, n_add))
+                i += 1
+                continue
+            if "(kdim)" in text:
+                new_lines.append(_update_matrix_index(text, n_add))
+                i += 1
+                continue
+
+            # --- Insert into Mass Balance Species table -------------------- #
+            if (current_section == SECTION_MASS_BAL_SPECIES
+                    and text.startswith("* Valid jflag strings")):
+                # Insert new rows just before the separator+comment block.
+                if (new_lines and new_lines[-1].rstrip("\n").startswith(
+                        "|----")):
+                    sep_line = new_lines.pop()
+                    for sp in missing:
+                        flag = flags[sp]
+                        row = "|{:<24s}Aqueous solution        |{:<16s}| --         |\n".format(
+                            sp, flag)
+                        new_lines.append(row)
+                    new_lines.append(sep_line)
+                new_lines.append(bottom_lines[i])
+                i += 1
+                continue
+
+            # --- Adjust donor species in Mass Balance Totals table --------- #
+            if (current_section == SECTION_MASS_BAL_TOTALS
+                    and text.startswith("|") and "Aqueous" in text
+                    and "Electrical imbalance" not in text):
+                sp_name = text[1:25].strip()
+                adj = donor_adjustments.get(sp_name)
+                if adj is not None and adj > 0:
+                    parts = text.split("|")
+                    if len(parts) >= 4:
+                        try:
+                            eq_total = float(parts[2].strip())
+                            aq_total = float(parts[3].strip())
+                            new_eq = eq_total - adj
+                            new_aq = aq_total - adj
+                            row = "|{:<24s}Aqueous |{:22.15E}|{:22.15E}|\n".format(
+                                sp_name, new_eq, new_aq)
+                            new_lines.append(row)
+                            i += 1
+                            continue
+                        except ValueError:
+                            pass
+
+            # --- Insert into Mass Balance Totals table --------------------- #
+            if (current_section == SECTION_MASS_BAL_TOTALS
+                    and "Electrical imbalance" in text):
+                for sp in missing:
+                    mt = (totals or {}).get(sp)
+                    if mt is not None and mt > 0:
+                        val = "{:22.15E}".format(mt)
+                    else:
+                        val = "{:22.15E}".format(1e-30)
+                    row = "|{:<24s}Aqueous |{}|{}|\n".format(sp, val, val)
+                    new_lines.append(row)
+                new_lines.append(bottom_lines[i])
+                i += 1
+                continue
+
+            # --- Insert into Matrix Column Variables table ----------------- #
+            if (current_section == SECTION_COLUMN_VARS
+                    and not inserted_column_vars
+                    and "Aqueous solution" in text
+                    and "(zvclgi(n))" not in text
+                    and "table header" not in text
+                    and text.startswith("|")):
+                new_lines.append(bottom_lines[i])
+                i += 1
+                # Walk forward through remaining Aqueous solution entries
+                while i < len(bottom_lines):
+                    next_text = bottom_lines[i].rstrip("\n")
+                    if ("Aqueous solution" in next_text
+                            and next_text.startswith("|")
+                            and "(zvclgi(n))" not in next_text):
+                        new_lines.append(bottom_lines[i])
+                        i += 1
+                        continue
+                    else:
+                        # Reached end of Aqueous solution entries — insert here
+                        for sp in missing:
+                            mt = (totals or {}).get(sp)
+                            if mt is not None and mt > 0:
+                                log_val = math.log10(mt)
+                            else:
+                                log_val = -30.0
+                            val = "{:22.15E}".format(log_val)
+                            row = "|{:<24s}Aqueous solution        |{}| --   |\n".format(
+                                sp, val)
+                            new_lines.append(row)
+                        inserted_column_vars = True
+                        break
+                continue
+
+            new_lines.append(bottom_lines[i])
+            i += 1
+
+        return new_lines
+
+
+    @staticmethod
+    def _replace_temperature_block(top_lines, T_fluid1, T_fluid2,
+                                    mass_ratio_factor):
+        """
+        Replace the temperature option block in the top half of a .6i file
+        with the jtemp=3 fluid mixing tracking option.
+        """
+        temp_block = [
+            "|Temperature option (jtemp):                                                   |\n",
+            "|  [ ] ( 0) Constant temperature:                                              |\n",
+            "|             Value (C)         | 0.00000E+00| (tempcb)                        |\n",
+            "|  [ ] ( 1) Linear tracking in Xi:                                             |\n",
+            "|             Base Value (C)    | 0.00000E+00| (tempcb)                        |\n",
+            "|             Derivative        | 0.00000E+00| (ttk(1))                        |\n",
+            "|  [ ] ( 2) Linear tracking in time:                                           |\n",
+            "|             Base Value (C)    | 0.00000E+00| (tempcb)                        |\n",
+            "|             Derivative        | 0.00000E+00| (ttk(1))                        |\n",
+            "|  [x] ( 3) Fluid mixing tracking (fluid 2 = special reactant):                |\n",
+            "|             T of fluid 1 (C)  |{:12.5E}| (tempcb)                        |\n".format(T_fluid1),
+            "|             T of fluid 2 (C)  |{:12.5E}| (ttk(2))                        |\n".format(T_fluid2),
+            "|             Mass ratio factor |{:12.5E}| (ttk(1))                        |\n".format(mass_ratio_factor),
+            "|------------------------------------------------------------------------------|\n",
+        ]
+
+        new_lines = []
+        i = 0
+        skip = False
+        while i < len(top_lines):
+            text = top_lines[i].rstrip("\n")
+            if "Temperature option (jtemp):" in text:
+                skip = True
+                new_lines.extend(temp_block)
+                i += 1
+                continue
+            if skip:
+                if "Pressure option (jpress):" in text:
+                    skip = False
+                    new_lines.append(top_lines[i])
+                i += 1
+                continue
+            new_lines.append(top_lines[i])
+            i += 1
+
+        return new_lines
+
+
+def join_input_files(input_files, filename="joined_input.csv",
+                     fill_value=None, return_df=False):
+    """
+    Join two or more CSV input files into a single file.
+
+    Each input file must contain a ``Temperature`` column and an ``H+``
+    column with subheader ``pH``. If any file has a ``Pressure`` column
+    then all files must have one. Species columns present in one file but
+    not another are filled with *fill_value*.
+
+    Parameters
+    ----------
+    input_files : list of str or pandas.DataFrame
+        Inputs to join. Each element can be a file path (str) or a
+        pandas DataFrame read from a CSV input file (where the first row
+        contains unit subheaders and subsequent rows contain data).
+        The list may mix strings and DataFrames.
+
+    filename : str, default "joined_input.csv"
+        Output CSV file path. Ignored when ``return_df`` is ``True``.
+
+    fill_value : str or numeric, optional
+        Value used to fill species columns that are missing from a file.
+        If ``None`` (the default), missing values are left blank. A common
+        alternative is ``"1E-18"``.
+
+    return_df : bool, default False
+        If ``True``, return a pandas DataFrame instead of writing a CSV
+        file. The DataFrame has species columns as headers, with the
+        first row containing unit subheaders. If ``False`` (the default),
+        write a CSV file and return its path.
+
+    Returns
+    -------
+    str or pandas.DataFrame
+        The path to the created CSV file, or a DataFrame if
+        ``return_df`` is ``True``.
+    """
+    import csv as csv_module
+
+    if not isinstance(input_files, (list, tuple)) or len(input_files) < 2:
+        raise Exception("input_files must be a list of at least two file "
+                        "paths or DataFrames.")
+
+    file_headers = []
+    file_units = []
+    file_rows = []
+
+    for entry in input_files:
+        if isinstance(entry, pd.DataFrame):
+            df = entry
+            if len(df) < 1:
+                raise Exception("A DataFrame input must have at least "
+                                "1 row (units) plus data rows.")
+            if isinstance(df.columns, pd.MultiIndex):
+                hdr = [str(c[0]) for c in df.columns]
+                units = [str(c[1]) for c in df.columns]
+                data = []
+                for row_idx in range(len(df)):
+                    data.append([str(v) for v in df.iloc[row_idx]])
+            else:
+                hdr = [str(c) for c in df.columns]
+                units = [str(v) for v in df.iloc[0]]
+                data = []
+                for row_idx in range(1, len(df)):
+                    data.append([str(v) for v in df.iloc[row_idx]])
+            file_headers.append(hdr)
+            file_units.append(units)
+            file_rows.append(data)
+        else:
+            with open(entry, newline="") as f:
+                reader = csv_module.reader(f)
+                rows = list(reader)
+            if len(rows) < 3:
+                raise Exception("Input file '" + str(entry)
+                                + "' must have at least 3 rows "
+                                "(header, units, data).")
+            file_headers.append(rows[0])
+            file_units.append(rows[1])
+            file_rows.append(rows[2:])
+
+    input_labels = []
+    for entry in input_files:
+        if isinstance(entry, pd.DataFrame):
+            input_labels.append("DataFrame")
+        else:
+            input_labels.append(str(entry))
+
+    for i, (hdr, label) in enumerate(zip(file_headers, input_labels)):
+        hdr_upper = [h.strip().upper() for h in hdr]
+        if "TEMPERATURE" not in hdr_upper:
+            raise Exception("Input '" + label
+                            + "' is missing a Temperature column.")
+        if "H+" not in [h.strip() for h in hdr]:
+            raise Exception("Input '" + label
+                            + "' is missing an H+ column.")
+        units_for_h = file_units[i][
+            [h.strip() for h in hdr].index("H+")].strip()
+        if units_for_h.lower() != "ph":
+            raise Exception("Input '" + label
+                            + "' H+ column must have subheader 'pH', "
+                            "got '" + units_for_h + "'.")
+
+    has_pressure = []
+    for hdr in file_headers:
+        hdr_upper = [h.strip().upper() for h in hdr]
+        has_pressure.append("PRESSURE" in hdr_upper)
+    if any(has_pressure) and not all(has_pressure):
+        raise Exception("Cannot join: some input files have a Pressure "
+                        "column and others do not. Either all files must "
+                        "have Pressure or none can.")
+
+    meta_names_upper = {"SAMPLE", "H+", "PRESSURE", "TEMPERATURE",
+                        "LOGFO2"}
+    file_col_maps = []
+    all_species = []
+    for hdr, units in zip(file_headers, file_units):
+        col_map = {}
+        for j, (h, u) in enumerate(zip(hdr, units)):
+            h_stripped = h.strip()
+            col_map[h_stripped] = (j, u.strip())
+            if h_stripped.upper() not in meta_names_upper:
+                if h_stripped not in all_species:
+                    all_species.append(h_stripped)
+        file_col_maps.append(col_map)
+
+    meta_order = ["Sample", "H+", "Pressure", "Temperature", "logfO2"]
+    meta_units = {"Sample": "id", "H+": "pH", "Pressure": "bar",
+                  "Temperature": "degC", "logfO2": "logfO2"}
+
+    out_meta = []
+    for m in meta_order:
+        for cm in file_col_maps:
+            if m in cm:
+                out_meta.append((m, cm[m][1]))
+                break
+
+    out_header = [m for m, _ in out_meta] + all_species
+    out_units = [u for _, u in out_meta]
+    for sp in all_species:
+        unit = "Molality"
+        for cm in file_col_maps:
+            if sp in cm:
+                unit = cm[sp][1]
+                break
+        out_units.append(unit)
+
+    fill_str = "" if fill_value is None else str(fill_value)
+
+    out_rows = []
+    for file_idx in range(len(input_files)):
+        cm = file_col_maps[file_idx]
+        for data_row in file_rows[file_idx]:
+            row = []
+            for m, _ in out_meta:
+                if m in cm:
+                    idx = cm[m][0]
+                    row.append(data_row[idx] if idx < len(data_row)
+                               else "")
+                else:
+                    row.append("")
+            for sp in all_species:
+                if sp in cm:
+                    idx = cm[sp][0]
+                    row.append(data_row[idx] if idx < len(data_row)
+                               else fill_str)
+                else:
+                    row.append(fill_str)
+            out_rows.append(row)
+
+    if return_df:
+        df_out = pd.DataFrame([out_units] + out_rows, columns=out_header)
+        return df_out
+
+    with open(filename, "w", newline="") as f:
+        writer = csv_module.writer(f)
+        writer.writerow(out_header)
+        writer.writerow(out_units)
+        for row in out_rows:
+            writer.writerow(row)
+
+    return filename
+
+
+def drop_min_molal_bases(df, db, minimum_molality):
+    """
+    Drop species columns from a joined input DataFrame where all data
+    values equal the minimum molality, provided no retained auxiliary
+    basis species depends on them via its dissociation reaction.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame produced by ``join_input_files`` (first row is unit
+        subheaders, subsequent rows are data).
+
+    db : str
+        Target database lettercode (e.g., ``"fcs"``) or path to a data0
+        file.
+
+    minimum_molality : float
+        The minimum molality value. Columns where every data value equals
+        this threshold are candidates for removal.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A copy of *df* with eligible columns removed.
+    """
+    if os.path.exists(db):
+        with open(db) as f:
+            data0_text = f.read()
+    else:
+        candidate = db if db.startswith("data0.") else "data0." + db
+        data0_text = None
+        for search_dir in [os.getcwd()]:
+            path = os.path.join(search_dir, candidate)
+            if os.path.exists(path):
+                with open(path) as f:
+                    data0_text = f.read()
+                break
+        if data0_text is None:
+            raise Exception(
+                "Could not find target data0 file for '" + str(db)
+                + "'. Place the file in the current working directory or "
+                "specify the full path.")
+
+    dissoc = AqEquil._parse_data0_dissociation_reactions(data0_text)
+
+    basis_stoich, _ = _parse_data0_basis_species_full(data0_text)
+    basis_set = set(basis_stoich.keys())
+
+    _lines = data0_text.split("\n")
+    _aux_start = None
+    _aq_start = None
+    for _i, _line in enumerate(_lines):
+        _s = _line.strip()
+        if _s == "auxiliary basis species":
+            _aux_start = _i
+        elif _s == "aqueous species":
+            _aq_start = _i
+            break
+    aux_set = set()
+    if _aux_start is not None:
+        _end = _aq_start if _aq_start is not None else len(_lines)
+        _j = _aux_start + 2
+        while _j < _end:
+            _sl = _lines[_j].strip()
+            if not _sl or _sl.startswith("+--"):
+                _j += 1
+                continue
+            aux_set.add(_sl)
+            _j += 1
+            while _j < _end and not _lines[_j].strip().startswith("+--"):
+                _j += 1
+            if _j < _end:
+                _j += 1
+
+    meta_upper = {"SAMPLE", "H+", "PRESSURE", "TEMPERATURE", "LOGFO2"}
+    species_cols = [c for c in df.columns if c.upper() not in meta_upper]
+
+    all_min_cols = set()
+    for col in species_cols:
+        vals = df[col].iloc[1:]
+        try:
+            if all(float(v) == minimum_molality for v in vals):
+                all_min_cols.add(col)
+        except (ValueError, TypeError):
+            continue
+
+    # Build dependency graph: for each aux species that is a column,
+    # record which other columns its dissociation reaction depends on
+    # (excluding system species).
+    system_species = {"H2O", "H+", "O2(g)", "O2", "e-"}
+    aux_deps = {}
+    for sp in aux_set:
+        if sp not in df.columns:
+            continue
+        rxn = dissoc.get(sp, {})
+        deps = set()
+        for product in rxn:
+            if product == sp:
+                continue
+            if product in system_species:
+                continue
+            if product in df.columns:
+                deps.add(product)
+        if deps:
+            aux_deps[sp] = deps
+
+    # Iteratively determine which columns can be dropped:
+    # A column can only be dropped if it is all-minimum AND no retained
+    # aux species depends on it.
+    to_drop = set()
+    changed = True
+    while changed:
+        changed = False
+        for col in list(all_min_cols - to_drop):
+            depended_on = False
+            for aux_sp, deps in aux_deps.items():
+                if aux_sp in to_drop:
+                    continue
+                if col in deps:
+                    depended_on = True
+                    break
+            if not depended_on:
+                to_drop.add(col)
+                changed = True
+
+    return df.drop(columns=list(to_drop))
+
+
+def _parse_species_section(lines, start, end):
+    """
+    Parse a basis species or auxiliary basis species section from a data0 file.
+    Returns a dict mapping species name to a list of element names.
+    """
+    import re
+    species_elements = {}
+    i = start
+    while i < end:
+        line = lines[i].strip()
+        # Skip separators and blank lines
+        if not line or line.startswith("+--"):
+            i += 1
+            continue
+        # This should be a species name
+        sp_name = line
+        i += 1
+        # Skip metadata lines until we find the element count line
+        elems = []
+        while i < end:
+            mline = lines[i].strip()
+            if mline.startswith("+--"):
+                # End of this species entry
+                i += 1
+                break
+            elem_match = re.match(r"(\d+)\s+element\(s\):", mline)
+            if elem_match:
+                n_elems = int(elem_match.group(1))
+                # Next line(s) have element data — read exactly n_elems elements
+                i += 1
+                while i < end and len(elems) < n_elems:
+                    eline = lines[i].strip()
+                    if eline.startswith("+--"):
+                        break
+                    if eline.startswith("*"):
+                        i += 1
+                        continue
+                    # Parse element composition line:
+                    # "1.0000 H   1.0000 O"
+                    tokens = eline.split()
+                    j = 0
+                    while j < len(tokens) - 1 and len(elems) < n_elems:
+                        try:
+                            float(tokens[j])
+                            elems.append(tokens[j + 1])
+                            j += 2
+                        except ValueError:
+                            j += 1
+                    i += 1
+                # Skip remaining lines until separator
+                while i < end:
+                    if lines[i].strip().startswith("+--"):
+                        i += 1
+                        break
+                    i += 1
+                break
+            i += 1
+        species_elements[sp_name] = elems
+    return species_elements
+
+
+def _parse_species_section_with_stoich(lines, start, end):
+    """
+    Like _parse_species_section but retains stoichiometric coefficients.
+    Returns a dict mapping species name to a dict of {element_name: coefficient}.
+    """
+    import re
+    species_stoich = {}
+    i = start
+    while i < end:
+        line = lines[i].strip()
+        if not line or line.startswith("+--"):
+            i += 1
+            continue
+        sp_name = line
+        i += 1
+        elems = {}
+        while i < end:
+            mline = lines[i].strip()
+            if mline.startswith("+--"):
+                i += 1
+                break
+            elem_match = re.match(r"(\d+)\s+element\(s\):", mline)
+            if elem_match:
+                n_elems = int(elem_match.group(1))
+                i += 1
+                while i < end and len(elems) < n_elems:
+                    eline = lines[i].strip()
+                    if eline.startswith("+--"):
+                        break
+                    if eline.startswith("*"):
+                        i += 1
+                        continue
+                    tokens = eline.split()
+                    j = 0
+                    while j < len(tokens) - 1 and len(elems) < n_elems:
+                        try:
+                            coeff = float(tokens[j])
+                            elems[tokens[j + 1]] = coeff
+                            j += 2
+                        except ValueError:
+                            j += 1
+                    i += 1
+                while i < end:
+                    if lines[i].strip().startswith("+--"):
+                        i += 1
+                        break
+                    i += 1
+                break
+            i += 1
+        species_stoich[sp_name] = elems
+    return species_stoich
+
+
+def _parse_data0_basis_species_full(data0_text):
+    """
+    Parse the basis species section of a data0 file and return dicts
+    mapping each basis species name to:
+      - its element stoichiometry  {element: coeff}
+      - its charge (float)
+    """
+    import re
+    lines = data0_text.split("\n")
+    basis_start = None
+    aux_start = None
+    for i, line in enumerate(lines):
+        s = line.strip()
+        if s == "basis species":
+            basis_start = i
+        elif s == "auxiliary basis species":
+            aux_start = i
+            break
+    if basis_start is None:
+        return {}, {}
+    end = aux_start if aux_start is not None else len(lines)
+    stoich = {}
+    charges = {}
+    i = basis_start + 2
+    while i < end:
+        line = lines[i].strip()
+        if not line or line.startswith("+--"):
+            i += 1
+            continue
+        sp_name = line
+        i += 1
+        elems = {}
+        charge = 0.0
+        while i < end:
+            mline = lines[i].strip()
+            if mline.startswith("+--"):
+                i += 1
+                break
+            cm = re.match(r"charge\s*=\s*([-\d.]+)", mline)
+            if cm:
+                charge = float(cm.group(1))
+            elem_match = re.match(r"(\d+)\s+element\(s\):", mline)
+            if elem_match:
+                n_elems = int(elem_match.group(1))
+                i += 1
+                while i < end and len(elems) < n_elems:
+                    eline = lines[i].strip()
+                    if eline.startswith("+--"):
+                        break
+                    if eline.startswith("*"):
+                        i += 1
+                        continue
+                    tokens = eline.split()
+                    j = 0
+                    while j < len(tokens) - 1 and len(elems) < n_elems:
+                        try:
+                            coeff = float(tokens[j])
+                            elems[tokens[j + 1]] = coeff
+                            j += 2
+                        except ValueError:
+                            j += 1
+                    i += 1
+                while i < end:
+                    if lines[i].strip().startswith("+--"):
+                        i += 1
+                        break
+                    i += 1
+                break
+            i += 1
+        stoich[sp_name] = elems
+        charges[sp_name] = charge
+    return stoich, charges
+
+
+def _apply_pe_totals_to_composition(top_lines, pe_totals, h2o_kg,
+                                    h2o_moles, target_elements,
+                                    data0_text=None):
+    """
+    Replace pseudo-element entries in the Composition block with values
+    computed from the species distribution.
+
+    pe_totals maps pseudo-element name → total molality.  Values are
+    converted to moles via ``molality * h2o_kg``.
+
+    H and O entries are left unchanged because they represent total
+    elemental amounts of the physical fluid; ``_rebuild_reaction_block``
+    recomputes H2O, H+, and O2(g) in the Reaction block to close the
+    hydrogen, oxygen, and charge balances against the updated
+    pseudo-element values.
+    """
+
+    stoich_template = (
+        "|--->|{elem}|{val}| (uesri(i,n), cesri(i,n))                |\n")
+
+    # Parse the current Composition block
+    comp = {}  # element -> moles
+    comp_order = []  # preserve order
+    in_comp = False
+    comp_start_idx = None
+    comp_end_idx = None
+    for idx, line in enumerate(top_lines):
+        text = line.rstrip("\n")
+        if "|->|Composition" in text:
+            in_comp = True
+            comp_start_idx = idx
+            continue
+        if in_comp and "|->|Reaction" in text:
+            comp_end_idx = idx
+            break
+        if in_comp and "|--->|" in text and "table header" not in text:
+            parts = text.split("|")
+            if len(parts) >= 4:
+                elem = parts[2].strip()
+                try:
+                    val = float(parts[3])
+                    comp[elem] = val
+                    if elem not in [e for e, _ in comp_order]:
+                        comp_order.append((elem, val))
+                except ValueError:
+                    pass
+
+    if comp_start_idx is None or comp_end_idx is None:
+        return top_lines
+
+    # Update pseudo-element values from pe_totals, adding new ones if needed
+    for pe, molality in pe_totals.items():
+        moles = molality * h2o_kg
+        if pe in comp:
+            comp[pe] = moles
+            comp_order = [(e, moles if e == pe else v)
+                          for e, v in comp_order]
+        else:
+            comp[pe] = moles
+            comp_order.append((pe, moles))
+
+    sep = ("|----------------------------------------------"
+           "--------------------------------|\n")
+
+    # Rebuild Composition block: keep header lines, replace data lines
+    new_comp_lines = []
+    # Composition marker line
+    new_comp_lines.append(top_lines[comp_start_idx])
+    # separator + table header + separator
+    new_comp_lines.append(sep)
+    new_comp_lines.append(
+        "|--->|Element |Stoich. Number        "
+        "| (this is a table header)                |\n")
+    new_comp_lines.append(sep)
+    # Element entries
+    for elem, val in comp_order:
+        padded = elem.ljust(8)
+        val_str = "{:22.15E}".format(val)
+        new_comp_lines.append(stoich_template.format(
+            elem=padded, val=val_str))
+    # Closing separator
+    new_comp_lines.append(sep)
+
+    # Replace in top_lines
+    new_top = (top_lines[:comp_start_idx] + new_comp_lines
+               + top_lines[comp_end_idx:])
+    return new_top
+
+
+def _rebuild_reaction_block(top_lines, data0_text):
+    """
+    Rebuild the Reaction block in top_lines so that it uses the target
+    database's basis species with molar amounts derived from the
+    (already-remapped) Composition block.
+
+    The Composition block encodes element → moles.  Each basis species in the
+    target database carries exactly one "primary" element (i.e. the non-H,
+    non-O element, or a pseudo-element).  The Reaction coefficient for that
+    species is set to the moles of its primary element.  H2O, H+, and O2(g)
+    are then calculated to close the hydrogen, oxygen, and charge balances.
+    """
+    from .redox_suppression import parse_pseudoelement_name
+
+    basis_stoich, basis_charges = _parse_data0_basis_species_full(data0_text)
+
+    # --- Parse the remapped Composition block from top_lines --- #
+    comp = {}
+    in_comp = False
+    for line in top_lines:
+        text = line.rstrip("\n")
+        if "|->|Composition" in text:
+            in_comp = True
+            continue
+        if in_comp and "|->|Reaction" in text:
+            break
+        if in_comp and "|--->|" in text and "table header" not in text:
+            parts = text.split("|")
+            if len(parts) >= 4:
+                elem = parts[2].strip()
+                try:
+                    val = float(parts[3])
+                    comp[elem] = val
+                except ValueError:
+                    pass
+
+    if not comp:
+        return top_lines
+
+    # --- Build mapping: primary_element → basis_species --- #
+    # "Primary element" is the non-H, non-O element of each species.
+    # H2O, H+, and O2(g) are handled separately for balance closure.
+    balance_species = {"H2O", "H+", "O2(g)"}
+    elem_to_basis = {}
+    for sp, sp_elems in basis_stoich.items():
+        if sp in balance_species:
+            continue
+        for elem in sp_elems:
+            if elem not in ("H", "O"):
+                elem_to_basis[elem] = sp
+                break
+
+    # --- Assign reaction coefficients --- #
+    rxn_coeffs = {}
+    total_H_from_species = 0.0
+    total_O_from_species = 0.0
+    total_charge = 0.0
+
+    for elem, moles in comp.items():
+        if elem in ("H", "O"):
+            continue
+        sp = elem_to_basis.get(elem)
+        if sp is None:
+            continue
+        sp_elems = basis_stoich[sp]
+        elem_per_sp = sp_elems.get(elem, 1.0)
+        if elem_per_sp == 0:
+            elem_per_sp = 1.0
+        sp_moles = moles / elem_per_sp
+        rxn_coeffs[sp] = sp_moles
+        h_per = sp_elems.get("H", 0.0)
+        o_per = sp_elems.get("O", 0.0)
+        total_H_from_species += sp_moles * h_per
+        total_O_from_species += sp_moles * o_per
+        total_charge += sp_moles * basis_charges.get(sp, 0.0)
+
+    # --- Close balances for H2O, H+, O2(g) --- #
+    # Total H from Composition:
+    total_H = comp.get("H", 0.0)
+    # Total O from Composition:
+    total_O = comp.get("O", 0.0)
+
+    # H+ carries 1 H and charge +1.  Its coefficient closes the charge
+    # balance: sum of all species charges must be zero.
+    # charge_from_H+ = c_Hplus * 1.0
+    # total_charge + charge_from_H+ = 0
+    c_Hplus = -total_charge
+    rxn_coeffs["H+"] = c_Hplus
+    total_H_from_species += c_Hplus * 1.0
+
+    # H2O carries 2 H and 1 O.  It closes the hydrogen balance.
+    # total_H_from_species + c_H2O * 2 = total_H
+    c_H2O = (total_H - total_H_from_species) / 2.0
+    rxn_coeffs["H2O"] = c_H2O
+    total_O_from_species += c_H2O * 1.0
+
+    # O2(g) carries 2 O.  It closes the oxygen balance.
+    # total_O_from_species + c_O2g * 2 = total_O
+    c_O2g = (total_O - total_O_from_species) / 2.0
+    rxn_coeffs["O2(g)"] = c_O2g
+
+    # --- Rebuild Reaction block in top_lines --- #
+    rxn_template = (
+        "|--->|{sp}|{val}| (ubsri(i,n), cbsri(i,n))|\n")
+
+    new_top = []
+    skip_old_rxn = False
+    for line in top_lines:
+        text = line.rstrip("\n")
+        if "|->|Reaction" in text:
+            new_top.append(line)
+            # Add separator and header
+            new_top.append(
+                "|----------------------------------------------"
+                "--------------------------------|\n")
+            new_top.append(
+                "|--->|Species                 |Reaction "
+                "Coefficient  | (this is a table header)|\n")
+            new_top.append(
+                "|----------------------------------------------"
+                "--------------------------------|\n")
+            # Add Fluid 2 entry
+            new_top.append(rxn_template.format(
+                sp="Fluid 2".ljust(24),
+                val="{:22.15E}".format(-1.0)))
+            # Add reaction species in a stable order:
+            # H2O first, then H+, then alphabetical, then O2(g) last
+            ordered = []
+            for sp in rxn_coeffs:
+                if sp in ("H2O", "H+", "O2(g)"):
+                    continue
+                if rxn_coeffs[sp] == 0.0:
+                    continue
+                ordered.append(sp)
+            ordered.sort()
+            emit_order = ["H2O", "H+"] + ordered + ["O2(g)"]
+            for sp in emit_order:
+                if sp not in rxn_coeffs:
+                    continue
+                coeff = rxn_coeffs[sp]
+                new_top.append(rxn_template.format(
+                    sp=sp.ljust(24),
+                    val="{:22.15E}".format(coeff)))
+            new_top.append(
+                "|----------------------------------------------"
+                "--------------------------------|\n")
+            skip_old_rxn = True
+            continue
+        if skip_old_rxn:
+            if "|->|Surface area" in text:
+                skip_old_rxn = False
+                new_top.append(line)
+            continue
+        new_top.append(line)
+
+    return new_top
+
+
+def _rebuild_fluid2_block(lines_6i, speciation_pickup_top):
+    """
+    Replace the Composition and Reaction blocks in lines_6i (the top half)
+    with those from a speciation's pickup top half.  This is used during
+    cross-database mixing so that Fluid 2's Composition and Reaction blocks
+    come from the target-database speciation rather than the cross-database
+    Mixing_Fluid.
+
+    The Prepare_Reaction options (temperature, pressure, Xi, mineral
+    suppression, etc.) are preserved from lines_6i.
+    """
+    # Extract Composition and Reaction blocks from speciation pickup
+    new_comp_lines = []
+    new_rxn_lines = []
+    in_comp = False
+    in_rxn = False
+    for line in speciation_pickup_top:
+        if "|->|Composition" in line:
+            in_comp = True
+        if in_comp and "|->|Reaction" in line:
+            in_comp = False
+            in_rxn = True
+        if in_rxn and "|->|Surface area" in line:
+            in_rxn = False
+            break
+        if in_comp:
+            new_comp_lines.append(line)
+        elif in_rxn:
+            new_rxn_lines.append(line)
+
+    if not new_comp_lines or not new_rxn_lines:
+        return lines_6i
+
+    # Find and replace Composition+Reaction blocks in lines_6i
+    result = []
+    i = 0
+    while i < len(lines_6i):
+        text = lines_6i[i]
+        if "|->|Composition" in text:
+            # Replace from Composition through end of Reaction block
+            result.extend(new_comp_lines)
+            result.extend(new_rxn_lines)
+            # Skip past original Composition+Reaction blocks
+            while i < len(lines_6i):
+                if "|->|Surface area" in lines_6i[i]:
+                    break
+                i += 1
+            continue
+        result.append(text)
+        i += 1
+
+    return result
+
+
+def _parse_data0_elements(data0_text):
+    """
+    Parse the elements section of a data0 file and return the set of all
+    element names (real and pseudo).
+    """
+    lines = data0_text.split("\n")
+    elements = set()
+    elem_start = None
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped == "elements":
+            elem_start = i
+        elif stripped == "basis species":
+            break
+    if elem_start is None:
+        return elements
+    for i in range(elem_start + 2, len(lines)):
+        line = lines[i].strip()
+        if not line or line.startswith("+--"):
+            continue
+        if line == "basis species":
+            break
+        elements.add(line.split()[0])
+    return elements
+
+
+def _zero_composition_elements(top_lines, elements_to_zero):
+    """
+    Remove specified elements from the Composition block entirely.
+    Elements absent from both fluids should not appear at all — even
+    a zero-valued entry can cause EQ6 errors if the element isn't in
+    the active data1 file.
+    """
+    new_top = []
+    in_comp = False
+    for line in top_lines:
+        text = line.rstrip("\n")
+        if "|->|Composition" in text:
+            in_comp = True
+        elif in_comp and "|->|Reaction" in text:
+            in_comp = False
+
+        if (in_comp and "|--->|" in text and "table header" not in text):
+            parts = text.split("|")
+            if len(parts) >= 4:
+                elem = parts[2].strip()
+                if elem in elements_to_zero:
+                    continue
+
+        new_top.append(line)
+    return new_top
+
+
+def _remap_composition_block(top_lines, target_elements, species_elements,
+                             pseudo_elements):
+    """
+    Remap the Composition block in the top half so that its element names
+    are compatible with the target data0 database.
+
+    Elements that exist in the target database are kept as-is.  Elements
+    that don't (e.g. plain ``C`` when the target uses ``Cjivp``/``Cjivn``)
+    are replaced by the corresponding pseudo-elements.  The stoichiometric
+    value is distributed among the replacement pseudo-elements by using
+    the Reaction block coefficients of species that contain each
+    pseudo-element.
+
+    Parameters
+    ----------
+    top_lines : list of str
+        Lines of the .6i top half.
+    target_elements : set of str
+        All element names present in the target data0 file.
+    species_elements : dict
+        Mapping of species name → list of element names in target data0.
+    pseudo_elements : list of str
+        Pseudo-element names in the target data0 (in data0 order).
+
+    Returns
+    -------
+    list of str
+        Modified top_lines with remapped Composition block.
+    """
+    from .redox_suppression import parse_pseudoelement_name
+
+    pseudo_set = set(pseudo_elements)
+
+    # --- Parse the Reaction block to get species→coefficient mapping --- #
+    reaction_coeffs = {}
+    in_reaction = False
+    for line in top_lines:
+        text = line.rstrip("\n")
+        if "|->|Reaction" in text:
+            in_reaction = True
+            continue
+        if in_reaction and "|->|Surface area" in text:
+            break
+        if in_reaction and "|--->|" in text and "table header" not in text:
+            parts = text.split("|")
+            if len(parts) >= 4:
+                sp_name = parts[2].strip()
+                try:
+                    coeff = float(parts[3])
+                    reaction_coeffs[sp_name] = coeff
+                except ValueError:
+                    pass
+
+    # --- Build mapping: pseudo-element → sum of absolute reaction coeffs --- #
+    pseudo_to_total = {}
+    for sp, coeff in reaction_coeffs.items():
+        for elem in species_elements.get(sp, []):
+            if elem in pseudo_set:
+                pseudo_to_total[elem] = (pseudo_to_total.get(elem, 0.0)
+                                         + abs(coeff))
+
+    # --- Build mapping: real element → list of replacement pseudo-elements --- #
+    real_to_pseudos = {}
+    for pe in pseudo_elements:
+        real_elem, ox = parse_pseudoelement_name(pe)
+        if ox is not None:
+            if real_elem not in real_to_pseudos:
+                real_to_pseudos[real_elem] = []
+            real_to_pseudos[real_elem].append(pe)
+
+    # --- Remap Composition block lines --- #
+    new_top = []
+    in_composition = False
+    composition_done = False
+    stoich_template = (
+        "|--->|{elem}|{val}| (uesri(i,n), cesri(i,n))                |\n")
+
+    for line in top_lines:
+        text = line.rstrip("\n")
+
+        if "|->|Composition" in text:
+            in_composition = True
+            new_top.append(line)
+            continue
+
+        if in_composition and "|->|Reaction" in text:
+            in_composition = False
+            composition_done = True
+            new_top.append(line)
+            continue
+
+        if not in_composition or composition_done:
+            new_top.append(line)
+            continue
+
+        # Inside Composition block
+        if "|--->|" not in text or "table header" in text:
+            new_top.append(line)
+            continue
+
+        # Parse element line
+        parts = text.split("|")
+        if len(parts) < 4:
+            new_top.append(line)
+            continue
+
+        elem_name = parts[2].strip()
+        try:
+            elem_val = float(parts[3])
+        except ValueError:
+            new_top.append(line)
+            continue
+
+        if elem_name in target_elements:
+            # Element exists in target — keep as-is
+            new_top.append(line)
+        elif elem_name in real_to_pseudos:
+            # Real element needs splitting into pseudo-elements
+            replacements = real_to_pseudos[elem_name]
+            total_pseudo_moles = sum(
+                pseudo_to_total.get(pe, 0.0) for pe in replacements)
+
+            for pe in replacements:
+                if total_pseudo_moles > 0:
+                    fraction = pseudo_to_total.get(pe, 0.0) / total_pseudo_moles
+                else:
+                    fraction = 1.0 / len(replacements)
+                pe_val = elem_val * fraction
+                pe_padded = pe.ljust(8)
+                val_str = "{:22.15E}".format(pe_val)
+                new_top.append(stoich_template.format(
+                    elem=pe_padded, val=val_str))
+        else:
+            # Check reverse: this might be a pseudo-element that needs
+            # merging into a real element for the target database
+            real_elem, ox = parse_pseudoelement_name(elem_name)
+            if ox is not None and real_elem in target_elements:
+                # This pseudo-element should be merged with others into
+                # the real element.  Collect all pseudo-element lines for
+                # the same real element, then emit one merged line.
+                # We handle this by deferring — mark for merge.
+                # For simplicity, just rename to the real element and
+                # let duplicates accumulate; we'll merge below.
+                re_padded = real_elem.ljust(8)
+                val_str = "{:22.15E}".format(elem_val)
+                new_top.append(stoich_template.format(
+                    elem=re_padded, val=val_str))
+            else:
+                new_top.append(line)
+
+    # --- Merge duplicate element entries (from pseudo→real collapse) --- #
+    # Find the Composition block in new_top and merge duplicates
+    merged_top = []
+    in_comp = False
+    comp_entries = []  # (elem_name, value, original_line)
+    for line in new_top:
+        text = line.rstrip("\n")
+        if "|->|Composition" in text:
+            in_comp = True
+            merged_top.append(line)
+            continue
+        if in_comp and "|->|Reaction" in text:
+            # Flush merged composition entries
+            seen = {}
+            order = []
+            for en, ev, ol in comp_entries:
+                if en is not None:
+                    if en in seen:
+                        seen[en] += ev
+                    else:
+                        seen[en] = ev
+                        order.append(en)
+                else:
+                    # Non-element line (header/divider) — flush as-is
+                    order.append(ol)
+                    seen[ol] = None
+
+            for key in order:
+                if seen[key] is None:
+                    merged_top.append(key)
+                else:
+                    padded = key.ljust(8)
+                    val_str = "{:22.15E}".format(seen[key])
+                    merged_top.append(stoich_template.format(
+                        elem=padded, val=val_str))
+
+            in_comp = False
+            merged_top.append(line)
+            continue
+
+        if in_comp:
+            if "|--->|" in text and "table header" not in text:
+                parts = text.split("|")
+                if len(parts) >= 4:
+                    en = parts[2].strip()
+                    try:
+                        ev = float(parts[3])
+                        comp_entries.append((en, ev, line))
+                        continue
+                    except ValueError:
+                        pass
+            comp_entries.append((None, 0, line))
+            continue
+
+        merged_top.append(line)
+
+    return merged_top
+
+
+def _compute_pseudo_element_totals(species_distribution, species_stoich):
+    """
+    Sum molality * stoichiometric_coefficient per pseudo-element across
+    all aqueous species in the distribution table.
+
+    Returns (totals, contributions) where:
+      totals : dict  pseudo_element -> total_molality
+      contributions : dict  pseudo_element -> list of
+          (species_name, molality, stoich_coeff, contribution)
+    """
+    from .redox_suppression import parse_pseudoelement_name
+    totals = {}
+    contributions = {}
+    for sp_name, molality in species_distribution.items():
+        stoich = species_stoich.get(sp_name)
+        if stoich is None:
+            continue
+        for elem, coeff in stoich.items():
+            _, ox = parse_pseudoelement_name(elem)
+            if ox is not None:
+                contribution = molality * coeff
+                totals[elem] = totals.get(elem, 0.0) + contribution
+                if elem not in contributions:
+                    contributions[elem] = []
+                contributions[elem].append(
+                    (sp_name, molality, coeff, contribution))
+    return totals, contributions
+
+
+def _reconcile_cross_database_mixing(top_lines, bottom_lines, data0_text,
+                                     eq_output_text=None,
+                                     fluid2_eq_output_text=None,
+                                     bottom_half_matches_target=False,
+                                     fluid2_basis=None):
+    """
+    Reconcile a .6i top and bottom half when they come from different
+    thermodynamic databases.  Remaps the Composition block elements in
+    the top half and adds missing basis species to the bottom half.
+
+    Parameters
+    ----------
+    top_lines : list of str
+        Lines of the .6i top half (will be modified with remapped elements).
+    bottom_lines : list of str
+        Lines of the .6i bottom half (will be modified with missing species).
+    data0_text : str
+        Full text of the target data0 database file (Fluid 1's database).
+    eq_output_text : str, optional
+        Full text of a .3o/.6o output file for oxidation-state distribution.
+    fluid2_eq_output_text : str, optional
+        Full text of the Mixing Fluid's .3o/.6o output file.
+    bottom_half_matches_target : bool
+        If True, the bottom half was produced by the same database as the
+        target.  Existing mass balance totals are already correct and will
+        not be overwritten; only missing species get new totals.
+    fluid2_basis : list of str, optional
+        Basis species names from the Mixing Fluid's pickup file.  When
+        provided, species that appear in neither the bottom half's basis
+        nor the mixing fluid's basis are excluded from the missing list
+        (they were not present in either fluid and should not be created).
+
+    Returns
+    -------
+    tuple of (list of str, list of str, dict)
+        Modified (top_lines, bottom_lines, allocation_log).
+    """
+    from .redox_suppression import parse_pseudoelement_name
+
+    species_elements = AqEquil._parse_data0_species_elements(data0_text)
+    pseudo_elements = AqEquil._parse_data0_pseudo_elements(data0_text)
+    target_elements = _parse_data0_elements(data0_text)
+
+    # Determine which pseudo-elements are unwanted (their covering basis
+    # species is absent from both fluids) BEFORE recomputing the
+    # Composition block.  This prevents phantom H/O from being allocated
+    # alongside species that will later be removed.
+    current_basis = AqEquil._parse_bottom_basis_species(bottom_lines)
+    unwanted_pes = set()
+    if fluid2_basis is not None:
+        either_fluid = set(current_basis) | set(fluid2_basis)
+        for pe in pseudo_elements:
+            covered_by = None
+            for sp, elems in species_elements.items():
+                if pe in elems:
+                    covered_by = sp
+                    break
+            if covered_by is not None and covered_by not in either_fluid:
+                unwanted_pes.add(pe)
+
+    # --- Remap Composition block in top half --- #
+    top_lines = _remap_composition_block(
+        top_lines, target_elements, species_elements, pseudo_elements)
+
+    # If we have the Mixing_Fluid's EQ3/6 output, recompute the
+    # Composition block pseudo-element distribution from the species
+    # distribution table (instead of relying on the source Reaction
+    # block coefficients, which may use a different redox basis).
+    if fluid2_eq_output_text is not None:
+        target_stoich = AqEquil._parse_data0_all_species_stoichiometry(
+            data0_text)
+        fluid2_dist = AqEquil._parse_output_species_distribution(
+            fluid2_eq_output_text)
+        pe_totals, _ = _compute_pseudo_element_totals(
+            fluid2_dist, target_stoich)
+        # Remove unwanted pseudo-elements before applying to the
+        # Composition block.  This ensures the O and H that would
+        # accompany these species are never counted.
+        for upe in unwanted_pes:
+            pe_totals.pop(upe, None)
+        if pe_totals:
+            fluid2_num_comp = AqEquil._parse_output_numerical_composition(
+                fluid2_eq_output_text)
+            h2o_moles_f2 = fluid2_num_comp.get("H2O")
+            if h2o_moles_f2 is None:
+                h2o_moles_f2 = 55.51
+            h2o_kg_f2 = h2o_moles_f2 * 18.01528 / 1000.0
+            top_lines = _apply_pe_totals_to_composition(
+                top_lines, pe_totals, h2o_kg_f2, h2o_moles_f2,
+                target_elements, data0_text=data0_text)
+
+    # Remove any unwanted pseudo-elements that may have been left by
+    # _remap_composition_block (which runs before the pe_totals filter).
+    if unwanted_pes:
+        top_lines = _zero_composition_elements(
+            top_lines, unwanted_pes)
+
+    # --- Rebuild Reaction block to match remapped Composition --- #
+    top_lines = _rebuild_reaction_block(top_lines, data0_text)
+
+    output_composition = {}
+    species_distribution = {}
+    species_stoich = {}
+    if eq_output_text is not None:
+        output_composition = AqEquil._parse_output_numerical_composition(
+            eq_output_text)
+        species_distribution = AqEquil._parse_output_species_distribution(
+            eq_output_text)
+        species_stoich = AqEquil._parse_data0_all_species_stoichiometry(
+            data0_text)
+
+    reactant_species = AqEquil._parse_reactant_species(top_lines)
+
+    # 1) Species referenced in the reactant but absent from the bottom half
+    missing = [sp for sp in reactant_species if sp not in current_basis]
+
+    # 2) Species needed to cover every pseudo-element in the target data0
+    #    Only add a covering basis species when the pseudo-element actually
+    #    carries nonzero mass in the Composition block.  If a pseudo-element
+    #    has zero moles (e.g. because both fluids suppressed all species
+    #    using that oxidation state), forcing in a basis species would
+    #    fabricate mass that doesn't exist.
+    comp_moles = {}
+    in_comp = False
+    for line in top_lines:
+        text = line.rstrip("\n")
+        if "|->|Composition" in text:
+            in_comp = True
+            continue
+        if in_comp and "|->|Reaction" in text:
+            break
+        if in_comp and "|--->|" in text and "table header" not in text:
+            parts = text.split("|")
+            if len(parts) >= 4:
+                try:
+                    comp_moles[parts[2].strip()] = float(parts[3])
+                except ValueError:
+                    pass
+
+    current_set = set(current_basis) | set(missing)
+    pseudo_set = set(pseudo_elements)
+    covered_pseudoelems = set()
+    for sp in current_set:
+        for elem in species_elements.get(sp, []):
+            if elem in pseudo_set:
+                covered_pseudoelems.add(elem)
+
+    for pe in pseudo_elements:
+        if pe in covered_pseudoelems:
+            continue
+        if abs(comp_moles.get(pe, 0.0)) == 0.0:
+            continue
+        for sp, elems in species_elements.items():
+            if pe in elems and sp not in current_set:
+                missing.append(sp)
+                current_set.add(sp)
+                for e in elems:
+                    if e in pseudo_set:
+                        covered_pseudoelems.add(e)
+                break
+
+    # Filter out species that don't exist in either fluid's basis.
+    # current_basis is fluid 1's basis (the bottom half).  fluid2_basis
+    # is the mixing fluid's basis.  If a species is in neither, it was
+    # not present in either fluid and should not be fabricated.
+    if fluid2_basis is not None:
+        either_fluid = set(current_basis) | set(fluid2_basis)
+        missing = [sp for sp in missing if sp in either_fluid]
+
+    aq_totals = AqEquil._parse_bottom_mass_balance_totals(
+        bottom_lines, column="aqueous")
+    h2o_aq_moles = aq_totals.get("H2O")
+
+    if not missing:
+        # No missing species — recompute existing totals only if the
+        # bottom half came from a different database than the target.
+        existing_overrides = {}
+        if species_distribution and not bottom_half_matches_target:
+            existing_overrides = _recompute_mass_balance_totals(
+                species_distribution, data0_text, current_basis,
+                h2o_aq_moles)
+        if existing_overrides:
+            bottom_lines = _override_mass_balance_totals(
+                bottom_lines, existing_overrides)
+        override_log = {}
+        for sp, new_val in existing_overrides.items():
+            old_val = aq_totals.get(sp)
+            override_log[sp] = {
+                "method": "dissociation_recompute",
+                "old_moles": old_val,
+                "new_moles": new_val,
+            }
+        return top_lines, bottom_lines, override_log
+
+    final_basis = list(current_basis) + missing
+
+    # Recompute mass balance totals using the species distribution from
+    # the source output and dissociation reactions from the target data0.
+    # When the bottom half matches the target, only compute for missing
+    # species (existing totals are already correct).  When the databases
+    # differ, recompute everything.
+    all_overrides = {}
+    if species_distribution:
+        recompute_basis = (final_basis if not bottom_half_matches_target
+                           else missing)
+        all_overrides = _recompute_mass_balance_totals(
+            species_distribution, data0_text, recompute_basis, h2o_aq_moles)
+
+    # Apply overrides for existing basis species to bottom half
+    current_set = set(current_basis)
+    existing_overrides = {sp: v for sp, v in all_overrides.items()
+                         if sp in current_set}
+    if existing_overrides:
+        bottom_lines = _override_mass_balance_totals(
+            bottom_lines, existing_overrides)
+
+    override_log = {}
+    for sp, new_val in existing_overrides.items():
+        old_val = aq_totals.get(sp)
+        override_log[sp] = {
+            "method": "dissociation_recompute",
+            "old_moles": old_val,
+            "new_moles": new_val,
+        }
+
+    all_species_elems = {}
+    for sp in final_basis:
+        all_species_elems[sp] = species_elements.get(sp, [])
+
+    missing_flags = {}
+    for sp in missing:
+        sp_elems = all_species_elems.get(sp, [])
+        needs_moles = False
+        for elem in sp_elems:
+            _, ox = parse_pseudoelement_name(elem)
+            if ox is None:
+                continue
+            covered = False
+            for other_sp in final_basis:
+                if other_sp == sp:
+                    continue
+                if elem in all_species_elems.get(other_sp, []):
+                    covered = True
+                    break
+            if not covered:
+                needs_moles = True
+                break
+        if needs_moles:
+            missing_flags[sp] = "Moles"
+        else:
+            has_shared = False
+            for elem in sp_elems:
+                for other_sp in final_basis:
+                    if other_sp == sp:
+                        continue
+                    if elem in all_species_elems.get(other_sp, []):
+                        has_shared = True
+                        break
+                if has_shared:
+                    break
+            missing_flags[sp] = "Make non-basis" if has_shared else "Moles"
+
+    missing_totals = {}
+    donor_adjustments = {}
+    allocation_log = {}
+
+    # Use dissociation-recomputed totals when available and nonzero;
+    # fall back to _compute_missing_totals for the rest.  This logic
+    # is the same regardless of whether the bottom half matches the
+    # target database — the difference is only in whether *existing*
+    # basis species totals get overwritten (handled above).
+    missing_with_recomputed = {
+        sp for sp in missing if sp in all_overrides
+        and all_overrides[sp] is not None
+        and abs(all_overrides[sp]) > 0}
+    missing_needing_fallback = [sp for sp in missing
+                                if sp not in missing_with_recomputed]
+
+    for sp in missing_with_recomputed:
+        missing_totals[sp] = all_overrides[sp]
+        allocation_log[sp] = {
+            "method": "dissociation_recompute",
+            "old_moles": None,
+            "new_moles": all_overrides[sp],
+        }
+
+    if missing_needing_fallback:
+        existing_totals = AqEquil._parse_bottom_mass_balance_totals(
+            bottom_lines)
+        fb_totals, fb_donors, fb_log = (
+            AqEquil._compute_missing_totals(
+                missing_needing_fallback, current_basis,
+                all_species_elems, existing_totals, output_composition,
+                species_distribution=species_distribution,
+                species_stoich=species_stoich,
+                h2o_aq_moles=h2o_aq_moles,
+                comp_moles=comp_moles))
+        missing_totals.update(fb_totals)
+        allocation_log.update(fb_log)
+        if not bottom_half_matches_target:
+            for sp in all_overrides:
+                fb_donors.pop(sp, None)
+            donor_adjustments.update(fb_donors)
+
+    for sp in allocation_log:
+        allocation_log[sp]["flag"] = missing_flags.get(sp)
+
+    bottom_lines = AqEquil._insert_missing_basis_species(
+        bottom_lines, missing, missing_flags, missing_totals,
+        donor_adjustments)
+
+    allocation_log.update(override_log)
+
+    return top_lines, bottom_lines, allocation_log
+
+
+def _recompute_mass_balance_totals(species_distribution, data0_text,
+                                   current_basis, h2o_aq_moles):
+    """
+    Recompute mass balance totals for all existing basis species using
+    the species distribution from the source EQ3/6 output and the
+    dissociation reactions from the target data0 file.
+
+    For each aqueous species *i* with molality *m_i*, its dissociation
+    reaction gives coefficients *a_ib* for each basis species *b*.
+    The mass balance total for *b* is::
+
+        MBT(b) = sum_i(a_ib * m_i) * kg_water
+
+    H2O is special: the species distribution table only lists solute
+    species, so H2O's own contribution (h2o_aq_moles) must be added
+    directly to MBT(H2O).
+
+    Returns a dict of {basis_species_name: new_total_moles}.
+    """
+    dissoc = AqEquil._parse_data0_dissociation_reactions(data0_text)
+
+    if not dissoc or h2o_aq_moles is None or h2o_aq_moles <= 0:
+        return {}
+
+    kg_water = h2o_aq_moles * 18.01528 / 1000.0
+
+    basis_set = set(current_basis)
+    mbt = {b: 0.0 for b in current_basis}
+
+    for sp_name, molality in species_distribution.items():
+        rxn = dissoc.get(sp_name)
+        if rxn is None:
+            continue
+        self_coeff = rxn.get(sp_name, None)
+        if self_coeff is not None and self_coeff > 0:
+            # Basis species: identity reaction {self: 1.0}
+            if sp_name in basis_set:
+                mbt[sp_name] += molality
+            continue
+        # Non-basis species: normalize by |self_coeff| (usually 1.0)
+        norm = abs(self_coeff) if self_coeff is not None else 1.0
+        if norm == 0:
+            norm = 1.0
+        for basis_sp, coeff in rxn.items():
+            if basis_sp == sp_name:
+                continue
+            if basis_sp in basis_set:
+                mbt[basis_sp] += (coeff / norm) * molality
+
+    overrides = {}
+    for b in current_basis:
+        overrides[b] = mbt[b] * kg_water
+
+    if "H2O" in overrides:
+        overrides["H2O"] += h2o_aq_moles
+
+    return overrides
+
+
+def _override_mass_balance_totals(bottom_lines, overrides):
+    """
+    Replace both the equilibrium and aqueous mass balance totals for
+    the species listed in *overrides* (a dict of species_name → new_moles).
+    """
+    new_lines = []
+    in_totals = False
+    for line in bottom_lines:
+        text = line.rstrip("\n")
+        if "Mass Balance Totals (moles)" in text:
+            in_totals = True
+        elif in_totals and "Electrical imbalance" in text:
+            in_totals = False
+
+        if (in_totals and text.startswith("|") and "Aqueous" in text
+                and "Electrical imbalance" not in text
+                and "(ubmtbi(n))" not in text and "(mtbi(n))" not in text):
+            sp_name = text[1:25].strip()
+            if sp_name in overrides:
+                val = overrides[sp_name]
+                row = "|{:<24s}Aqueous |{:22.15E}|{:22.15E}|\n".format(
+                    sp_name, val, val)
+                new_lines.append(row)
+                continue
+
+        new_lines.append(line)
+    return new_lines
+
+
+def _warn_if_collapsed_totals(bottom_lines):
+    """
+    Detect when a pickup file's Equilibrium System totals equal its Aqueous
+    Solution totals for every species — a sign that clear_es_solids_end=True
+    was used, which destroys mineral mass contributions.  This produces
+    incorrect results in cross-database mixing because the total H+ and O2(g)
+    budgets no longer account for mineral formation/dissolution.
+
+    Skips the warning if kbt == kmt (no minerals in the equilibrium system),
+    since Eq = Aq is expected when no minerals are present (e.g. a direct
+    EQ3 speciation with no prior reaction).
+    """
+    import re, warnings
+
+    kbt = kmt = None
+    for line in bottom_lines:
+        text = line.rstrip("\n")
+        if "(kbt)" in text:
+            m = re.search(r'\|\s*(\d+)\|', text)
+            if m:
+                kbt = int(m.group(1))
+        elif "(kmt)" in text:
+            m = re.search(r'\|\s*(\d+)\|', text)
+            if m:
+                kmt = int(m.group(1))
+            break
+    if kbt is not None and kmt is not None and kbt == kmt:
+        return
+
+    in_totals = False
+    all_equal = True
+    n_checked = 0
+    for line in bottom_lines:
+        if "Mass Balance Totals" in line:
+            in_totals = True
+            continue
+        if in_totals and "Electrical imbalance" in line:
+            break
+        if not in_totals:
+            continue
+        parts = line.split("|")
+        if len(parts) >= 4:
+            eq_str = parts[2].strip()
+            aq_str = parts[3].strip()
+            try:
+                eq_val = float(eq_str)
+                aq_val = float(aq_str)
+                n_checked += 1
+                if eq_val != aq_val:
+                    all_equal = False
+                    break
+            except ValueError:
+                continue
+    if all_equal and n_checked > 3:
+        warnings.warn(
+            "Cross-database mixing: the Mixing_Fluid's pickup file has "
+            "identical Equilibrium System and Aqueous Solution totals for "
+            "all species. This usually means clear_es_solids_end=True was "
+            "used in the reaction that produced this fluid, which removes "
+            "mineral mass contributions from the mass balance. This will "
+            "produce incorrect pH and redox results during mixing. To fix "
+            "this, set clear_es_solids_end=False in the Prepare_Reaction "
+            "that creates the Mixing_Fluid's source speciation, and use "
+            "strip_minerals=True on the Mixing_Fluid instead.",
+            UserWarning,
+            stacklevel=4,
+        )
+
+
+def _strip_minerals_from_bottom_half(bottom_lines):
+    """
+    Remove all mineral entries (pure minerals and solid solution end-members)
+    from the bottom half of a .6p/.6i file, update the matrix index limits,
+    and set equilibrium-system mass balance totals equal to aqueous-solution
+    totals so that the removed mineral mass is not spuriously re-dissolved.
+    """
+    import re
+
+    # First pass: find kbt so we know the target value for kmt, kxt, kdim
+    # after all minerals are removed.
+    kbt_value = None
+    for line in bottom_lines:
+        if "(kbt)" in line:
+            m = re.search(r'\|\s*(\d+)\|', line)
+            if m:
+                kbt_value = int(m.group(1))
+            break
+
+    if kbt_value is None:
+        return bottom_lines
+
+    new_lines = []
+    in_column_vars = False
+    in_totals = False
+
+    for line in bottom_lines:
+        text = line.rstrip("\n")
+
+        if "Matrix Column Variables and Values" in text:
+            in_column_vars = True
+        elif "Phases and Species in the PRS" in text:
+            in_column_vars = False
+
+        if "Mass Balance Totals (moles)" in text:
+            in_totals = True
+        elif in_totals and "Electrical imbalance" in text:
+            in_totals = False
+
+        # Set kmt, kxt, and kdim all equal to kbt (no minerals remain)
+        if "(kmt)" in text or "(kxt)" in text or "(kdim)" in text:
+            new_lines.append(_set_matrix_index(text, kbt_value))
+            continue
+
+        # In the Mass Balance Totals section, set equilibrium total = aqueous
+        if (in_totals and text.startswith("|") and "Aqueous" in text
+                and "Electrical imbalance" not in text
+                and "(ubmtbi(n))" not in text and "(mtbi(n))" not in text):
+            parts = text.split("|")
+            if len(parts) >= 4:
+                sp_name = parts[1][:24]
+                aq_str = parts[3].strip()
+                try:
+                    aq_val = float(aq_str)
+                    row = "|{:<24s}Aqueous |{:22.15E}|{:22.15E}|\n".format(
+                        sp_name.strip(), aq_val, aq_val)
+                    new_lines.append(row)
+                    continue
+                except ValueError:
+                    pass
+
+        # In the Matrix Column Variables section, drop non-aqueous entries
+        # but keep the table header line containing "(zvclgi(n))"
+        if (in_column_vars and text.startswith("|") and "| --   |" in text
+                and "(zvclgi(n))" not in text):
+            if "Aqueous solution" not in text:
+                continue
+
+        new_lines.append(line)
+
+    return new_lines
+
+
+def _set_matrix_index(line_text, new_val):
+    """
+    Set a matrix index value (e.g., kbt, kmt, kxt, kdim) to an absolute value.
+    """
+    import re
+    match = re.search(r'\|\s*(\d+)\|', line_text)
+    if match:
+        inner = match.group(0)[1:-1]  # strip outer |
+        width = len(inner)
+        new_field = "|{:>{w}}|".format(new_val, w=width)
+        new_line = line_text[:match.start()] + new_field + line_text[match.end():]
+        return new_line + "\n"
+    return line_text + "\n"
+
+
+def _update_matrix_index(line_text, n_add):
+    """
+    Increment a matrix index value (e.g., kbt, kmt, kxt, kdim) by n_add.
+    """
+    import re
+    match = re.search(r'\|\s*(\d+)\|', line_text)
+    if match:
+        old_val = int(match.group(1))
+        new_val = old_val + n_add
+        # Preserve the field width
+        field = match.group(0)
+        # The format is |   NN| with fixed width
+        inner = match.group(0)[1:-1]  # strip outer |
+        width = len(inner)
+        new_field = "|{:>{w}}|".format(new_val, w=width)
+        new_line = line_text[:match.start()] + new_field + line_text[match.end():]
+        return new_line + "\n"
+    return line_text + "\n"
 
 
 def compare(*args):
@@ -7524,22 +10163,46 @@ class Speciation(object):
             fig.show(config=config)
             
             
-    def join_6i_p(self, filepath_6i, chain_mt):
+    def join_6i_p(self, filepath_6i, chain_mt, strip_minerals=False,
+                  mixing_fluid_data0_lettercode=None,
+                  mixing_fluid_pickup_bottom=None,
+                  mixing_fluid_pickup_top=None,
+                  mixing_fluid_eq_output_text=None,
+                  data1_override=None):
         path='rxn_6i'
         if not os.path.exists(path):
             os.makedirs(path)
         else:
             shutil.rmtree(path)
             os.makedirs(path)
-            
+
         if chain_mt:
             raw_p_dict_bottom = self.raw_6_pickup_dict
         else:
             raw_p_dict_bottom = self.raw_3_pickup_dict_bottom
-            
-        for sample_name in raw_p_dict_bottom.keys():
+
+        # Detect whether cross-database reconciliation is needed
+        fluid1_lettercode = getattr(self.thermo, 'data0_lettercode', None)
+        needs_cross_db = (
+            mixing_fluid_data0_lettercode is not None
+            and fluid1_lettercode is not None
+            and mixing_fluid_data0_lettercode != fluid1_lettercode
+        )
+
+        mix_with = getattr(filepath_6i, 'mix_with', None)
+        mixing_sample_name = getattr(filepath_6i, 'mixing_sample_name', None)
+        if mix_with is not None:
+            samples_to_process = [s for s in raw_p_dict_bottom.keys()
+                                  if s in mix_with]
+        elif mixing_sample_name is not None:
+            samples_to_process = [s for s in raw_p_dict_bottom.keys()
+                                  if s != mixing_sample_name]
+        else:
+            samples_to_process = list(raw_p_dict_bottom.keys())
+
+        for sample_name in samples_to_process:
             sample_filename = self.sample_data[sample_name]['filename'][:-3]
-            
+
             if isinstance(filepath_6i, str):
                 # if a string (filepath) is given
                 with open(filepath_6i, "r") as f6i:
@@ -7548,16 +10211,93 @@ class Speciation(object):
                 # if a Prepare_Reaction object is given
                 all_lines = filepath_6i.formatted_reaction.split("\n")
                 lines_6i = [e+"\n" for e in all_lines if e]
-            
+
             # trim away any extra newlines at end of pre.6i, then add one.
             while lines_6i[-1] == "\n":
                 lines_6i = lines_6i[:-1]
-                
+
             if lines_6i[-1][-1:] != "\n": # \n counts as 1 character, not 2
                 lines_6i[-1] = lines_6i[-1]+"\n"
-                
-            lines_3p = raw_p_dict_bottom[sample_name]
-            
+
+            if needs_cross_db and mixing_fluid_pickup_bottom is not None:
+                # Cross-database mixing.
+                # Fluid 1 (bottom half) = self's pickup (the base speciation).
+                # Fluid 2 (top half Composition/Reaction) = from the
+                #   Prepare_Reaction template, which already contains the
+                #   Mixing_Fluid's composition in the target database format.
+                # The bottom half needs reconciliation to add basis species
+                # that exist in the target database but not in self's.
+
+                # Select the bottom half: prefer 6p (react result) over 3p.
+                if (hasattr(self, 'raw_6_pickup_dict')
+                        and sample_name in self.raw_6_pickup_dict):
+                    lines_3p = list(self.raw_6_pickup_dict[sample_name])
+                else:
+                    lines_3p = list(raw_p_dict_bottom[sample_name])
+
+                _warn_if_collapsed_totals(lines_3p)
+
+                if strip_minerals:
+                    lines_3p = _strip_minerals_from_bottom_half(lines_3p)
+
+                # Determine the EQ3/6 output text for self (Fluid 1) to
+                # use for species distribution when computing pseudo-element
+                # mass balance totals.
+                self_eq_output_text = None
+                raw_6o = self.raw_6_output_dict.get(sample_name, [])
+                if raw_6o:
+                    self_eq_output_text = "".join(raw_6o)
+                elif hasattr(self, 'raw_3_output_dict'):
+                    raw_3o = self.raw_3_output_dict.get(sample_name, [])
+                    if raw_3o:
+                        self_eq_output_text = "\n".join(raw_3o)
+
+                # Load the target database's data0 for reconciliation.
+                target_lettercode = data1_override or fluid1_lettercode
+                if (data1_override is not None
+                        and data1_override != fluid1_lettercode):
+                    data0_text = None
+                else:
+                    data0_text = getattr(self.thermo, 'data0_db', None)
+                if data0_text is None and target_lettercode:
+                    eq36da = getattr(self.thermo, 'eq36da', None)
+                    if eq36da:
+                        data0_path = os.path.join(eq36da,
+                                                  "data0." + target_lettercode)
+                        if os.path.exists(data0_path):
+                            with open(data0_path) as f:
+                                data0_text = f.read()
+                    if data0_text is None:
+                        data0_path = "data0." + target_lettercode
+                        if os.path.exists(data0_path):
+                            with open(data0_path) as f:
+                                data0_text = f.read()
+                if data0_text:
+                    bottom_matches = (
+                        fluid1_lettercode is not None
+                        and fluid1_lettercode == target_lettercode)
+                    f2_basis = None
+                    if mixing_fluid_pickup_bottom is not None:
+                        f2_basis = AqEquil._parse_bottom_basis_species(
+                            mixing_fluid_pickup_bottom)
+                    lines_6i, lines_3p, allocation_log = (
+                        _reconcile_cross_database_mixing(
+                            lines_6i, lines_3p, data0_text,
+                            self_eq_output_text,
+                            fluid2_eq_output_text=mixing_fluid_eq_output_text,
+                            bottom_half_matches_target=bottom_matches,
+                            fluid2_basis=f2_basis))
+                    if allocation_log:
+                        if not hasattr(self, 'cross_db_allocation_log'):
+                            self.cross_db_allocation_log = {}
+                        self.cross_db_allocation_log[sample_name] = (
+                            allocation_log)
+            else:
+                lines_3p = raw_p_dict_bottom[sample_name]
+
+                if strip_minerals:
+                    lines_3p = _strip_minerals_from_bottom_half(lines_3p)
+
             lines_to_keep = []
             for line in lines_6i:
                 if "Start of the bottom half of the input file" in line:
@@ -7591,12 +10331,12 @@ class Speciation(object):
     def mt(self, sample):
         """
         Retrieve mass transfer results for a sample.
-        
+
         Parameters
         ----------
         sample : str
             Name of the sample for which to retrieve mass transfer results.
-            
+
         Returns
         -------
         An object of class `AqEquil.MassTransfer.Mass_Transfer`.
@@ -7619,4 +10359,392 @@ class Speciation(object):
               "is a data0 or data1 file without a supporting CSV file.")
         self.err_handler.raise_exception(msg)
 
-    
+
+    def create_input_file(self, db, filename="new_input.csv",
+                          sample=None, xi=None, sample_name=None,
+                          aux_basis=None, minimum_molality=None,
+                          return_df=False):
+        """
+        Create a CSV input file from speciation or mass transfer results,
+        compatible with a different thermodynamic database.
+
+        Tallies the aqueous species distribution into the basis species of
+        the target database by using its dissociation reactions.
+
+        For mass transfer results, extracts the fluid at a chosen reaction
+        progress (Xi). For basic speciation results (no mass transfer),
+        extracts each sample directly. When ``sample`` is ``None``, all
+        samples are included as separate rows.
+
+        Parameters
+        ----------
+        db : str
+            Target database lettercode (e.g., ``"fez"``) or path to a data0
+            file (e.g., ``"data0.fez"``).
+
+        filename : str, default "new_input.csv"
+            Output CSV file path. Ignored when ``return_df`` is ``True``.
+
+        sample : str, optional
+            Name of the sample to extract. If ``None``, all samples are
+            included. For mass transfer results, ``None`` auto-selects the
+            sole sample or raises an error if multiple exist.
+
+        xi : float, optional
+            Reaction progress value at which to extract the fluid composition.
+            Only used for mass transfer results. If ``None``, the last Xi
+            value is used.
+
+        sample_name : str, optional
+            Name to write in the ``Sample`` column of the output CSV. Only
+            used when a single sample is being extracted. If ``None``, the
+            original sample name is used.
+
+        aux_basis : list of str, optional
+            Auxiliary basis species to include as separate columns in the
+            output CSV. Their tallied molalities are subtracted from the
+            corresponding donor basis species to conserve mass. For example,
+            ``["NH4+"]`` would tally nitrogen species containing NH4+ into
+            an NH4+ column and subtract that amount from the NO3- (donor)
+            column. If ``None`` (the default), only strict basis species
+            are included and no reallocation is performed.
+
+        minimum_molality : float, optional
+            Minimum molality for allocated basis or auxiliary basis species.
+            Any tallied species value that is positive but below this
+            threshold will be raised to this value. For example,
+            ``minimum_molality=1E-18`` prevents extremely small values like
+            ``4.25E-41`` from appearing in the output. If ``None`` (the
+            default), no minimum is applied.
+
+        return_df : bool, default False
+            If ``True``, return a pandas DataFrame instead of writing a CSV
+            file. The DataFrame has species columns as headers, with the
+            first row containing unit subheaders (compatible with
+            ``join_input_files``). If ``False`` (the default), write a CSV
+            file and return its path.
+
+        Returns
+        -------
+        str or pandas.DataFrame
+            The path to the created CSV file, or a DataFrame if
+            ``return_df`` is ``True``.
+        """
+        import csv as csv_module
+
+        verbose = getattr(self, "verbose", 1)
+        all_sample_data = getattr(self, "sample_data", {})
+
+        # --- Locate and read the target data0 file ---
+        target_data0_text = None
+        if os.path.exists(db):
+            with open(db) as f:
+                target_data0_text = f.read()
+        else:
+            candidate = db if db.startswith("data0.") else "data0." + db
+            for search_dir in [os.getcwd(),
+                               getattr(self, "eq36da", None) or ""]:
+                path = os.path.join(search_dir, candidate)
+                if os.path.exists(path):
+                    with open(path) as f:
+                        target_data0_text = f.read()
+                    break
+        if target_data0_text is None:
+            self.err_handler.raise_exception(
+                "Could not find target data0 file for '" + str(db)
+                + "'. Place the file in the current working directory or "
+                "specify the full path.")
+
+        dissoc = AqEquil._parse_data0_dissociation_reactions(target_data0_text)
+        basis_stoich, _ = _parse_data0_basis_species_full(target_data0_text)
+        basis_set = set(basis_stoich.keys())
+
+        # Identify auxiliary basis species from the target data0 file
+        all_aux_in_db = set()
+        _lines = target_data0_text.split("\n")
+        _aux_start = None
+        _aq_start = None
+        for _i, _line in enumerate(_lines):
+            _s = _line.strip()
+            if _s == "auxiliary basis species":
+                _aux_start = _i
+            elif _s == "aqueous species":
+                _aq_start = _i
+                break
+        if _aux_start is not None:
+            _end = _aq_start if _aq_start is not None else len(_lines)
+            _j = _aux_start + 2
+            while _j < _end:
+                _sl = _lines[_j].strip()
+                if not _sl or _sl.startswith("+--"):
+                    _j += 1
+                    continue
+                all_aux_in_db.add(_sl)
+                _j += 1
+                while _j < _end and not _lines[_j].strip().startswith("+--"):
+                    _j += 1
+                if _j < _end:
+                    _j += 1
+
+        # Only include user-requested auxiliary basis species
+        aux_set = set()
+        aux_donor = {}
+        if aux_basis is not None:
+            for sp in aux_basis:
+                if sp not in all_aux_in_db:
+                    self.err_handler.raise_exception(
+                        "'" + str(sp) + "' is not an auxiliary basis species "
+                        "in the target database. Available: "
+                        + str(sorted(all_aux_in_db)))
+                aux_set.add(sp)
+
+            # Map each requested aux species to its donor (the strict basis
+            # species in its dissociation reaction, excluding system species).
+            system_species = {"H2O", "H+", "O2(g)", "O2", "e-"}
+            for aux_sp in aux_set:
+                rxn = dissoc.get(aux_sp, {})
+                for product, coeff in rxn.items():
+                    if product == aux_sp:
+                        continue
+                    if product in basis_set and product not in system_species:
+                        if coeff > 0:
+                            aux_donor[aux_sp] = product
+                            break
+
+        tally_set = basis_set | aux_set
+
+        # --- Determine which samples to process ---
+        if sample is not None:
+            if sample not in all_sample_data:
+                self.err_handler.raise_exception(
+                    "Sample '" + str(sample) + "' not found among: "
+                    + str(list(all_sample_data.keys())))
+            samples_to_process = [sample]
+        else:
+            samples_to_process = list(all_sample_data.keys())
+
+        exclude = {"H2O", "H+", "O2(g)", "O2", "e-"}
+        all_csv_species = set()
+        rows = []
+
+        for s in samples_to_process:
+            sd = all_sample_data[s]
+            has_mt = ("mass_transfer" in sd
+                      and sd["mass_transfer"] is not None)
+
+            if has_mt:
+                if len(samples_to_process) > 1 and sample is None:
+                    self.err_handler.raise_exception(
+                        "Multiple samples with mass transfer results found. "
+                        "Specify one with the 'sample' parameter: "
+                        + str(samples_to_process))
+
+                mt = sd["mass_transfer"]
+                xi_values = mt.misc_params["Xi"].values
+                if xi is None:
+                    xi_idx = len(xi_values) - 1
+                    xi_used = xi_values[xi_idx]
+                else:
+                    xi_idx = int(np.argmin(np.abs(xi_values - xi)))
+                    xi_used = xi_values[xi_idx]
+
+                aq_row = mt.aq_distribution_molal.iloc[xi_idx]
+                species_distribution = {}
+                for col in mt.aq_distribution_molal.columns:
+                    if col == "Xi":
+                        continue
+                    val = aq_row[col]
+                    if pd.notna(val) and val > 0:
+                        species_distribution[col] = float(val)
+
+                misc_row = mt.misc_params.iloc[xi_idx]
+                temperature = misc_row["Temp(C)"]
+                pressure = misc_row["Press(bars)"]
+                pH = misc_row["pH"]
+                logfO2 = misc_row["log fO2"]
+
+            else:
+                aq_dist = sd["aq_distribution"]
+                molality_series = aq_dist["molality"]
+                species_distribution = {
+                    sp: float(mol) for sp, mol in molality_series.items()
+                    if pd.notna(mol) and mol > 0}
+
+                temperature = sd["temperature"]
+                pressure = sd["pressure"]
+                pH = -float(aq_dist["log_activity"]["H+"])
+                fugacity = sd.get("fugacity")
+                if fugacity is not None and "log_fugacity" in fugacity.columns:
+                    logfO2 = float(fugacity["log_fugacity"]["O2(g)"])
+                else:
+                    logfO2 = ""
+
+            # --- Tally molalities to target basis + aux basis species ---
+            tally = {b: 0.0 for b in tally_set}
+            unmatched = []
+
+            for sp_name, molality in species_distribution.items():
+                rxn = dissoc.get(sp_name)
+                if rxn is None:
+                    unmatched.append(sp_name)
+                    continue
+                # Basis and auxiliary basis species tally directly
+                if sp_name in tally_set:
+                    tally[sp_name] += molality
+                    continue
+                # Aqueous species: dissociate into basis/aux products
+                self_coeff = rxn.get(sp_name, None)
+                norm = abs(self_coeff) if self_coeff is not None else 1.0
+                if norm == 0:
+                    norm = 1.0
+                for product_sp, coeff in rxn.items():
+                    if product_sp == sp_name:
+                        continue
+                    if product_sp in tally_set:
+                        tally[product_sp] += (coeff / norm) * molality
+
+            # Subtract auxiliary basis tallies from their donors
+            for aux_sp, donor_sp in aux_donor.items():
+                if donor_sp in tally and tally[aux_sp] > 0:
+                    tally[donor_sp] -= tally[aux_sp]
+
+            if unmatched and verbose > 0:
+                print("Warning (" + s + "): " + str(len(unmatched))
+                      + " species not found in the target database"
+                      " and skipped"
+                      + (": " + str(unmatched[:10])
+                         + ("..." if len(unmatched) > 10 else "")
+                         if verbose > 1 else "")
+                      + ".")
+
+            csv_species = {}
+            for sp, val in tally.items():
+                if sp in exclude or val <= 0:
+                    continue
+                if minimum_molality is not None and val < minimum_molality:
+                    val = minimum_molality
+                csv_species[sp] = val
+            all_csv_species.update(csv_species.keys())
+
+            row_name = sample_name if sample_name is not None else s
+            rows.append((row_name, pH, pressure, temperature, logfO2,
+                         csv_species))
+
+        # --- Build output ---
+        sorted_species = sorted(all_csv_species)
+
+        header = ["Sample", "H+", "Pressure", "Temperature", "logfO2"]
+        units = ["id", "pH", "bar", "degC", "logfO2"]
+        header += sorted_species
+        units += ["Molality"] * len(sorted_species)
+
+        out_data_rows = []
+        for row_name, pH, pressure, temperature, logfO2, csv_sp in rows:
+            data = [row_name, str(pH), str(pressure),
+                    str(temperature), str(logfO2)]
+            for sp in sorted_species:
+                val = csv_sp.get(sp, 0.0)
+                data.append("{:.4E}".format(val) if val > 0 else "0")
+            out_data_rows.append(data)
+
+        if return_df:
+            df_out = pd.DataFrame([units] + out_data_rows, columns=header)
+            return df_out
+
+        with open(filename, "w", newline="") as f:
+            writer = csv_module.writer(f)
+            writer.writerow(header)
+            writer.writerow(units)
+            for data in out_data_rows:
+                writer.writerow(data)
+
+        if verbose > 0:
+            has_mt = any("mass_transfer" in all_sample_data[s]
+                         and all_sample_data[s]["mass_transfer"] is not None
+                         for s in samples_to_process)
+            xi_msg = (" at Xi=" + str(xi_used)) if has_mt else ""
+            print("Created input file '" + filename + "' with "
+                  + str(len(sorted_species)) + " species columns and "
+                  + str(len(rows)) + " sample(s) for database '"
+                  + str(db) + "'" + xi_msg + ".")
+
+        return filename
+
+
+    def rename_samples(self, names):
+        """
+        Rename samples throughout this Speciation object.
+
+        Parameters
+        ----------
+        names : dict
+            Mapping of ``{old_name: new_name}``. Only samples present in the
+            dict are renamed; others are left unchanged.
+
+        Raises
+        ------
+        Exception
+            If an old name is not found, or if renaming would produce
+            duplicate sample names.
+        """
+        if not isinstance(names, dict) or len(names) == 0:
+            self.err_handler.raise_exception(
+                "names must be a non-empty dict mapping old names to new names.")
+
+        existing = set(self.sample_data.keys())
+        for old in names:
+            if old not in existing:
+                self.err_handler.raise_exception(
+                    "Sample '" + str(old) + "' not found among: "
+                    + str(list(existing)))
+
+        new_all = []
+        for s in existing:
+            new_all.append(names.get(s, s))
+        if len(set(new_all)) != len(new_all):
+            self.err_handler.raise_exception(
+                "Renaming would produce duplicate sample names: "
+                + str(new_all))
+
+        def _rename_dict_keys(d):
+            if not isinstance(d, dict):
+                return
+            for old, new in names.items():
+                if old in d:
+                    d[new] = d.pop(old)
+
+        # 1. sample_data dict keys + nested "name" field
+        for old, new in names.items():
+            if old in self.sample_data:
+                self.sample_data[old]["name"] = new
+        _rename_dict_keys(self.sample_data)
+
+        # 2. Raw EQ3/6 file dicts
+        for attr in ["raw_3_input_dict", "raw_3_output_dict",
+                      "raw_3_pickup_dict_top", "raw_3_pickup_dict_bottom",
+                      "raw_6_input_dict", "raw_6_output_dict",
+                      "raw_6_pickup_dict", "raw_6_pickup_dict_top"]:
+            d = getattr(self, attr, None)
+            if d is not None:
+                _rename_dict_keys(d)
+
+        # 3. DataFrames with sample names as row index
+        for attr in ["report", "input", "aq_distribution_logact",
+                      "aq_distribution_molal", "misc_params"]:
+            df = getattr(self, attr, None)
+            if df is not None and isinstance(df, pd.DataFrame):
+                df.rename(index=names, inplace=True)
+
+        # 4. mass_contribution "sample" column
+        mc = getattr(self, "mass_contribution", None)
+        if mc is not None and isinstance(mc, pd.DataFrame):
+            if "sample" in mc.columns:
+                mc["sample"] = mc["sample"].replace(names)
+            for old, new in names.items():
+                sd = self.sample_data.get(new)
+                if sd is not None and "mass_contribution" in sd:
+                    sd_mc = sd["mass_contribution"]
+                    if (isinstance(sd_mc, pd.DataFrame)
+                            and "sample" in sd_mc.columns):
+                        sd_mc["sample"] = sd_mc["sample"].replace(names)
+

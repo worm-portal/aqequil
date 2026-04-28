@@ -2301,15 +2301,16 @@ c
 c
 c         Closed or titration system.
 c
-          do np = nxrn1,nxrn2
+          do np = 2,npt
+            nr1 = ncmpr(1,np)
+            nr2 = ncmpr(2,np)
+            if (nr2 - nr1 + 1 .le. 1) go to 410
             if (moph(np) .gt. 0.) then
               do n = 1,nxct
                 if (uphase(np) .eq. ussphx(1,n)) then
 c
 c                 Have found a solid solution in the existing list.
 c
-                  nr1 = ncmpr(1,np)
-                  nr2 = ncmpr(2,np)
                   do ns = nr1,nr2
                     if (uspec(ns) .eq. ussphx(2,n)) then
                       xfrac(n) = xbar(ns)
@@ -2320,11 +2321,10 @@ c
               enddo
 c
 c             Did not find a current solid solution in the existing
-c             list. Add it to the list.
+c             list. Add it to the list if there is room.
 c
+              if (nxct + (nr2 - nr1 + 1) .gt. nxcmax) go to 410
               qnewss = .true.
-              nr1 = ncmpr(1,np)
-              nr2 = ncmpr(2,np)
               do ns = nr1,nr2
                 nxct = nxct + 1
                 n = nxct
@@ -2339,15 +2339,16 @@ c
 c
 c         Fluid-centered flow-through system.
 c
-          do np = nxrn1,nxrn2
+          do np = 2,npt
+            nr1 = ncmpr(1,np)
+            nr2 = ncmpr(2,np)
+            if (nr2 - nr1 + 1 .le. 1) go to 420
             if (mopht(np) .gt. 0.) then
               do n = 1,nxct
                 if (uphase(np) .eq. ussphx(1,n)) then
 c
 c                 Have found a solid solution in the existing list.
 c
-                  nr1 = ncmpr(1,np)
-                  nr2 = ncmpr(2,np)
                   do ns = nr1,nr2
                     if (uspec(ns) .eq. ussphx(2,n)) then
                       xfrac(n) = mospt(ns)/mopht(np)
@@ -2358,11 +2359,10 @@ c
               enddo
 c
 c             Did not find a current solid solution in the existing
-c             list. Add it to the list.
+c             list. Add it to the list if there is room.
 c
+              if (nxct + (nr2 - nr1 + 1) .gt. nxcmax) go to 420
               qnewss = .true.
-              nr1 = ncmpr(1,np)
-              nr2 = ncmpr(2,np)
               do ns = nr1,nr2
                 nxct = nxct + 1
                 n = nxct

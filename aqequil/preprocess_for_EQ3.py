@@ -928,8 +928,8 @@ def write_3i_file(df,
                 "|  [ ] (-3) Omit species with molalities < 1.e-8                               |\n" + \
                 "|  [ ] (-2) Omit species with molalities < 1.e-12                              |\n" + \
                 "|  [ ] (-1) Omit species with molalities < 1.e-20                              |\n" + \
-                "|  [x] ( 0) Omit species with molalities < 1.e-100                             |\n" + \
-                "|  [ ] ( 1) Include all species                                                |\n" + \
+                "|  [ ] ( 0) Omit species with molalities < 1.e-100                             |\n" + \
+                "|  [x] ( 1) Include all species                                                |\n" + \
                 "|------------------------------------------------------------------------------|\n" + \
                 "|iopr(5) - Print a Table of Aqueous Species/H+ Activity Ratios:                |\n" + \
                 "|  [ ] ( 0) Don't print                                                        |\n" + \

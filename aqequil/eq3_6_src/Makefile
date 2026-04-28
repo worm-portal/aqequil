@@ -1,5 +1,5 @@
 PREFIX:=/usr/local
-export FFLAGS:=-O3
+export FFLAGS?=-O3
 
 all:
 	@mkdir -p bin lib
