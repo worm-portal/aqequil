@@ -121,36 +121,56 @@ def react_water_rock(speciation, rock_composition,
 
 
 
-def mix(speciation, fluid_1, fluid_2):
+def mix(speciation, fluid_1, fluid_2,
+        mixing_fluid_kwargs={},
+        prepare_reaction_kwargs={"mineral_suppression_option":"All", "xi_print_int":0.1},
+        conservative_species=None):
+
+    if conservative_species is not None:
+        mineral_opt = prepare_reaction_kwargs.get("mineral_suppression_option", "All")
+        if mineral_opt != "All":
+            raise Exception("conservative_species requires "
+                            "mineral_suppression_option='All' in "
+                            "prepare_reaction_kwargs.")
 
     speciation_for_mix = copy.deepcopy(speciation)
-    
+
     # Create mixing fluid from the vent fluid result
     Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
                                sample_name=fluid_2,
-                               mix_with=fluid_1)
-    
+                               mix_with=fluid_1,
+                               **mixing_fluid_kwargs)
+
     # Set up and run the mixing calculation
     r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
-                                     mineral_suppression_option="All",
-                                     xi_print_int=0.1)
-    
+                                     **prepare_reaction_kwargs)
+
     speciation_mixed_1 = aqequil.react(speciation_for_mix, r_mix)
     m1 = speciation_mixed_1.mt(fluid_1)
 
     Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
                                sample_name=fluid_1,
-                               mix_with=fluid_2)
-    
+                               mix_with=fluid_2,
+                               **mixing_fluid_kwargs)
+
     # Set up and run the mixing calculation
     r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
-                                     mineral_suppression_option="All",
-                                     xi_print_int=0.1)
-    
+                                     **prepare_reaction_kwargs)
+
     speciation_mixed_2 = aqequil.react(speciation_for_mix, r_mix)
     m2 = speciation_mixed_2.mt(fluid_2)
-    
+
     joined_mix = aqequil.join_mixes(m1, m2)
+
+    if conservative_species is not None:
+        mass_ratio = mixing_fluid_kwargs.get("mass_ratio", 1)
+        joined_mix.apply_conservative_mixing(
+            speciation=speciation,
+            fluid_1=fluid_1,
+            fluid_2=fluid_2,
+            species=conservative_species,
+            mass_ratio=mass_ratio,
+        )
 
     return joined_mix
 

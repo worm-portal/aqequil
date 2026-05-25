@@ -561,7 +561,91 @@ class Mass_Transfer:
             self.moles_minerals = self.moles_product_minerals
 
         self.mass_contribution_dict = self.__get_mass_contribution()
-            
+        self._conservative_mixing_applied = False
+
+    def apply_conservative_mixing(self, speciation, fluid_1, fluid_2,
+                                   species=None, mass_ratio=1):
+        """
+        Replace EQ6-computed log activities and molalities of specified species
+        with values derived from conservative (linear) mixing of molalities
+        between two endmember fluids.
+
+        Parameters
+        ----------
+        speciation : Speciation object
+            The speciation object containing the two endmember fluids.
+
+        fluid_1 : str
+            Name of the base fluid (100% at Xi=0).
+
+        fluid_2 : str
+            Name of the mixing fluid (50% at Xi=1 with mass_ratio=1).
+
+        species : list of str, optional
+            Species to conservatively mix. Default is ["O2", "H2"].
+
+        mass_ratio : float, default 1
+            The mass ratio factor used in the mixing calculation. Must match
+            what was used in Prepare_Reaction / Mixing_Fluid.
+        """
+        if species is None:
+            species = ["O2", "H2"]
+
+        if not hasattr(self, '_eq6_aq_distribution_logact'):
+            self._eq6_aq_distribution_logact = self.aq_distribution_logact.copy()
+            self._eq6_aq_distribution_molal = self.aq_distribution_molal.copy()
+            self._eq6_aq_distribution_logmolal = self.aq_distribution_logmolal.copy()
+            self._eq6_misc_params = self.misc_params.copy()
+
+        xi_values = list(self.misc_params["Xi"])
+
+        for sp in species:
+            m_fluid1 = speciation.sample_data[fluid_1]["aq_distribution"]["molality"][sp]
+            m_fluid2 = speciation.sample_data[fluid_2]["aq_distribution"]["molality"][sp]
+
+            conservative_molal = []
+            for xi in xi_values:
+                if xi <= 1.0:
+                    f2 = xi * mass_ratio / (1.0 + xi * mass_ratio)
+                else:
+                    f2 = 1.0 / (1.0 + (2.0 - xi) * mass_ratio)
+                m_cons = (1.0 - f2) * m_fluid1 + f2 * m_fluid2
+                conservative_molal.append(m_cons)
+
+            conservative_logmolal = [log10(m) if m > 0 else -999
+                                     for m in conservative_molal]
+            conservative_logact = conservative_logmolal
+
+            if sp in self.aq_distribution_molal.columns:
+                self.aq_distribution_molal[sp] = conservative_molal
+            if sp in self.aq_distribution_logmolal.columns:
+                self.aq_distribution_logmolal[sp] = conservative_logmolal
+            if sp in self.aq_distribution_logact.columns:
+                self.aq_distribution_logact[sp] = conservative_logact
+
+            if sp == "O2" and "log fO2" in self.misc_params.columns:
+                original_logfO2 = list(self._eq6_misc_params["log fO2"])
+                original_logact_O2 = list(self._eq6_aq_distribution_logact["O2"])
+                new_logfO2 = []
+                for i in range(len(xi_values)):
+                    offset = original_logfO2[i] - original_logact_O2[i]
+                    new_logfO2.append(conservative_logact[i] + offset)
+                self.misc_params["log fO2"] = new_logfO2
+
+        self._conservative_mixing_applied = True
+        self._conservative_species = species
+
+    def revert_conservative_mixing(self):
+        """
+        Revert to original EQ6-computed values, undoing apply_conservative_mixing.
+        """
+        if hasattr(self, '_eq6_aq_distribution_logact'):
+            self.aq_distribution_logact = self._eq6_aq_distribution_logact.copy()
+            self.aq_distribution_molal = self._eq6_aq_distribution_molal.copy()
+            self.aq_distribution_logmolal = self._eq6_aq_distribution_logmolal.copy()
+            self.misc_params = self._eq6_misc_params.copy()
+            self._conservative_mixing_applied = False
+
     def __get_misc_params(self):
         
         recording = False
@@ -4315,6 +4399,7 @@ class Prepare_Reaction:
                  auto_basis_switching_post_NR=False,
                  calc_mode_selection=0,
                  ODE_corrector_mode=0,
+                 suppress_redox=False,
                  mineral_suppression_option="None",
                  write_tab=-1, # do not write a TAB file by default because EQ6 can encounter an access violation when writing a TAB file
                  fluid_mixing_setup=False,
@@ -4502,6 +4587,12 @@ class Prepare_Reaction:
             - 2 to allow only stiff corrector
             - 3 to allow no correctors
         
+        suppress_redox : bool, default False
+            Force the suppression of all redox reactions (iopt(15)). When True,
+            EQ6 will suppress all redox reactions during the calculation.
+            Note: this option is incompatible with WORM data but has been
+            included for testing purposes.
+
         mineral_suppression_option : str, default "None"
             Option to suppress formation of minerals. Can be either "None" (no
             minerals are suppressed) or "All" (all minerals are suppressed).
@@ -4903,7 +4994,10 @@ class Prepare_Reaction:
         # The suppress redox option in EQ6 doesn't work with WORM data.
         # Use redox-isolated elements from the redox suppression
         # option in the AqEquil class instead.
-        self.i15_checkbox_1 = "x"
+        if suppress_redox:
+            self.i15_checkbox_2 = "x"
+        else:
+            self.i15_checkbox_1 = "x"
 
         if write_tab == -1:
             self.i18_checkbox_1 = "x"
