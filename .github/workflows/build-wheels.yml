@@ -20,11 +20,20 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      # One platform failing should not cancel the others, otherwise the logs of
+      # the remaining platforms are lost
+      fail-fast: false
       matrix:
         # Build wheels for all supported platforms
         # Use ubuntu-latest for Linux, windows-2022 for Windows
-        # For macOS: macos-15-intel (Intel x86_64) and macos-latest (Apple Silicon ARM64)
-        os: [ubuntu-latest, windows-2022, macos-15-intel, macos-latest]
+        # For macOS: macos-15-intel (Intel x86_64) and macos-15 (Apple Silicon ARM64)
+        #
+        # The macOS runners are pinned to macOS 15 because Homebrew bottles are
+        # built for the version of macOS they are installed on. On a macOS 26
+        # runner (macos-latest), the libgfortran and libquadmath that come with
+        # Homebrew gcc have a minimum target of 26.0, and delocate refuses to
+        # bundle them into a wheel with MACOSX_DEPLOYMENT_TARGET=15.0
+        os: [ubuntu-latest, windows-2022, macos-15-intel, macos-15]
 
     steps:
       - uses: actions/checkout@v4
@@ -89,7 +98,7 @@ jobs:
           fi
 
       - name: Install ARM64 gfortran on macOS ARM runner
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-15'
         run: |
           brew install gcc
           GFORTRAN_PATH=$(brew --prefix gcc)/bin/gfortran
@@ -124,7 +133,7 @@ jobs:
             python prepare_databases.py
 
       - name: Build wheels (macOS ARM)
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-15'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BUILD_VERBOSITY: 1
@@ -181,7 +190,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-2022, macos-15-intel, macos-latest]
+        # Must match the build_wheels matrix, because the wheel artifacts are
+        # named after the runner they were built on
+        os: [ubuntu-latest, windows-2022, macos-15-intel, macos-15]
         python-version: ['3.10', '3.11', '3.12', '3.13']
 
     steps:
