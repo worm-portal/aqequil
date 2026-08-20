@@ -1,4 +1,9 @@
 FIXED_SPECIES = ["H2O", "H+", "O2(g)", "water", "e-", "OH-", "O2", "H2O(g)"] # ["H2O", "water", "e-", "H+"]
+WORM_DB_BASE_URL = "https://raw.githubusercontent.com/worm-portal/WORM-db/master"
+# CSV databases that accompany data0 and data1 files, keyed by letter code.
+# Functions like plot_reaction_paths() need information in these CSVs that is
+# not present in a data0 or data1 file.
+WORM_COMPANION_CSVS = {"wrm":["wrm_data_latest.csv", "wrm_data.csv"]}
 WORM_THERMODYNAMIC_DATABASE_COLUMN_TYPE_DICT = {
         'name':'str', 'abbrv':'str', 'formula':'str',
         'state':'str', 'ref1':'str', 'ref2':'str',
@@ -220,7 +225,15 @@ class AqEquil(object):
         "https://raw.githubusercontent.com/worm-portal/WORM-db/master/data0.wrm"
         - The URL of a CSV file containing thermodynamic data, e.g.,
         "https://raw.githubusercontent.com/worm-portal/WORM-db/master/wrm_data_latest.csv"
-        
+
+        If a data0 or data1 file has a WORM CSV database that accompanies it,
+        e.g., "wrm_data_latest.csv" for "data1.wrm", then that CSV is loaded as
+        well. The CSV is not used for EQ3/6 calculations, but functions like
+        plot_reaction_paths() require the additional information it contains. A
+        copy of the CSV in the current working directory is used if there is
+        one; otherwise it is retrieved from
+        https://github.com/worm-portal/WORM-db
+
     solid_solutions : str
         Filepath of a CSV file containing parameters for solid solutions, e.g.,
         "my_solid_solutions.csv". If `db` is set to "WORM" and `solid_solutions`
@@ -490,8 +503,6 @@ class AqEquil(object):
         useful for setting up a local copy of the databases.
         """
         from urllib.request import urlopen
-
-        WORM_DB_BASE_URL = "https://raw.githubusercontent.com/worm-portal/WORM-db/master"
 
         files_to_download = {
             "wrm_data_latest.csv": f"{WORM_DB_BASE_URL}/wrm_data_latest.csv",
@@ -3699,6 +3710,11 @@ class AqEquil(object):
                 elif self.thermo_db_filename == "wrm_data.csv":
                     print("This database is meant for calculations between 0 and 1000 °C and up to 5 kb pressure.")
 
+            # a data0 or data1 file does not contain everything that functions
+            # like plot_reaction_paths() need, so load its companion CSV too
+            if self.thermo_db_type in ["data0", "data1"] and not isinstance(self.csv_db, pd.DataFrame):
+                self._load_companion_csv(download_csv_files=download_csv_files)
+
             
 
 
@@ -4207,6 +4223,55 @@ class AqEquil(object):
             self._remove_missing_G_species()
 
             self.csv_db = self._exclude_category(df=self.csv_db, df_name=self.csv_db_filename)
+
+
+        def _load_companion_csv(self, download_csv_files=False):
+            """
+            Load the WORM-styled thermodynamic database CSV that accompanies the
+            active data0 or data1 file.
+
+            A data0 or data1 file is all that EQ3/6 needs, but other functions,
+            like plot_reaction_paths(), require the additional information found
+            in a CSV database. The CSV becomes the `csv_db` attribute and does
+            not replace the data0 or data1 file used for EQ3/6 calculations.
+            """
+
+            # only some data0 and data1 files have a companion CSV
+            csv_names = WORM_COMPANION_CSVS.get(str(self.data0_lettercode).lower())
+            if csv_names == None:
+                return
+
+            # a CSV in the working directory is used before one is downloaded
+            local_csvs = [f for f in csv_names if os.path.isfile(f)]
+
+            try:
+                if len(local_csvs) > 0:
+                    self._load_csv(local_csvs[0], source="file")
+                else:
+                    self._load_csv(WORM_DB_BASE_URL+"/"+csv_names[0],
+                                   source="URL",
+                                   download_csv_files=download_csv_files)
+
+            except Exception as e:
+                # EQ3/6 calculations can go ahead without the companion CSV
+                self.csv_db = None
+                self.csv_db_type = None
+                self.csv_db_source = None
+                self.csv_db_filename = None
+
+                if self.verbose > 0:
+                    print("The CSV database that accompanies", self.thermo_db_filename,
+                          "could not be loaded:", str(e))
+                    print("Continuing anyway, but functions that require a "
+                          "CSV database, like plot_reaction_paths(), will not "
+                          "work. Consider placing", csv_names[0], "in your "
+                          "working directory.")
+                return
+
+            if self.verbose > 0:
+                print(self.csv_db_filename, "is loaded alongside",
+                      str(self.thermo_db_filename), "to support functions that "
+                      "require a CSV database.")
 
 
         def _exclude_category(self, df, df_name):

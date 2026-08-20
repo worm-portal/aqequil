@@ -313,30 +313,31 @@ def test_water_rock_reaction():
 
             try:
                 # Create AqEquil instance and run speciation
-                # download_csv_files=True downloads the WORM database CSV files
+                # download_csv_files=True downloads the WORM database files
                 ae = aqequil.AqEquil(db="WORM", exclude_organics=True, download_csv_files=True, verbose=0)
 
-                # Copy downloaded CSV files to the bundled databases directory
+                # Copy downloaded database files to the bundled databases directory
                 # This ensures the wheel includes the latest WORM database files
                 # Files are overwritten if they already exist
                 databases_dir = get_database_path()
-                csv_files = [
+                db_files = [
                     "wrm_data_latest.csv",
                     "elements.csv",
                     "solid_solutions.csv",
                     "wrm_data_logk.csv",
                     "wrm_data_logk_s.csv",
+                    "speciation_groups_WORM.txt",
                 ]
-                for csv_file in csv_files:
-                    if os.path.isfile(csv_file):
-                        dest_path = os.path.join(databases_dir, csv_file)
+                for db_file in db_files:
+                    if os.path.isfile(db_file):
+                        dest_path = os.path.join(databases_dir, db_file)
                         # Remove existing file first to ensure clean replacement
                         if os.path.exists(dest_path):
                             os.remove(dest_path)
-                        shutil.copy(csv_file, dest_path)
-                        print(f"[OK] Copied {csv_file} to bundled databases (replaced existing)")
+                        shutil.copy(db_file, dest_path)
+                        print(f"[OK] Copied {db_file} to bundled databases (replaced existing)")
                     else:
-                        print(f"[WARN] {csv_file} not found in working directory")
+                        print(f"[WARN] {db_file} not found in working directory")
 
                 speciation = ae.speciate(
                     input_filename=test_csv,
