@@ -40,6 +40,13 @@ class SpeciationGroups(object):
     reactant_dict_scalar = None
     speciation_group_dict_unpacked = None
 
+    # The grouping file to fall back on, set from the `custom_grouping_filepath`
+    # parameter of AqEquil. None means the built-in speciation groups.
+    default_grouping_filepath = None
+
+    # {group key: (category, moiety count)}, filled in alongside the dictionaries
+    _group_parts = {}
+
     # the grouping file the current dictionaries were built from
     _speciation_group_source = None
 
@@ -60,12 +67,16 @@ class SpeciationGroups(object):
 
         reset : bool, default False
             If True, `custom_grouping_filepath=None` means "go back to the
-            built-in speciation groups" instead of "keep whatever grouping file
-            was set before".
+            grouping file this object defaults to" instead of "keep whatever
+            grouping file was set before". That default is the
+            `custom_grouping_filepath` given to AqEquil, or the built-in
+            speciation groups if none was given.
         """
 
-        if isinstance(custom_grouping_filepath, str) or reset:
+        if isinstance(custom_grouping_filepath, str):
             self.custom_grouping_filepath = custom_grouping_filepath
+        elif reset:
+            self.custom_grouping_filepath = self.default_grouping_filepath
 
         if (not isinstance(self.reactant_dict_scalar, dict)
                 or self._speciation_group_source != self.custom_grouping_filepath):
@@ -82,7 +93,16 @@ class SpeciationGroups(object):
             content = content.split("\n")
             lines = [line.rstrip() for line in content]
 
-        lines = [l for l in lines if l != ""] # remove blank lines
+        # Blank lines, and comments: a grouping file generated from a thermodynamic
+        # database (e.g. by the WORM correlator's Complicator export) records at the
+        # top which database it goes with, and that is worth being able to read.
+        lines = [l for l in lines
+                 if l.strip() != "" and not l.strip().startswith("#")]
+
+        bad_line_indices = [i+1 for i,l in enumerate(lines) if ":" not in l]
+        if len(bad_line_indices) > 0:
+            bad_lines = [l for l in lines if ":" not in l]
+            self.err_handler.raise_exception("Line(s) in the speciation group file do not contain a colon ':'. Fix the formatting on line(s):\n"+str(bad_line_indices)+"\nLines to blame:\n"+str(bad_lines))
 
         # Creates a dictionary with this format:
         #
@@ -95,21 +115,25 @@ class SpeciationGroups(object):
         # }
         #
         # Used by calculate_energy() to calculate concentrations of limiting reactants.
-        try:
-            reactant_dict_scalar = {l.split(":")[0]:l.split(":")[1].strip() for l in lines}
-        except:
-            bad_line_indices = []
-            bad_lines = []
-            for i,l in enumerate(lines):
-                if ":" not in l:
-                    bad_line_indices.append(i)
-                    bad_lines.append(l)
+        #
+        # A group key repeated on two lines is MERGED. It used to overwrite, and a
+        # dropped line is invisible: the shipped file repeats eight keys, so every
+        # metal succinate, malonate, glutarate, adipate, pimelate, glycolate and
+        # lactate complex was being pooled with nothing at all. Species repeated
+        # within a group are dropped, because _grouped_molality sums the group's
+        # columns and would otherwise count one of them twice.
+        speciation_group_dict = collections.OrderedDict()
+        self._group_parts = {}
+        for line in lines:
+            group_name, _, rest = line.strip().partition(":")
+            group_name = group_name.strip()
+            group_species = speciation_group_dict.setdefault(group_name, [])
+            for sp in rest.split():
+                if sp not in group_species:
+                    group_species.append(sp)
+            self._group_parts[group_name] = self._split_group_name(group_name)
 
-            bad_line_indices = [i+1 for i in bad_line_indices]
-            self.err_handler.raise_exception("Line(s) in the speciation group file do not contain a colon ':'. Fix the formatting on line(s):\n"+str(bad_line_indices)+"\nLines to blame:\n"+str(bad_lines))
-
-
-        self.reactant_dict_scalar = {k:v.split(" ") for k,v in zip(reactant_dict_scalar.keys(), reactant_dict_scalar.values())}
+        self.reactant_dict_scalar = speciation_group_dict
 
         # Creates a dictionary with this format:
         # {...
@@ -122,19 +146,10 @@ class SpeciationGroups(object):
         # }
         #
         # Used to switch a user-specified limiting reactant to one within the same scalar group.
-        speciation_group_dict = {}
-        for i,line in enumerate(lines):
-            line = line.strip().split(":")
-            assert len(line) == 2 # will fail if : in species names
-            group_name = line[0].strip()
-            group_species = line[1].strip().split(" ")
-            group_species = list(collections.OrderedDict.fromkeys(group_species)) # remove duplicates
-            speciation_group_dict[group_name] = group_species
-
         speciation_group_dict_unpacked = {}
-        for key in list(speciation_group_dict.keys()):
-            for sp in speciation_group_dict[key]:
-                speciation_group_dict_unpacked[sp] = speciation_group_dict[key]
+        for group_species in speciation_group_dict.values():
+            for sp in group_species:
+                speciation_group_dict_unpacked[sp] = group_species
 
         self.speciation_group_dict_unpacked = speciation_group_dict_unpacked
 
@@ -146,24 +161,33 @@ class SpeciationGroups(object):
         # }
         # Used when the user wants to exclude all organics except for acetate (e.g.)
         # and all species in the acetate speciation group
-        group_categories = []
-        for group_name in self.reactant_dict_scalar.keys():
-            group_name_no_number = group_name.split(" ")
-            group_name_no_number = " ".join(group_name_no_number[:-1])
-            group_categories.append(group_name_no_number)
-        group_categories = list(set(group_categories))
-
         sp_dict_groups = {}
-        for g1 in group_categories:
-            for i,g2 in enumerate(self.reactant_dict_scalar.keys()):
-                g2_cat_name = g2.split(" ")
-                g2_cat_name = " ".join(g2_cat_name[:-1])
-                if g1 == g2_cat_name:
-                    if g1 not in sp_dict_groups.keys():
-                        sp_dict_groups[g1] = copy.deepcopy(self.reactant_dict_scalar[list(self.reactant_dict_scalar.keys())[i]])
-                    else:
-                        sp_dict_groups[g1] += copy.deepcopy(self.reactant_dict_scalar[list(self.reactant_dict_scalar.keys())[i]])
-        self.sp_dict_groups = sp_dict_groups
+        for group_name, group_species in speciation_group_dict.items():
+            category = self._group_parts[group_name][0]
+            pooled = sp_dict_groups.setdefault(category, [])
+            for sp in group_species:
+                if sp not in pooled:
+                    pooled.append(sp)
+        self.sp_dict_groups = copy.deepcopy(sp_dict_groups)
+
+
+    @staticmethod
+    def _split_group_name(group_name):
+        """
+        A group key split into its category and the moiety count, e.g.
+        "sulfide 2" -> ("sulfide", 2.0) and "PO2 anion 1" -> ("PO2 anion", 1.0).
+
+        The count is the last space-separated token, so a category name may contain
+        spaces but must not end in a number. A key whose last token is not a number
+        gets a count of None and is left out of every group total rather than
+        bringing the calculation down.
+        """
+        category, _, scalar = group_name.rpartition(" ")
+        try:
+            scalar = float(scalar)
+        except ValueError:
+            return group_name, None
+        return category, scalar
 
 
     def _match_grouped_species(self, s):
@@ -181,39 +205,34 @@ class SpeciationGroups(object):
                                      }
         If `s` = "Ag(HS)2-"
         then `scalars` = [1, 2, 3]
-        and `groups` = ["sulfides 1", "sulfides 2", "sulfides 3"]
+        and `groups` = [["H2S", "HS-"], ["Pb(HS)2", ...], ["Pb(HS)3-"]]
 
+        A species in two categories (830 of the 1487 species in the shipped file
+        are in both a ligand group and a metal group) matches the FIRST of them in
+        file order, so whether Fe(Ac)+ totals all acetate or all ferrous iron is
+        decided by the order of the grouping file.
         """
         scalars = []
         groups = []
 
-        for i,grp_list in enumerate(list(self.reactant_dict_scalar.values())):
-            if s in grp_list:
-                s_key = list(self.reactant_dict_scalar.keys())[i] #e.g., s_key can be "sulfates 1"
-                s_key_split = s_key.split(" ")
-                s_key_grp = " ".join(s_key_split[:-1])
-                possible_scalars = [k.split(s_key_grp)[-1].strip() for k in list(self.reactant_dict_scalar.keys()) if s_key_grp in k]
-                for k in possible_scalars:
-                    try:
-                        float(k) # test whether the scalar is a number. If so, append.
-                        scalars.append(k)
-                    except:
-                        continue
-                groups = [s_key_grp+" "+str(s) for s in scalars]
-                break
+        for group_name, grp_list in self.reactant_dict_scalar.items():
+            if s not in grp_list:
+                continue
+            category = self._group_parts[group_name][0]
+            # Every count this category has, matched on the category EXACTLY. It
+            # used to be a substring test over the group keys, which read the "2"
+            # of "H-citrate 2" as a count of citrate and then raised KeyError
+            # looking up the "citrate 2" that does not exist -- so one category
+            # name containing another was enough to break a calculation.
+            for other_name, other_list in self.reactant_dict_scalar.items():
+                other_category, other_scalar = self._group_parts[other_name]
+                if other_category != category or other_scalar is None:
+                    continue
+                scalars.append(other_scalar)
+                groups.append(other_list)
+            break
 
-        scalars = [float(s) for s in scalars]
-
-        # prevent duplicate groups and scalars from appearing
-        scalars_final = []
-        groups_final = []
-        for i,group in enumerate(groups):
-            if group not in groups_final:
-                scalars_final.append(scalars[i])
-                groups_final.append(groups[i])
-
-        groups_final = [self.reactant_dict_scalar[g] for g in groups_final]
-        return scalars_final, groups_final
+        return scalars, groups
 
 
     def _switch_limiting(self, limiting, stoich, species, lenient=False):

@@ -163,7 +163,7 @@ c
             if (unam48(1:24) .eq. uphasa(np)) then
               nhitp = nhitp + 1
               nhitpl = nhitpl + 1
-              if (nhitp .le. nlpmax) uusupp(nhitpl) = uphasa(np)
+              if (nhitpl .le. nlpmax) uusupp(nhitpl) = uphasa(np)
               if (jpflag(np) .le. 0) jpflag(np) = 1
               nr1 = ncmpra(1,np)
               nr2 = ncmpra(2,np)

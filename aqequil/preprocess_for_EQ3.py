@@ -799,11 +799,6 @@ def write_3i_file(df,
 
                 aqueous_lines.append(this_aq_line)
 
-    # suppressing species
-    for species in suppress:
-        this_aq_line = f"\n|{species:<48}| {0:.5E}|{'Suppressed':<16}|"
-        aqueous_lines.append(this_aq_line)
-
     aqueous_block = "".join(aqueous_lines)
 
     eq3_ender1 = "\n|------------------------------------------------------------------------------|\n" + \
@@ -848,6 +843,14 @@ def write_3i_file(df,
                 "|Species                                         |Option          |Alter value |\n" + \
                 "| (uxmod(n))                                     |(ukxm(kxmod(n)))| (xlkmod(n))|\n" + \
                 "|------------------------------------------------------------------------------|"
+
+    # Suppressed species go in the alter/suppress block rather than as
+    # 'Suppressed' jflags in the basis block, because each jflag entry
+    # takes a basis-species slot and EQ3 only allots 10 spare slots
+    # beyond the basis species declared on the data file.
+    # Explicit alter_options take precedence for the same species.
+    alter_options = {**{species: ["Suppress", "0"] for species in suppress},
+                     **alter_options}
 
     alter_block_lines = []
     if len(alter_options) > 0:
@@ -948,8 +951,8 @@ def write_3i_file(df,
                 "|------------------------------------------------------------------------------|\n" + \
                 "|iopr(6) - Print a Table of Aqueous Mass Balance Percentages:                  |\n" + \
                 "|  [ ] (-1) Don't print                                                        |\n" + \
-                "|  [x] ( 0) Print those species comprising at least 99% of each mass balance   |\n" + \
-                "|  [ ] ( 1) Print all contributing species                                     |\n" + \
+                "|  [ ] ( 0) Print those species comprising at least 99% of each mass balance   |\n" + \
+                "|  [x] ( 1) Print all contributing species                                     |\n" + \
                 "|------------------------------------------------------------------------------|\n" + \
                 "|iopr(7) - Print Tables of Saturation Indices and Affinities:                  |\n" + \
                 "|  [ ] (-1) Don't print                                                        |\n" + \

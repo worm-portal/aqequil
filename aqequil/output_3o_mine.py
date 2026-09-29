@@ -40,6 +40,15 @@ def safe_float(value):
         return np.nan
 
 
+def fortran_float_str(value):
+    """
+    Restore the 'E' of a number whose exponent field overflowed its Fortran
+    format, e.g. '2.2899-171' becomes '2.2899E-171'. Values that are already
+    well-formed are returned unchanged.
+    """
+    return re.sub(r'^([+-]?\d*\.?\d+)([+-]\d+)$', r'\1E\2', str(value).strip())
+
+
 ### Main functions
 
 def mine_3o(this_file,
@@ -189,10 +198,17 @@ def mine_3o(this_file,
     # End of 'aqueous distribution' extraction
 
     if get_mass_contribution:
-        ### Begin extracting 'Major Species by Contribution to Aqueous Mass Balances'
+        ### Begin extracting 'Species by Contribution to Aqueous Mass Balances'
 
-        # String to isolate the species saturation section:
-        front_trim = r"^.*\n\n\n      --- Major Species by Contribution to Aqueous Mass Balances ---\n\n\n"
+        # String to isolate the species saturation section. The table is titled
+        # "Major Species by Contribution..." when iopr(6) = 0 (only species
+        # making up 99% of each mass balance) and "Species by Contribution..."
+        # when iopr(6) = 1 (all contributing species).
+        front_trim = r"^.*\n\n\n      --- (?:Major )?Species by Contribution to Aqueous Mass Balances ---\n\n\n"
+
+        # Do the tables report every contributing species, or only those
+        # comprising at least 99% of each mass balance?
+        all_species_reported = "--- Species by Contribution to Aqueous Mass Balances ---" in extractme
 
         # Isolate contribution block
         contrib_block = isolate_block(extractme, begin_str=front_trim, end_str=r"\n\n\n\n.*$")
@@ -207,8 +223,11 @@ def mine_3o(this_file,
         mass_contribution = {}
         for this_row in contrib_block:
             if "Accounting for" in this_row:
-                # Get basis species for this block
-                this_basis = this_row.replace(" Species Accounting for 99% or More of Aqueous ", "")
+                # Get basis species for this block. The heading reads
+                # "99% or More of Aqueous" when iopr(6) = 0 and
+                # "Total Aqueous" when iopr(6) = 1.
+                this_basis = re.sub(r"^\s*Species Accounting for (?:99% or More of|Total) Aqueous ",
+                                    "", this_row).strip()
             elif "Per Cent" in this_row:
                 # Get ready to mine data for this basis species
                 mine_vals = True
@@ -221,8 +240,8 @@ def mine_3o(this_file,
                     df_basis_data.append({
                         'species': row_data[0],
                         'factor': row_data[1],
-                        'molality': row_data[2],
-                        'percent': row_data[3]
+                        'molality': fortran_float_str(row_data[2]),
+                        'percent': fortran_float_str(row_data[3])
                     })
             elif " - - - - - - - - -" in this_row:
                 # Stop mining for this basis species
@@ -234,6 +253,7 @@ def mine_3o(this_file,
                 mass_contribution[this_basis] = df_basis
 
         sample_3o["mass_contribution"] = mass_contribution
+        sample_3o["mass_contribution_all_species"] = all_species_reported
 
     # End 'aqueous contribution' extraction
 
@@ -583,7 +603,8 @@ def melt_mass_contribution(batch_3o, other=False, verbose=1):
     batch_3o : dict
         Batch data from multiple .3o files
     other : bool
-        Include "Other" category
+        Include "Other" category. Ignored for samples whose mass balance tables
+        report every contributing species, since nothing is left over.
     verbose : int
         Verbosity level
 
@@ -600,6 +621,10 @@ def melt_mass_contribution(batch_3o, other=False, verbose=1):
     mass_contributions = {sample: data.get('mass_contribution', {})
                          for sample, data in batch_3o["sample_data"].items()}
 
+    # Which samples report every contributing species in their mass balances?
+    all_species_reported = {sample: data.get('mass_contribution_all_species', False)
+                            for sample, data in batch_3o["sample_data"].items()}
+
     # Loop through each sample and basis species
     for sample in mass_contributions:
         if verbose > 1:
@@ -611,8 +636,13 @@ def melt_mass_contribution(batch_3o, other=False, verbose=1):
             df['species'] = df.index
             df = df.reset_index(drop=True)
 
-            if other:
+            if other and not all_species_reported[sample]:
+                # The remainder of the mass balance that is not accounted for by
+                # the reported species. Rounding of the reported percents can
+                # make this slightly negative.
                 percent = round(100 - sum(pd.to_numeric(df['percent'], errors='coerce')), 2)
+                if percent <= 0:
+                    percent = 0.0
                 other_row = pd.DataFrame([{
                     'sample': sample,
                     'basis': basis,

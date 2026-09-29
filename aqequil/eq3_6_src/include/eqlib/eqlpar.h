@@ -19,7 +19,7 @@ c
 c
           parameter(iet_par = 10,jet_par = 4,jso_par = 12,
      $    net_par = 12,nodb_par = 20,nopg_par = 20,nopr_par = 20,
-     $    nopt_par = 20,ntit_par = 200,nxmd_par = 100)
+     $    nopt_par = 20,ntit_par = 200,nxmd_par = 500)
 c
           integer iapxa_par,ibpxa_par
 c

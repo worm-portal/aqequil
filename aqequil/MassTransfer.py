@@ -314,6 +314,10 @@ def react(speciation,
                               tab_name="eq6_extra_out/"+filename_6i[:-2] + 'csv',
                               hide_traceback=hide_traceback)
 
+            # inherit the speciation's speciation group file, if any
+            m.default_grouping_filepath = speciation.default_grouping_filepath
+            m.custom_grouping_filepath = speciation.custom_grouping_filepath
+
             speciation.sample_data[sample_name]["mass_transfer"] = m
         else:
             speciation.sample_data[sample_name]["mass_transfer"] = None
@@ -3073,7 +3077,9 @@ class Mass_Transfer(SpeciationGroups):
 
         custom_grouping_filepath : str, optional
             Filepath for a TXT file containing customized speciation groups. Use
-            to override the built-in speciation group file.
+            to override the speciation group file that this object already uses:
+            the one given to the `custom_grouping_filepath` parameter of
+            `AqEquil`, or the built-in group file if none was given.
 
         xlab, ylab : str, optional
             Custom x and y axis labels.

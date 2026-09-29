@@ -22,6 +22,7 @@ import os
 import re
 import sys
 import shutil
+import tempfile
 import copy
 import collections
 import dill
@@ -385,7 +386,27 @@ class AqEquil(object):
     exceed_Ttr : bool, default True
         Calculate Gibbs energies of mineral phases and other species
         beyond their transition temperatures?
-        
+
+    custom_grouping_filepath : str, optional
+        Filepath of a TXT file containing customized speciation groups, e.g.,
+        "my_speciation_groups.txt". Speciation groups determine which dissolved
+        forms of a reactant are pooled together when a limiting reactant is
+        chosen during an energy supply calculation. For example, a microbe
+        oxidizing sulfide can draw on H2S, HS-, and the sulfide complexes, so
+        those species belong to the same group. The built-in group file,
+        "speciation_groups_WORM.txt", is used if this parameter is undefined.
+        Speciations and mass transfer results produced by this instance inherit
+        this file, so it does not have to be provided again to
+        `calculate_energy` or `apply_redox_reactions`.
+        Each line of the file names a group, then a colon, then the species in
+        that group separated by spaces, e.g.:
+        `sulfide 1: H2S HS-`
+        The number after the group name is the number of moieties that species
+        in the group contain (e.g., "sulfide 2: Pb(HS)2 Ag(HS)2- Au(HS)2-"
+        contains two sulfide moieties per species). Blank lines and lines
+        beginning with '#' are ignored, and a group name that appears on more
+        than one line is merged.
+
     verbose : int, 0, 1, or 2, default 1
         Level determining how many messages are returned during a
         calculation. 2 for all messages, 1 for errors or warnings only,
@@ -437,6 +458,7 @@ class AqEquil(object):
                  input_template="none",
                  water_model="SUPCRT92",
                  exceed_Ttr=True,
+                 custom_grouping_filepath=None,
                  verbose=1,
                  load_thermo=True,
                  hide_traceback=True):
@@ -484,8 +506,23 @@ class AqEquil(object):
         
         self.batch_T = []
         self.batch_P = []
-        
+
         self.logK_models = {}
+
+        # the speciation group file that speciations and mass transfer results
+        # produced by this instance will use
+        if custom_grouping_filepath is not None:
+            if not isinstance(custom_grouping_filepath, str):
+                self.err_handler.raise_exception("The parameter "
+                        "custom_grouping_filepath must be the filepath of a TXT "
+                        "file of speciation groups, but "
+                        "{}".format(str(custom_grouping_filepath))+" was given.")
+            if not os.path.isfile(custom_grouping_filepath):
+                self.err_handler.raise_exception("The speciation group file "
+                        "'{}'".format(custom_grouping_filepath)+" could not be "
+                        "found. Check that custom_grouping_filepath is spelled "
+                        "correctly and that the file is where you think it is.")
+        self.custom_grouping_filepath = custom_grouping_filepath
 
         if "'" in os.getcwd():
             self.err_handler.raise_exception("The current working directory "
@@ -529,6 +566,7 @@ class AqEquil(object):
                 # and species in associated speciation group
                 
                 sp = Speciation({})
+                sp.custom_grouping_filepath = self.custom_grouping_filepath
                 sp._make_speciation_group_dict()
                 reactant_dict_scalar = copy.deepcopy(sp.reactant_dict_scalar)
                 sp_dict_unpacked = copy.deepcopy(sp.speciation_group_dict_unpacked)
@@ -683,7 +721,116 @@ class AqEquil(object):
                     with open(filename, 'a') as f:
                         f.write('\n')
 
-    
+
+    @staticmethod
+    def _sample_dataframe_to_rows(df):
+        """
+        Convert a sample DataFrame into the rows of a sample input CSV (header
+        row, subheader row, then one row per sample), all as strings.
+
+        Two layouts are accepted:
+        - single-level columns holding the headers, with the subheaders in the
+          first row, as returned by `pd.read_csv(input_filename)`.
+        - two-level columns holding the headers and subheaders, as returned by
+          `pd.read_csv(input_filename, header=[0, 1])`.
+
+        Sample names are taken from the first column, or from the index if it
+        is named or holds strings (e.g., `pd.read_csv(..., index_col=0)`).
+        """
+        df = df.copy()
+        if any(n is not None for n in df.index.names) or df.index.dtype == object:
+            df = df.reset_index()
+
+        def _clean(label):
+            # blank CSV headers are read in by pandas as 'Unnamed: ...'
+            label = "" if pd.isna(label) else str(label)
+            return "" if re.match(r"^Unnamed: \d+(_level_\d+)?$", label) else label
+
+        if isinstance(df.columns, pd.MultiIndex):
+            if df.columns.nlevels != 2:
+                raise ValueError("A sample DataFrame with MultiIndex columns "
+                                 "must have exactly two levels: headers and subheaders.")
+            header_rows = [[_clean(h) for h in df.columns.get_level_values(i)]
+                           for i in range(2)]
+        else:
+            header_rows = [[_clean(h) for h in df.columns]]
+
+        def _to_str(value):
+            if pd.isna(value):
+                return ""
+            # columns with blanks are read in as float, e.g., a Year of 2014.0
+            if isinstance(value, float) and value.is_integer():
+                return str(int(value))
+            return str(value)
+
+        body = df.astype(object).apply(lambda col: col.map(_to_str))
+        rows = header_rows + body.values.tolist()
+        return pd.DataFrame(rows, dtype=str)
+
+
+    def _prepare_sample_input_file(self, input_filename, include_samples,
+                                   exclude_samples):
+        """
+        Write the sample input (a CSV filename or a pandas DataFrame) to a CSV
+        in a new temporary directory, keeping only the requested samples.
+        Returns the path of the new CSV and the temporary directory.
+        """
+        if isinstance(input_filename, pd.DataFrame):
+            try:
+                df_in = self._sample_dataframe_to_rows(input_filename)
+            except ValueError as e:
+                self.err_handler.raise_exception(str(e))
+            input_label = "the input DataFrame"
+            out_basename = "input_dataframe.csv"
+        else:
+            if not self.__file_exists(input_filename):
+                self.err_handler.raise_exception("_prepare_sample_input_file() error!")
+            # read everything as strings so values are written back unchanged
+            df_in = pd.read_csv(input_filename, header=None, dtype=str,
+                                keep_default_na=False)
+            input_label = input_filename
+            out_basename = os.path.basename(input_filename)
+
+        # rows 0 and 1 are the header and subheader rows
+        sample_names = list(df_in.iloc[2:, 0])
+
+        def _as_name_list(samples, arg_name):
+            if isinstance(samples, str):
+                samples = [samples]
+            samples = [str(s) for s in samples]
+            missing = [s for s in samples if s not in sample_names]
+            if len(missing) > 0:
+                self.err_handler.raise_exception(
+                    "The following samples given to '{}'".format(arg_name) + " "
+                    "could not be found in the first column of "
+                    "{}: {}".format(input_label, missing))
+            return samples
+
+        keep = [True, True] + [True]*len(sample_names)
+        if include_samples is not None:
+            include_samples = _as_name_list(include_samples, "include_samples")
+            keep = keep[:2] + [s in include_samples for s in sample_names]
+        if exclude_samples is not None:
+            exclude_samples = _as_name_list(exclude_samples, "exclude_samples")
+            keep = keep[:2] + [k and s not in exclude_samples
+                               for k, s in zip(keep[2:], sample_names)]
+
+        if len(sample_names) > 0 and sum(keep[2:]) == 0:
+            self.err_handler.raise_exception(
+                "No samples remain after applying 'include_samples' and "
+                "'exclude_samples' to {}.".format(input_label))
+
+        if self.verbose > 1 and (include_samples is not None or exclude_samples is not None):
+            print("Speciating {} of {} samples in {}".format(
+                sum(keep[2:]), len(sample_names), input_label))
+
+        temp_dir = tempfile.mkdtemp(prefix="aqequil_samples_")
+        filtered_filename = os.path.join(temp_dir, out_basename)
+        df_in[keep].to_csv(filtered_filename, header=False, index=False,
+                           encoding="utf-8")
+        return filtered_filename, temp_dir
+
+
     def _check_sample_input_file(self, input_filename, exclude, db,
                                        dynamic_db, charge_balance_on,
                                        suppress_missing,
@@ -1644,6 +1791,8 @@ class AqEquil(object):
 
     def speciate(self,
                  input_filename,
+                 include_samples=None,
+                 exclude_samples=None,
                  logK_extrapolate=None,
                  activity_model="auto",
                  redox_flag="auto",
@@ -1684,9 +1833,10 @@ class AqEquil(object):
         
         Parameters
         ----------
-        input_filename : str
+        input_filename : str or pandas DataFrame
             User-supplied utf8-encoded comma separated value (csv) file
-            containing sample data intended for speciation. The file must
+            containing sample data intended for speciation, or a pandas
+            DataFrame holding the same table (see below). The file must
             follow this format:
             
             - the first row is a header row that must contain the names of the
@@ -1724,6 +1874,28 @@ class AqEquil(object):
               subheader.
             - The first column must contain sample names. There cannot be
               duplicate sample names.
+            
+            A DataFrame can be given in either of these layouts:
+            
+            - as read by `pd.read_csv(input_filename)`: columns are the
+              headers and the first row holds the subheaders.
+            - as read by `pd.read_csv(input_filename, header=[0, 1])`:
+              two-level columns holding the headers and subheaders.
+            
+            Sample names are taken from the first column, or from the index
+            if it is named or holds strings (e.g., when the DataFrame was read
+            with `index_col=0`).
+        
+        include_samples : str or list of str, optional
+            Names of samples (from the first column of `input_filename`) to
+            speciate. All other samples in the file are ignored. If not
+            given, all samples are speciated.
+        
+        exclude_samples : str or list of str, optional
+            Names of samples (from the first column of `input_filename`) to
+            leave out of the speciation calculation. Can be combined with
+            `include_samples`, in which case samples are removed from the
+            included set.
         
         activity_model : str, default "auto"
             Aqueous species activity coefficient model to use for speciation.
@@ -1863,7 +2035,8 @@ class AqEquil(object):
         mass_contribution_other : bool, default True
             Include an "other" species for the sake of summing percents of basis
             species contributions to 100%? Ignored if `get_mass_contribution` is
-            False.
+            False, and ignored for EQ3 output that already reports every
+            contributing species (nothing is left over in that case).
         
         get_mineral_sat : bool, default True
             Calculate saturation states of pure solids?
@@ -1962,6 +2135,14 @@ class AqEquil(object):
         if "suppress_redox" in db_args.keys() and self.thermo.thermo_db_type != "data0" and self.thermo.thermo_db_type != "data1":
             if len(db_args["suppress_redox"]) > 0:
                 redox_suppression = True
+
+        # write DataFrame input to a CSV and keep only the samples requested
+        # by the user
+        samples_temp_dir = None
+        if (isinstance(input_filename, pd.DataFrame)
+                or include_samples is not None or exclude_samples is not None):
+            input_filename, samples_temp_dir = self._prepare_sample_input_file(
+                input_filename, include_samples, exclude_samples)
 
         # Exclude the 'charge_balance_on' column from being treated as a chemical species
         # (if it exists in the input file). This allows users to have this column in their CSV
@@ -2394,6 +2575,10 @@ class AqEquil(object):
             verbose=self.verbose,
         )
 
+        # the filtered copy of the sample input file is no longer needed
+        if samples_temp_dir is not None:
+            shutil.rmtree(samples_temp_dir, ignore_errors=True)
+
         if len(batch_3o) == 0:
             self.err_handler.raise_exception("Could not compile a speciation report. This is "
                             "likely because errors occurred during "
@@ -2665,6 +2850,10 @@ class AqEquil(object):
 
         speciation.half_cell_reactions = self.half_cell_reactions
         speciation._half_cell_reactions_original_copy = self._half_cell_reactions_original_copy
+
+        # speciation groups default to the grouping file given to AqEquil
+        speciation.default_grouping_filepath = self.custom_grouping_filepath
+        speciation.custom_grouping_filepath = self.custom_grouping_filepath
 
         if report_filename != None:
             # Prepare report for CSV export with proper header structure
@@ -7840,7 +8029,9 @@ class Speciation(SpeciationGroups):
 
         custom_grouping_filepath : str, optional
             Filepath for a TXT file containing customized speciation groups. Use
-            to override the built-in speciation group file.
+            to override the speciation group file that this object already uses:
+            the one given to the `custom_grouping_filepath` parameter of
+            `AqEquil`, or the built-in group file if none was given.
 
         raise_nonlimiting_exception : bool, default True
             This parameter can be ignored in almost all cases. Raise an
@@ -8701,7 +8892,9 @@ class Speciation(SpeciationGroups):
 
         custom_grouping_filepath : str, optional
             Filepath for a TXT file containing customized speciation groups. Use
-            to override the built-in speciation group file.
+            to override the speciation group file that this object already uses:
+            the one given to the `custom_grouping_filepath` parameter of
+            `AqEquil`, or the built-in group file if none was given.
 
         print_logK_messages : bool, default False
             Print additional messages related to calculating logK values for
@@ -9106,7 +9299,45 @@ class Speciation(SpeciationGroups):
         seen_add = seen.add
         return [x for x in seq if not (x in seen or seen_add(x))]
 
-    
+
+    @staticmethod
+    def __lump_other_species(df_sp, other_threshold):
+        """
+        Lump species that never account for more than `other_threshold` percent
+        of a mass balance in any sample of a mass contribution dataframe into a
+        single "Other" species. Percents of lumped species are summed within
+        each sample. An "Other" species that contributes nothing is dropped.
+        """
+
+        max_percent = df_sp.groupby("species")["percent"].max()
+        minor_species = [sp for sp in max_percent.index
+                         if sp != "Other" and max_percent[sp] <= other_threshold]
+
+        is_other = df_sp["species"].isin(minor_species + ["Other"])
+
+        if not is_other.any():
+            return df_sp
+
+        other_rows = df_sp[is_other]
+
+        # keep the first row of each sample so that columns other than
+        # 'species', 'factor', 'molality', and 'percent' are preserved
+        df_other = other_rows.drop_duplicates(subset="sample", keep="first").copy()
+        df_other["species"] = "Other"
+        for col in ["factor", "molality"]:
+            if col in df_other.columns:
+                df_other[col] = np.nan
+        df_other["percent"] = df_other["sample"].map(
+                other_rows.groupby("sample")["percent"].sum())
+
+        df_sp = df_sp[~is_other]
+
+        if (df_other["percent"].fillna(0) > 0).any():
+            df_sp = pd.concat([df_sp, df_other], ignore_index=True)
+
+        return df_sp
+
+
     def save(self, filename, messages=True):
         """
         Save the speciation as a '.speciation' file to your current working
@@ -9687,7 +9918,7 @@ class Speciation(SpeciationGroups):
                     rxns_as_labels=True, charge_sign_at_end=False,
                     plot_width=4, plot_height=3, ppi=122,
                     fill_alpha=0.7, point_size=10,
-                    ylab=None, lineplot=False, linemarkers=True,
+                    xlab=None, ylab=None, lineplot=False, linemarkers=True,
                     colormap="WORM", save_as=None, save_format=None,
                     save_scale=1, interactive=True, plot_out=False):
         
@@ -9733,9 +9964,9 @@ class Speciation(SpeciationGroups):
         point_size : numeric, default 10
             Size of scatterpoints.
 
-        ylab : str, optional
-            Custom label for the y-axis.
-        
+        xlab, ylab : str, optional
+            Custom labels for the x-axis and y-axis.
+
         lineplot : bool, default False
             Display a line plot instead of a scatterplot?
 
@@ -9949,6 +10180,8 @@ class Speciation(SpeciationGroups):
         df['y_variable_original'] = df['y_variable']
         df['y_variable'] = df['y_variable'].apply(chemlabel, charge_sign_at_end=charge_sign_at_end)
         
+        if xlab != None:
+            xlabel=xlab
         if ylab != None:
             ylabel=ylab
 
@@ -10034,7 +10267,8 @@ class Speciation(SpeciationGroups):
     def plot_mass_contribution(self, basis, title=None, sort_by=None,
                                      ascending=True, sort_y_by=None, width=0.9,
                                      colormap="WORM", sample_label="sample",
-                                     colors=None,
+                                     colors=None, other_threshold=1,
+                                     show_legend=True,
                                      plot_width=4, plot_height=3, ppi=122,
                                      save_as=None, save_format=None,
                                      save_scale=1, interactive=True,
@@ -10083,7 +10317,18 @@ class Speciation(SpeciationGroups):
             However, other words might be more appropriate to describe the
             calculations you are performing. For instance, if you are comparing
             reaction progress, `sample_label = "Xi"` might be more appropriate.
-        
+
+        other_threshold : numeric, default 1
+            Species that do not account for more than this percent of the mass
+            balance in any of the samples being plotted are lumped together
+            into an "Other" category. Set to 0 to give every contributing
+            species its own legend entry.
+
+        show_legend : bool, default True
+            Show the legend of species names? Hiding the legend can be useful
+            when many species are plotted, or when several plots share a
+            legend.
+
         plot_width, plot_height : numeric, default 4 by 3
             Width and height of the plot, in inches. Size of interactive plots
             is also determined by pixels per inch, set by the parameter `ppi`.
@@ -10164,15 +10409,19 @@ class Speciation(SpeciationGroups):
                        "{}".format(list(self.report.columns.get_level_values(0))))
                 self.err_handler.raise_exception(msg)
         
-        df_sp['percent'] = df_sp['percent'].astype(float)
-        
+        # errors are coerced to NaN so that a value EQ3 could not format
+        # (e.g., '**********') does not prevent a plot from being created
+        df_sp['percent'] = pd.to_numeric(df_sp['percent'], errors="coerce")
+
+        labels = self.__unique(df_sp["sample"])
+
+        df_sp = self.__lump_other_species(df_sp, other_threshold)
+
         unique_species = self.__unique(df_sp["species"])
-        
+
         if "Other" in unique_species:
 
             unique_species.append(unique_species.pop(unique_species.index("Other")))
-        
-        labels = self.__unique(df_sp["sample"])
 
         bottom = np.array([0]*len(labels))
 
@@ -10242,7 +10491,7 @@ class Speciation(SpeciationGroups):
         fig.update_layout(xaxis_tickangle=-45, xaxis_title=None, legend_title=None,
                           title={'text':title, 'x':0.5, 'xanchor':'center'},
                           margin={"t": 40}, bargap=0, xaxis={'fixedrange':True},
-                          yaxis={'fixedrange':True})
+                          yaxis={'fixedrange':True}, showlegend=show_legend)
 
         fig.update_traces(width=width, marker_line_width=0)
         
