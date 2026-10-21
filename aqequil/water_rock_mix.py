@@ -123,56 +123,146 @@ def react_water_rock(speciation, rock_composition,
 
 def mix(speciation, fluid_1, fluid_2,
         mixing_fluid_kwargs={},
-        prepare_reaction_kwargs={"mineral_suppression_option":"All", "xi_print_int":0.1},
-        conservative_species=None):
+        prepare_reaction_kwargs=None,
+        conservative_species=None,
+        single_run=False,
+        max_xi=1000):
+    '''
+    Mix two speciated fluids with EQ6.
+
+    Parameters
+    ----------
+    speciation : object of class Speciation
+        Speciation containing both fluids.
+
+    fluid_1, fluid_2 : str
+        Names of the two fluid samples in the speciation.
+
+    mixing_fluid_kwargs : dict, default {}
+        Keyword arguments passed to `Mixing_Fluid`, e.g., "mass_ratio".
+
+    prepare_reaction_kwargs : dict, optional
+        Keyword arguments passed to `Prepare_Reaction`. If None, minerals are
+        suppressed ("mineral_suppression_option": "All"). If a dict is given,
+        it replaces that default, so include "mineral_suppression_option" if
+        you want minerals suppressed.
+
+    conservative_species : list of str, optional
+        Species whose molalities and activities are replaced with values from
+        conservative (linear) mixing of the two fluids after the calculation.
+        Requires "mineral_suppression_option": "All".
+
+    single_run : bool, default False
+        If False, two EQ6 runs are performed: fluid_2 is added to fluid_1, and
+        fluid_1 is added to fluid_2, each until the two meet in the middle.
+        The results are joined so that Xi runs from 0 (pure fluid_1) to 2
+        (pure fluid_2).
+        If True, one EQ6 run is performed, where fluid_2 is added to fluid_1
+        until Xi = `max_xi`. This is useful when the path matters, for
+        example in a fluid-centered flow-through open system
+        ("physical_system_model": "fluid-centered flow-through open"), where
+        the two halves of a two-run mix would not meet in the middle. Unless
+        set in `prepare_reaction_kwargs`, "xi_print_int" defaults to
+        max_xi/50, "log_xi_print_int" to 0.1, and "max_n_steps" to 20000.
+
+    max_xi : float, default 1000
+        Only used if `single_run` is True. Maximum reaction progress, in kg of
+        fluid_2 added per kg of fluid_1 (times "mass_ratio" in
+        `mixing_fluid_kwargs`, if given). For example, with a mass_ratio of 1,
+        max_xi=1000 ends at 99.9% fluid_2.
+
+    Returns
+    -------
+    An object of class `Mass_Transfer`. If `single_run` is True, amounts in
+    the results are per kg of fluid_1.
+    '''
+
+    if prepare_reaction_kwargs is None:
+        prepare_reaction_kwargs = {"mineral_suppression_option":"All"}
+        if not single_run:
+            prepare_reaction_kwargs["xi_print_int"] = 0.1
+    prepare_reaction_kwargs = dict(prepare_reaction_kwargs)
+    mixing_fluid_kwargs = dict(mixing_fluid_kwargs)
 
     if conservative_species is not None:
-        mineral_opt = prepare_reaction_kwargs.get("mineral_suppression_option", "All")
+        # "None" is the Prepare_Reaction default
+        mineral_opt = prepare_reaction_kwargs.get("mineral_suppression_option", "None")
         if mineral_opt != "All":
             raise Exception("conservative_species requires "
                             "mineral_suppression_option='All' in "
                             "prepare_reaction_kwargs.")
 
+    mass_ratio = mixing_fluid_kwargs.get("mass_ratio", 1)
+
     speciation_for_mix = copy.deepcopy(speciation)
 
-    # Create mixing fluid from the vent fluid result
-    Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
-                               sample_name=fluid_2,
-                               mix_with=fluid_1,
-                               **mixing_fluid_kwargs)
+    if single_run:
+        if "xi_range" in prepare_reaction_kwargs:
+            raise Exception("Use max_xi instead of 'xi_range' in "
+                            "prepare_reaction_kwargs when single_run=True.")
+        # fluid_2 must last until max_xi, otherwise EQ6 runs out of it
+        # and the chemistry stops changing while temperature keeps tracking Xi
+        if mixing_fluid_kwargs.get("amount_remaining", max_xi) < max_xi:
+            raise Exception("'amount_remaining' in mixing_fluid_kwargs must "
+                            "be at least max_xi.")
+        mixing_fluid_kwargs.setdefault("amount_remaining", max_xi)
+        prepare_reaction_kwargs["xi_range"] = [0, max_xi]
+        prepare_reaction_kwargs.setdefault("xi_print_int", max_xi/50)
+        prepare_reaction_kwargs.setdefault("log_xi_print_int", 0.1)
+        prepare_reaction_kwargs.setdefault("max_n_steps", 20000)
 
-    # Set up and run the mixing calculation
-    r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
-                                     **prepare_reaction_kwargs)
+        Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
+                                   sample_name=fluid_2,
+                                   mix_with=fluid_1,
+                                   **mixing_fluid_kwargs)
 
-    speciation_mixed_1 = aqequil.react(speciation_for_mix, r_mix)
-    m1 = speciation_mixed_1.mt(fluid_1)
+        r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
+                                         **prepare_reaction_kwargs)
 
-    Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
-                               sample_name=fluid_1,
-                               mix_with=fluid_2,
-                               **mixing_fluid_kwargs)
+        mix_result = aqequil.react(speciation_for_mix, r_mix).mt(fluid_1)
 
-    # Set up and run the mixing calculation
-    r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
-                                     **prepare_reaction_kwargs)
+    else:
+        # Create mixing fluid from the vent fluid result
+        Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
+                                   sample_name=fluid_2,
+                                   mix_with=fluid_1,
+                                   **mixing_fluid_kwargs)
 
-    speciation_mixed_2 = aqequil.react(speciation_for_mix, r_mix)
-    m2 = speciation_mixed_2.mt(fluid_2)
+        # Set up and run the mixing calculation
+        r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
+                                         **prepare_reaction_kwargs)
 
-    joined_mix = aqequil.join_mixes(m1, m2)
+        speciation_mixed_1 = aqequil.react(speciation_for_mix, r_mix)
+        m1 = speciation_mixed_1.mt(fluid_1)
+
+        # the inverse mass ratio makes both halves meet at the same mixture
+        # at Xi = 1: mass_ratio kg of fluid_2 per kg of fluid_1
+        mixing_fluid_kwargs_2 = dict(mixing_fluid_kwargs, mass_ratio=1/mass_ratio)
+        Mix = aqequil.Mixing_Fluid(speciation=speciation_for_mix,
+                                   sample_name=fluid_1,
+                                   mix_with=fluid_2,
+                                   **mixing_fluid_kwargs_2)
+
+        # Set up and run the mixing calculation
+        r_mix = aqequil.Prepare_Reaction(reactants=[Mix],
+                                         **prepare_reaction_kwargs)
+
+        speciation_mixed_2 = aqequil.react(speciation_for_mix, r_mix)
+        m2 = speciation_mixed_2.mt(fluid_2)
+
+        mix_result = aqequil.join_mixes(m1, m2)
 
     if conservative_species is not None:
-        mass_ratio = mixing_fluid_kwargs.get("mass_ratio", 1)
-        joined_mix.apply_conservative_mixing(
+        mix_result.apply_conservative_mixing(
             speciation=speciation,
             fluid_1=fluid_1,
             fluid_2=fluid_2,
             species=conservative_species,
             mass_ratio=mass_ratio,
+            single_run=single_run,
         )
 
-    return joined_mix
+    return mix_result
 
 
 

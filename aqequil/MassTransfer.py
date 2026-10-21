@@ -569,7 +569,7 @@ class Mass_Transfer(SpeciationGroups):
         self._conservative_mixing_applied = False
 
     def apply_conservative_mixing(self, speciation, fluid_1, fluid_2,
-                                   species=None, mass_ratio=1):
+                                   species=None, mass_ratio=1, single_run=False):
         """
         Replace EQ6-computed log activities and molalities of specified species
         with values derived from conservative (linear) mixing of molalities
@@ -590,8 +590,16 @@ class Mass_Transfer(SpeciationGroups):
             Species to conservatively mix. Default is ["O2", "H2"].
 
         mass_ratio : float, default 1
-            The mass ratio factor used in the mixing calculation. Must match
-            what was used in Prepare_Reaction / Mixing_Fluid.
+            The `mass_ratio` given to `Mixing_Fluid` (kg of fluid_2 added per
+            unit Xi). Must match what was used in the mixing calculation.
+
+        single_run : bool, default False
+            Set to True if these results come from a single mixing run where
+            fluid_2 is added to fluid_1 over the whole range of Xi, e.g., from
+            `mix(single_run=True)`. If False, the results are assumed to be two
+            runs joined by `join_mixes`, as in `mix()`, where Xi runs from 0
+            (pure fluid_1) to 2 (pure fluid_2) and the second half was run with
+            a mass ratio of 1/mass_ratio.
         """
         if species is None:
             species = ["O2", "H2"]
@@ -610,10 +618,13 @@ class Mass_Transfer(SpeciationGroups):
 
             conservative_molal = []
             for xi in xi_values:
-                if xi <= 1.0:
+                if xi <= 1.0 or single_run:
+                    # xi*mass_ratio kg of fluid_2 added to 1 kg of fluid_1
                     f2 = xi * mass_ratio / (1.0 + xi * mass_ratio)
                 else:
-                    f2 = 1.0 / (1.0 + (2.0 - xi) * mass_ratio)
+                    # second half of a joined mix: (2 - xi)/mass_ratio kg of
+                    # fluid_1 added to 1 kg of fluid_2
+                    f2 = mass_ratio / (mass_ratio + (2.0 - xi))
                 m_cons = (1.0 - f2) * m_fluid1 + f2 * m_fluid2
                 conservative_molal.append(m_cons)
 
@@ -666,6 +677,12 @@ class Mass_Transfer(SpeciationGroups):
         IS_vals = []
         for line in self.six_o_file_lines:
             if "                    Xi=" in line:
+                # flow-through open systems print Xi, T, and P blocks without
+                # aqueous data following a discontinuity. Drop them.
+                if len(t_vals) > len(pH_vals):
+                    del xi_vals[len(pH_vals):]
+                    del t_vals[len(pH_vals):]
+                    del p_vals[len(pH_vals):]
                 recording = True
                 splitstrings = line.strip().split(" ")
                 xi = [float(v) for v in splitstrings if v not in ['', 'Xi=']][0]
@@ -704,6 +721,11 @@ class Mass_Transfer(SpeciationGroups):
                 IS_vals.append(IS)
             if "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" in line:
                 recording = False
+
+        if len(t_vals) > len(pH_vals):
+            del xi_vals[len(pH_vals):]
+            del t_vals[len(pH_vals):]
+            del p_vals[len(pH_vals):]
 
         df = pd.DataFrame({
             "Xi":xi_vals,
@@ -981,9 +1003,16 @@ class Mass_Transfer(SpeciationGroups):
                       col_index=col_index)
 
     def __get_moles_minerals(self):
-        
+
+        # flow-through open systems report cumulative ES + PRS solids instead
+        # of a grand summary
+        if "Grand Summary of Solid Phases" in "\n".join(self.six_o_file_lines):
+            table_start = "Grand Summary of Solid Phases"
+        else:
+            table_start = "--- Summary of Solid Phases (ES + PRS) ---"
+
         return self.mine_6o_table(
-                      table_start="Grand Summary of Solid Phases",
+                      table_start=table_start,
                       table_stop="Mass, grams       Volume, cm3",
                       ignore = ["", "Phase/End-member", '---'],
                       col_index=2)
@@ -991,13 +1020,20 @@ class Mass_Transfer(SpeciationGroups):
     
     def __get_moles_product_minerals(self, include_solid_solutions=True):
         
-        if "Grand Summary of Solid Phases" in "\n".join(self.six_o_file_lines):
+        six_o_text = "\n".join(self.six_o_file_lines)
+        if "Grand Summary of Solid Phases" in six_o_text:
             table_stop = "Grand Summary of Solid Phases"
         else:
             table_stop = "Mass, grams       Volume, cm3"
-        
+
+        # flow-through open systems move product solids from the ES to the PRS
+        if "--- Summary of Solid Phases (ES) ---" in six_o_text:
+            table_start = "--- Summary of Solid Phases (ES) ---"
+        else:
+            table_start = "--- Summary of Solid Phases (ES + PRS) ---"
+
         df = self.mine_6o_table(
-                      table_start="--- Summary of Solid Phases (ES) ---",
+                      table_start=table_start,
                       table_stop=table_stop,
                       ignore = ["", "Phase/End-member", '---'],
                       col_index=2)
@@ -4010,7 +4046,10 @@ class Mixing_Fluid:
             sample in the speciation object.
 
         amount_remaining : float, default 1
-            Number of moles of the fluid to be mixed with all others.
+            Number of moles of the fluid to be mixed with all others. One mole
+            is `mass_ratio` kg of the mixing fluid, so the mixing fluid is used
+            up at Xi = `amount_remaining`. To mix beyond Xi = 1, raise
+            `amount_remaining` along with the maximum Xi in `Prepare_Reaction`.
 
         amount_destroyed : float, default 0
             Number of moles of the mixing fluid that has been destroyed.
@@ -4019,7 +4058,9 @@ class Mixing_Fluid:
             Molar volume of the mixing fluid, in moles/cm3.
 
         mass_ratio : float, default 1
-            Ratio of mass of the mixing fluid to all other fluids.
+            Kilograms of the mixing fluid added per unit of reaction progress
+            (Xi), relative to the 1 kg of the fluid it is mixed with. The mass
+            fraction of the mixing fluid is Xi*mass_ratio/(1 + Xi*mass_ratio).
 
         hide_traceback : bool, default True
             Hide traceback message when encountering errors handled by this
@@ -4029,6 +4070,9 @@ class Mixing_Fluid:
         """
 
         self.err_handler = Error_Handler(clean=hide_traceback)
+
+        if not mass_ratio > 0:
+            self.err_handler.raise_exception("mass_ratio must be greater than 0.")
 
         # Prepare a special reactant to be used in a mixing calculation.
         if isinstance(speciation, Speciation):
@@ -4076,8 +4120,9 @@ class Mixing_Fluid:
                 split_line = line.split("|")
                 element = split_line[2].strip()
                 value = float(split_line[3])
-                fluid_2_dict[element] = value
-            
+                # one mole of the reactant is mass_ratio kg of this fluid
+                fluid_2_dict[element] = value*mass_ratio
+
             self.reactant = Reactant(reactant_name="Fluid 2",
                                      reactant_type="Special reactant",
                                      special_reactant_dict=fluid_2_dict,
@@ -4108,6 +4153,14 @@ class Mixing_Fluid:
             if "|->|Surface area" in line:
                 capture = False
             if capture:
+                split_line = line.split("|")
+                # scale species coefficients (not the reactant itself) by mass_ratio
+                if (mass_ratio != 1 and len(split_line) > 3
+                        and split_line[1] == "--->"
+                        and split_line[2].strip() not in ("Fluid 2", "Species")):
+                    coeff = float(split_line[3])*mass_ratio
+                    split_line[3] = f"{'{:.15E}'.format(coeff):>22}"
+                    line = "|".join(split_line)
                 reaction_block_lines.append(line)
 
         # insert this fluid's reaction block
@@ -4499,8 +4552,8 @@ class Prepare_Reaction:
             - 0 for constant temperature
             - 1 for linear tracking in Xi
             - 2 for linear tracking in time
-            
-            Fluid mixing tracking is not yet supported.
+            - 3 for fluid mixing tracking (the default when a `Mixing_Fluid`
+            is among the reactants)
          
         t_value_1, t_value_2, t_value_3 : default None, 0, 0, respectively
             By default, the temperature of samples in the speciation
@@ -4519,7 +4572,12 @@ class Prepare_Reaction:
             - If 't_option' is 2, then t_value_1 is the base value
             temperature (in degrees C), t_value_2 is the derivative, and
             t_value_3 is ignored.
-         
+            - If 't_option' is 3, then t_value_1 and t_value_2 are the
+            temperatures (in degrees C) of fluid 1 and fluid 2, and t_value_3
+            is EQ6's mass ratio factor, ttk(1): kg of fluid 1 per kg of fluid 2
+            added per unit Xi. By default these are taken from the
+            `Mixing_Fluid` reactant, with t_value_3 = 1/mass_ratio.
+
         p_option : int, default 0
             Desired option for handling pressure of the reaction. Valid
             choices include:
@@ -4844,7 +4902,10 @@ class Prepare_Reaction:
                     t_value_2 = float(reactant.T) # temp of fluid 2
                     self.t_value_2=t_value_2
                 if t_value_3 == None:
-                    t_value_3 = reactant.mass_ratio # mass ratio factor
+                    # EQ6 mass ratio factor ttk(1) is kg of fluid 1 per kg of
+                    # fluid 2 added per unit Xi:
+                    # T = (T1*ttk(1) + Xi*T2)/(Xi + ttk(1))
+                    t_value_3 = 1/reactant.mass_ratio
                     self.t_value_3=t_value_3
                 
         if n_mixing_fluid_reactants == 0:
